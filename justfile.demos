@@ -1,0 +1,22 @@
+# Demo commands for showcasing features
+# This file is imported by the main Justfile
+
+# Demo command placeholder
+demo:
+    @echo "🎯 Demo functionality will be implemented per feature"
+    @echo "Run specific demos with: just demo-<feature>"
+
+# Demo: View all commits and diffs in browser (single command)
+demo-commits:
+    ./scripts/demo-commits.sh {{ api_dir }} {{ python }}
+
+# Demo: Diff Generation API (legacy - requires manual server start)
+demo-diff-generation:
+    ./scripts/demo-diff-generation.sh {{ api_dir }} {{ python }}
+
+# Demo commands in Docker container
+demo-commits-docker:
+    docker compose exec api python -m haven.cli demo-commits
+
+demo-diff-generation-docker:
+    docker compose exec api python -m haven.cli demo-diff-generation

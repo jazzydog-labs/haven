@@ -1,0 +1,74 @@
+# API-specific Justfile commands
+# This file is imported by the main Justfile
+
+# Run API server
+run:
+    {{ python }} -m haven.main
+
+# Run with specific environment
+run-env env="local":
+    {{ python }} -m haven.main +environment={{ env }}
+
+# Python linting
+lint:
+    {{ python }} -m ruff check .
+
+# Fix linting issues
+lint-fix:
+    {{ python }} -m ruff check --fix .
+    {{ python }} -m ruff format .
+
+# Format Python code
+format:
+    {{ python }} -m ruff format .
+
+# Type checking
+type:
+    {{ python }} -m pyright
+
+# Run all tests
+test:
+    {{ python }} -m pytest
+
+# Run fast tests only
+test-fast:
+    {{ python }} -m pytest -m "not slow"
+
+# Coverage testing
+test-cov:
+    {{ python }} -m pytest --cov=haven --cov-report=html
+
+# Watch mode testing
+test-watch:
+    {{ python }} -m pytest-watch
+
+# Run specific test file
+test-file file:
+    {{ python }} -m pytest {{ file }}
+
+# Quality checks
+check: lint type test-fast
+
+# Development utilities
+shell:
+    {{ python }} -m asyncio
+
+# Update dependencies
+update:
+    {{ pip }} install --upgrade pip
+    {{ pip }} install --upgrade -e ".[dev,docs]"
+
+# Clean Python artifacts
+clean:
+    rm -rf build/ dist/ *.egg-info/
+    find . -type d -name __pycache__ -exec rm -rf {} +
+    find . -type f -name "*.pyc" -delete
+    rm -rf .coverage htmlcov/ .pytest_cache/
+    rm -rf .ruff_cache/ .mypy_cache/ .pyright/
+    rm -rf site/
+
+# Show current environment info
+info:
+    @echo "Python: $({{ python }} --version)"
+    @echo "Working directory: $(pwd)"
+    @{{ python }} -m pip list | grep -E "(fastapi|sqlalchemy|strawberry|pydantic)"

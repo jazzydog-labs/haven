@@ -1,17 +1,17 @@
-# Haven Development Justfile
+# Haven Development Justfile - Main Orchestrator
 # Run `just --list` to see all available commands
+
+# Import common variables and settings
+import 'justfile.common'
+
+# Import module-specific justfiles
+import 'justfile.database'
+import 'justfile.docker'
+import 'justfile.demos'
 
 # Default recipe shows available commands
 default:
     @just --list
-
-# Directory configuration
-api_dir := "apps/api"
-web_dir := "apps/web"
-
-# Python environment (relative to api_dir when used with cd)
-python := ".venv/bin/python"
-pip := ".venv/bin/pip"
 
 # Bootstrap entire monorepo
 bootstrap: bootstrap-python bootstrap-web
@@ -60,51 +60,15 @@ run: run-api
 
 # Run API server
 run-api:
-    cd {{ api_dir }} && {{ python }} -m haven.main
+    cd {{ api_dir }} && just run
 
 # Run Web development server
 run-web:
-    cd {{ web_dir }} && npm run dev
+    cd {{ web_dir }} && just run
 
 # Run with specific environment
 run-env env="local":
-    cd {{ api_dir }} && {{ python }} -m haven.main +environment={{ env }}
-
-# Database commands
-db-up:
-    docker compose up -d postgres
-    @echo "⏳ Waiting for PostgreSQL to be ready..."
-    @sleep 3
-    @echo "✅ PostgreSQL is running"
-
-db-down:
-    docker compose down
-
-db-reset:
-    docker compose down -v
-    docker compose up -d postgres
-    @sleep 3
-    @echo "✅ Database reset complete"
-
-# Run migrations
-db-migrate:
-    cd {{ api_dir }} && {{ python }} -m alembic upgrade head
-
-# Create a new migration
-db-make message:
-    cd {{ api_dir }} && {{ python }} -m alembic revision --autogenerate -m "{{ message }}"
-
-# Show migration history
-db-history:
-    cd {{ api_dir }} && {{ python }} -m alembic history --verbose
-
-# Show current migration
-db-current:
-    cd {{ api_dir }} && {{ python }} -m alembic current
-
-# Downgrade database
-db-downgrade steps="1":
-    cd {{ api_dir }} && {{ python }} -m alembic downgrade -{{ steps }}
+    cd {{ api_dir }} && just run-env {{ env }}
 
 # Quality checks for all code
 lint: lint-python lint-web
@@ -112,51 +76,52 @@ lint: lint-python lint-web
 
 # Python linting
 lint-python:
-    cd {{ api_dir }} && {{ python }} -m ruff check .
+    cd {{ api_dir }} && just lint
 
 # Web linting
 lint-web:
-    cd {{ web_dir }} && npm run lint
+    cd {{ web_dir }} && just lint
 
 # Fix linting issues
 lint-fix: lint-fix-python lint-fix-web
     @echo "✅ All linting issues fixed!"
 
 lint-fix-python:
-    cd {{ api_dir }} && {{ python }} -m ruff check --fix .
-    cd {{ api_dir }} && {{ python }} -m ruff format .
+    cd {{ api_dir }} && just lint-fix
 
 lint-fix-web:
-    cd {{ web_dir }} && npm run format
+    cd {{ web_dir }} && just lint-fix
 
 # Format all code
 format: format-python format-web
     @echo "✅ All code formatted!"
 
 format-python:
-    cd {{ api_dir }} && {{ python }} -m ruff format .
+    cd {{ api_dir }} && just format
 
 format-web:
-    cd {{ web_dir }} && npm run format
+    cd {{ web_dir }} && just format
 
 # Type checking
 type: type-python type-web
     @echo "✅ All type checking passed!"
 
 type-python:
-    cd {{ api_dir }} && {{ python }} -m pyright
+    cd {{ api_dir }} && just type
 
 type-web:
-    cd {{ web_dir }} && npm run type-check
+    cd {{ web_dir }} && just type
 
 # Run all quality checks
 check: lint type test-fast
 
 # Run Python quality checks only
-check-python: lint-python type-python test-fast-python
+check-python:
+    cd {{ api_dir }} && just check
 
 # Run Web quality checks only  
-check-web: lint-web type-web test-web
+check-web:
+    cd {{ web_dir }} && just check
 
 # Run all tests
 test: test-python test-web
@@ -164,34 +129,34 @@ test: test-python test-web
 
 # Python testing
 test-python:
-    cd {{ api_dir }} && {{ python }} -m pytest
+    cd {{ api_dir }} && just test
 
-# Web testing (placeholder for now)
+# Web testing
 test-web:
-    @echo "📝 Web tests not implemented yet"
+    cd {{ web_dir }} && just test
 
 test-fast: test-fast-python
     @echo "✅ Fast tests passed!"
 
 test-fast-python:
-    cd {{ api_dir }} && {{ python }} -m pytest -m "not slow"
+    cd {{ api_dir }} && just test-fast
 
 # Coverage testing
 test-cov: test-cov-python
     @echo "✅ Coverage report generated!"
 
 test-cov-python:
-    cd {{ api_dir }} && {{ python }} -m pytest --cov=haven --cov-report=html
+    cd {{ api_dir }} && just test-cov
 
 # Watch mode testing
 test-watch: test-watch-python
 
 test-watch-python:
-    cd {{ api_dir }} && {{ python }} -m pytest-watch
+    cd {{ api_dir }} && just test-watch
 
 # Run specific test file
 test-file file:
-    cd {{ api_dir }} && {{ python }} -m pytest {{ file }}
+    cd {{ api_dir }} && just test-file {{ file }}
 
 # Documentation
 docs:
@@ -205,11 +170,7 @@ docs-deploy:
 
 # Development utilities
 shell:
-    cd {{ api_dir }} && {{ python }} -m asyncio
-
-# Database console
-db-console:
-    docker compose exec postgres psql -U haven -d haven
+    cd {{ api_dir }} && just shell
 
 # Show logs
 logs:
@@ -223,162 +184,10 @@ clean: clean-python clean-web
     @echo "✅ All cleaned!"
 
 clean-python:
-    cd {{ api_dir }} && rm -rf build/ dist/ *.egg-info/
-    find {{ api_dir }} -type d -name __pycache__ -exec rm -rf {} +
-    find {{ api_dir }} -type f -name "*.pyc" -delete
-    cd {{ api_dir }} && rm -rf .coverage htmlcov/ .pytest_cache/
-    cd {{ api_dir }} && rm -rf .ruff_cache/ .mypy_cache/ .pyright/
-    cd {{ api_dir }} && rm -rf site/
+    cd {{ api_dir }} && just clean
 
 clean-web:
-    cd {{ web_dir }} && rm -rf dist/ node_modules/.cache/
-    cd {{ web_dir }} && rm -rf .eslintcache
-
-# Docker commands - Legacy single-image commands
-docker-build tag="latest":
-    ./scripts/build-docker.sh --tag {{ tag }}
-
-docker-build-multi:
-    ./scripts/build-docker.sh --multi-arch
-
-docker-push registry tag="latest":
-    ./scripts/build-docker.sh --push --registry {{ registry }} --tag {{ tag }}
-
-docker-size:
-    @docker images haven --format "table {{ '{{' }}.Repository{{ '}}' }}\t{{ '{{' }}.Tag{{ '}}' }}\t{{ '{{' }}.Size{{ '}}' }}"
-
-# Docker Compose Development Commands
-# Run entire stack in containers
-run-docker:
-    docker compose up
-
-# Run in detached mode
-run-docker-d:
-    docker compose up -d
-
-# Run only API in container (with hot-reload)
-run-api-docker:
-    docker compose up api
-
-# Stop all containers
-stop-docker:
-    docker compose down
-
-# Alias for stop-docker (compatibility)
-down: stop-docker
-
-# Database Operations in Docker
-# Run migrations in container (requires running API container)
-db-migrate-docker:
-    docker compose exec api alembic upgrade head
-
-# Run migrations with one-shot container (doesn't require running API)
-db-migrate-run:
-    docker compose run --rm api alembic upgrade head
-
-# Run migrations with dedicated service
-db-migrate-service:
-    docker compose run --rm migrate
-
-# Create migration from container
-db-make-docker message:
-    docker compose exec api alembic revision --autogenerate -m "{{ message }}"
-
-# Show migration history in container
-db-history-docker:
-    docker compose exec api alembic history --verbose
-
-# Show current migration in container
-db-current-docker:
-    docker compose exec api alembic current
-
-# Downgrade database in container
-db-downgrade-docker steps="1":
-    docker compose exec api alembic downgrade -{{ steps }}
-
-# Database console via container
-db-console-docker:
-    docker compose exec postgres psql -U haven -d haven
-
-# Reset database in container
-db-reset-docker:
-    docker compose exec api alembic downgrade base
-    docker compose exec api alembic upgrade head
-
-# Testing & Quality in Docker
-# Run tests in container
-test-docker:
-    docker compose run --rm api pytest tests/ --no-cov
-
-# Run tests with coverage in container
-test-cov-docker:
-    docker compose run --rm api pytest tests/ --cov=haven --cov-report=html
-
-# Run specific test file in container
-test-file-docker file:
-    docker compose run --rm api pytest tests/{{ file }}
-
-# Run linting in container
-lint-docker:
-    docker compose run --rm api ruff check .
-
-# Fix linting in container
-lint-fix-docker:
-    docker compose run --rm api ruff check --fix .
-    docker compose run --rm api ruff format .
-
-# Run type checking in container
-type-docker:
-    docker compose run --rm api pyright
-
-# Run all quality checks in container
-check-docker:
-    docker compose run --rm api ruff check .
-    docker compose run --rm api pyright
-    docker compose run --rm api pytest -m "not slow"
-
-# Docker Utilities
-# Shell into API container
-shell-docker:
-    docker compose exec api /bin/bash
-
-# Python REPL in container
-shell-python-docker:
-    docker compose exec api python -m asyncio
-
-# View container logs
-logs-docker service="":
-    docker compose logs -f {{ service }}
-
-# Show running containers
-ps-docker:
-    docker compose ps
-
-# Rebuild containers
-rebuild-docker:
-    docker compose build --no-cache
-
-# Development Helpers for Docker
-# Full reset (containers + volumes)
-reset-docker:
-    docker compose down -v
-    docker compose up -d
-
-# Update dependencies in container
-update-docker:
-    docker compose exec api pip install -e ".[dev]"
-
-# Clean Docker resources
-clean-docker:
-    docker compose down
-    docker system prune -f
-
-# Run demo commands in container
-demo-commits-docker:
-    docker compose exec api python -m haven.cli demo-commits
-
-demo-diff-generation-docker:
-    docker compose exec api python -m haven.cli demo-diff-generation
+    cd {{ web_dir }} && just clean
 
 # Pre-commit setup
 pre-commit-install:
@@ -386,19 +195,6 @@ pre-commit-install:
 
 pre-commit-run:
     pre-commit run --all-files
-
-# Demo command (placeholder for future implementation)
-demo:
-    @echo "🎯 Demo functionality will be implemented per feature"
-    @echo "Run specific demos with: just demo-<feature>"
-
-# Demo: View all commits and diffs in browser (single command)
-demo-commits:
-    ./scripts/demo-commits.sh {{ api_dir }} {{ python }}
-
-# Demo: Diff Generation API (legacy - requires manual server start)
-demo-diff-generation:
-    ./scripts/demo-diff-generation.sh {{ api_dir }} {{ python }}
 
 # CLI Tools
 # List commits from current branch
@@ -425,17 +221,21 @@ add-entity name:
 
 # Show current environment info
 info:
-    @echo "Python: $(cd {{ api_dir }} && {{ python }} --version)"
-    @echo "Environment: {{ api_dir }}/.venv"
+    @echo "=== Monorepo Info ==="
     @echo "Working directory: $(pwd)"
-    @cd {{ api_dir }} && {{ python }} -m pip list | grep -E "(fastapi|sqlalchemy|strawberry|pydantic)"
+    @echo ""
+    @echo "=== API Info ==="
+    @cd {{ api_dir }} && just info
+    @echo ""
+    @echo "=== Web Info ==="
+    @cd {{ web_dir }} && just info
 
 # Full CI simulation
 ci: clean bootstrap check docs
     @echo "✅ All CI checks passed!"
 
 # Run CI for Python only
-ci-python: clean bootstrap-python check docs
+ci-python: clean bootstrap-python check-python docs
     @echo "✅ Python CI checks passed!"
 
 # Build all applications
@@ -449,5 +249,4 @@ build-api:
 
 # Build Web application
 build-web:
-    cd {{ web_dir }} && npm run build
-    @echo "✅ Web application built to {{ web_dir }}/dist"
+    cd {{ web_dir }} && just build

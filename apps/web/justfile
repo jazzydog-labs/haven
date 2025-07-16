@@ -1,0 +1,53 @@
+# Web-specific Justfile commands
+# This file is imported by the main Justfile
+
+# Run development server
+run:
+    npm run dev
+
+# Build for production
+build:
+    npm run build
+    @echo "✅ Web application built to dist/"
+
+# Install dependencies
+install:
+    npm install
+
+# Update dependencies
+update:
+    npm update
+
+# Linting
+lint:
+    npm run lint
+
+# Fix linting and formatting
+lint-fix:
+    npm run format
+
+# Format code
+format:
+    npm run format
+
+# Type checking
+type:
+    npm run type-check
+
+# Run tests
+test:
+    @echo "📝 Web tests not implemented yet"
+
+# Quality checks
+check: lint type test
+
+# Clean build artifacts
+clean:
+    rm -rf dist/ node_modules/.cache/
+    rm -rf .eslintcache
+
+# Show info
+info:
+    @echo "Node version: $(node --version)"
+    @echo "NPM version: $(npm --version)"
+    @echo "Working directory: $(pwd)"

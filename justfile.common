@@ -1,0 +1,15 @@
+# Common variables and shared settings for all Justfiles
+
+# Directory configuration
+export api_dir := "apps/api"
+export web_dir := "apps/web"
+
+# Python environment (relative to api_dir when used with cd)
+export python := ".venv/bin/python"
+export pip := ".venv/bin/pip"
+
+# Docker settings
+export COMPOSE_PROJECT_NAME := "haven"
+
+# Common functions for all Justfiles
+# Note: These are exported so they can be used in imported files

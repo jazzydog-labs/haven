@@ -240,6 +240,19 @@ just down
 just --list
 ```
 
+## Justfile Architecture
+
+The project uses a modular Justfile structure:
+- **Main Justfile**: Orchestrates all commands
+- **justfile.common**: Shared variables
+- **justfile.database**: Database operations
+- **justfile.docker**: Container commands
+- **justfile.demos**: Demo commands
+- **apps/api/justfile**: Python-specific
+- **apps/web/justfile**: Web-specific
+
+All existing commands work unchanged. See [`docs/development/justfile-architecture.md`](docs/development/justfile-architecture.md) for details.
+
 ---
 
 *This file is designed for rapid development. Quality gates and full testing come after feature implementation.*
