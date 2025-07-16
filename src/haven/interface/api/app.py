@@ -6,11 +6,13 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from strawberry.fastapi import GraphQLRouter
 
 from haven.config import get_settings
 from haven.domain.exceptions import DomainError, RecordNotFoundError
 from haven.infrastructure.database.factory import db_factory
 from haven.interface.api.routes import router as api_router
+from haven.interface.graphql.schema import schema
 
 
 @asynccontextmanager
@@ -49,6 +51,10 @@ def create_app() -> FastAPI:
     
     # Include API routes
     app.include_router(api_router, prefix="/api/v1")
+    
+    # Add GraphQL endpoint
+    graphql_app = GraphQLRouter(schema)
+    app.include_router(graphql_app, prefix="/graphql")
     
     # Add exception handlers
     @app.exception_handler(RecordNotFoundError)
