@@ -68,11 +68,11 @@ run-all:
     
     # Wait for backend to be ready
     @echo "⏳ Waiting for backend services to start..."
-    @sleep 5
     @while ! curl -s http://localhost:8080/health > /dev/null 2>&1; do \
-        echo "   Still waiting for API..."; \
-        sleep 2; \
+        printf "."; \
+        sleep 0.3; \
     done
+    @echo ""
     
     @echo "✅ Backend services ready!"
     @echo ""
@@ -82,11 +82,12 @@ run-all:
     @cd {{ web_dir }} && npm run dev > /tmp/haven-frontend.log 2>&1 & echo $$! > /tmp/haven-frontend.pid
     
     # Wait for frontend
-    @sleep 3
+    @echo "⏳ Waiting for frontend to start..."
     @while ! curl -s http://localhost:3000 > /dev/null 2>&1; do \
-        echo "   Still waiting for frontend..."; \
-        sleep 2; \
+        printf "."; \
+        sleep 0.3; \
     done
+    @echo ""
     
     @echo "✅ Frontend ready!"
     @echo ""
