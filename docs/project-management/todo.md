@@ -10,12 +10,15 @@ This file tracks immediate tasks and notes. For completed work, see `work-log.md
 
 ### 🚀 WHAT TO WORK ON NEXT (Priority Order)
 
-**CRITICAL PRIORITY**: Documentation is likely out of sync with recent changes.
+**CRITICAL PRIORITY**: Infrastructure improvements needed before further development.
 
-1. **Documentation Audit** (Priority 1 - CRITICAL):
+1. **Scalable Justfile System** (Priority 1 - CRITICAL):
+   - [ ] Implement Scalable Justfile System (`tasks/open/implement-scalable-justfile-system.md`)
+
+2. **Documentation Audit** (Priority 1 - CRITICAL):
    - [ ] Comprehensive Documentation Audit (`tasks/open/comprehensive-docs-audit.md`)
 
-2. **Frontend Development** (Priority 2):
+3. **Frontend Development** (Priority 2):
    - [ ] CRUD Frontend for Records (`tasks/open/crud-frontend-records.md`)
    - [ ] Frontend-Backend Sync Workflow (`tasks/open/frontend-backend-sync-workflow.md`)
 
@@ -32,16 +35,20 @@ This file tracks immediate tasks and notes. For completed work, see `work-log.md
 ### ✅ Completed Phases
 All foundation, containerization, and infrastructure tasks are complete. See work-log.md for detailed documentation of all completed work.
 
-### 🎯 Current Focus: Documentation Audit
+### 🎯 Current Focus: Infrastructure Improvements
 
-**CRITICAL**: Documentation may be out of sync with recent modularization changes.
+**CRITICAL**: Command structure needs improvement before further development.
 
 Current next steps:
-1. **Comprehensive Documentation Audit** - Review all docs for accuracy (see `tasks/open/comprehensive-docs-audit.md`)
-2. **CRUD Frontend for Records** - Complete UI for Records management (see `tasks/open/crud-frontend-records.md`)
-3. **Frontend-Backend Sync Workflow** - Automated type generation and API sync (see `tasks/open/frontend-backend-sync-workflow.md`)
+1. **Scalable Justfile System** - Implement hierarchical command structure (see `tasks/open/implement-scalable-justfile-system.md`)
+2. **Comprehensive Documentation Audit** - Review all docs for accuracy (see `tasks/open/comprehensive-docs-audit.md`)
+3. **CRUD Frontend for Records** - Complete UI for Records management (see `tasks/open/crud-frontend-records.md`)
+4. **Frontend-Backend Sync Workflow** - Automated type generation and API sync (see `tasks/open/frontend-backend-sync-workflow.md`)
 
 ### Active Tasks in `tasks/open/` (By Priority)
+
+**Scalable Justfile System (Priority 1 - CRITICAL):**
+- `implement-scalable-justfile-system.md` - Implement hierarchical command structure with validation
 
 **Documentation Audit (Priority 1 - CRITICAL):**
 - `comprehensive-docs-audit.md` - Audit all docs for consistency with current project state

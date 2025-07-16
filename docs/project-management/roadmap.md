@@ -17,7 +17,8 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 
 ### Current Sprint Focus
 
-**Documentation Audit (Critical Priority)**
+**Infrastructure Improvements (Critical Priority)**
+- [ ] **Scalable Justfile System** - Implement hierarchical command structure with validation
 - [ ] **Comprehensive Documentation Audit** - Review all docs for accuracy and consistency
 - [ ] **Workflow Documentation** - Create systematic process for maintaining doc consistency
 
