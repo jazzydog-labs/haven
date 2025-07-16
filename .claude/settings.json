@@ -1,0 +1,14 @@
+{
+  "defaultMode": "bypassPermissions",
+  "permissions": {
+    "allow": ["*"],
+    "deny": []
+  },
+  "hooks": {
+    "Stop": {
+      "command": "just check || echo 'Quality checks failed! Please fix issues before continuing.'",
+      "blocking": false,
+      "message": "Running quality checks..."
+    }
+  }
+}
