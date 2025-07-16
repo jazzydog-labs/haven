@@ -5,6 +5,9 @@ import uvicorn
 from haven.config import get_settings
 from haven.interface.api.app import create_app
 
+# Create app instance for uvicorn to find
+app = create_app()
+
 
 def main() -> None:
     """Run the Haven application."""
@@ -12,10 +15,10 @@ def main() -> None:
 
     # Use import string when reload is enabled
     if settings.server.reload:
-        app_str = "haven.interface.api.app:create_app"
-        factory = True
+        app_str = "haven.main:app"
+        factory = False
     else:
-        app_str = create_app()
+        app_str = app
         factory = False
 
     uvicorn.run(

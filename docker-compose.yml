@@ -30,11 +30,12 @@ services:
       - "8080:8080"
     environment:
       # Database connection using container networking
-      HAVEN_DATABASE__HOST: postgres
-      HAVEN_DATABASE__PORT: 5432
-      HAVEN_DATABASE__USERNAME: haven
-      HAVEN_DATABASE__PASSWORD: haven
-      HAVEN_DATABASE__DATABASE: haven
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: haven
+      DB_USER: haven
+      DB_PASSWORD: haven
+      DATABASE_URL: postgresql+asyncpg://haven:haven@postgres:5432/haven
       # Hydra config overrides
       HYDRA_FULL_ERROR: 1
     volumes:
@@ -68,11 +69,12 @@ services:
     container_name: haven-migrate
     environment:
       # Database connection using container networking
-      HAVEN_DATABASE__HOST: postgres
-      HAVEN_DATABASE__PORT: 5432
-      HAVEN_DATABASE__USERNAME: haven
-      HAVEN_DATABASE__PASSWORD: haven
-      HAVEN_DATABASE__DATABASE: haven
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: haven
+      DB_USER: haven
+      DB_PASSWORD: haven
+      DATABASE_URL: postgresql+asyncpg://haven:haven@postgres:5432/haven
       # Hydra config overrides
       HYDRA_FULL_ERROR: 1
     volumes:
