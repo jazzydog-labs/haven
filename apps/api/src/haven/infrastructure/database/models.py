@@ -18,7 +18,7 @@ class Base(DeclarativeBase):
     }
 
 
-__all__ = ["Base", "RecordModel", "UserModel"]
+__all__ = ["Base", "RecordModel", "UserModel", "RepositoryModel"]
 
 
 class RecordModel(Base):
@@ -71,3 +71,32 @@ class UserModel(Base):
     def __repr__(self) -> str:
         """String representation of UserModel."""
         return f"<UserModel(id={self.id}, username={self.username}, email={self.email})>"
+
+
+class RepositoryModel(Base):
+    """SQLAlchemy model for Repository entity."""
+    
+    __tablename__ = "repositories"
+    
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    url: Mapped[str] = mapped_column(Text, nullable=False)
+    branch: Mapped[str] = mapped_column(String(255), nullable=False, default="main")
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    is_local: Mapped[bool] = mapped_column(nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+    
+    def __repr__(self) -> str:
+        """String representation of RepositoryModel."""
+        return f"<RepositoryModel(id={self.id}, name={self.name}, url={self.url})>"
