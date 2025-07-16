@@ -254,6 +254,37 @@ Key features:
 - Updated work log entries to reference demos
 - Complete documentation guide
 
+## 2025-07-16.0008 - Configured CORS and local domain support
+**Added**: CORS configuration with multiple approaches for cross-origin access
+**See**: `docs/development/cors-and-domains.md`, updated `apps/api/conf/environment/local.yaml`
+**Test**: Run `just demo-cors` to verify configuration, `sudo ./scripts/setup-local-domains.sh` for domains
+**Demo**:
+```bash
+# Test CORS configuration
+just demo-cors
+
+# Set up local domains
+sudo ./scripts/setup-local-domains.sh
+
+# Run with reverse proxy (no CORS)
+just run-proxy
+
+# Access via custom domains
+curl http://api.haven.local:8080/health
+curl http://app.haven.local:5173
+
+# Access via proxy (single domain)
+curl http://haven.local/api/v1/records
+curl http://haven.local/health
+```
+
+Key features:
+- CORS configured with specific allowed origins
+- Local domain setup script for better URLs
+- Caddy reverse proxy option eliminates CORS
+- Three approaches: CORS config, local domains, proxy
+- Complete documentation with troubleshooting
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
