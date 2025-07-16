@@ -63,14 +63,51 @@ All commands need verification after monorepo restructure:
 4. **Modularize Justfiles** - Break down justfile into package-specific modules (see `tasks/open/modular-justfiles.md`)
 5. **Add Demo Commands** - Ensure all worklog entries have demo commands (see `tasks/open/worklog-demo-commands.md`)
 
+### Priority 2.5: Containerization - Phase 1 (Prerequisites)
+**Must be done first:**
+- [ ] Containerize PostgreSQL and FastAPI services (see `tasks/open/containerize-services.md`)
+- [ ] Containerize FastAPI with hot-reload support (see `tasks/open/containerize-api-service.md`)
+- [ ] Create docker-compose.override.yml (see `tasks/open/create-dev-overrides.md`)
+- [ ] Add Docker commands to Justfile (see `tasks/open/add-docker-justfile-commands.md`)
+
+### Priority 2.6: Containerization - Phase 2 (Core Features)
+**Can be done after Phase 1:**
+- [ ] Implement migration strategies (see `tasks/open/implement-migration-strategy.md`)
+- [ ] Resolve developer experience issues (see `tasks/open/container-dev-experience.md`)
+- [ ] Create troubleshooting guide (see `tasks/open/container-troubleshooting-guide.md`)
+
+### Priority 2.7: Containerization - Phase 3 (Enhancements)
+**Optional improvements (can be done in parallel):**
+- [ ] Configure CORS and local domains (see `tasks/open/local-cors-and-domains.md`)
+- [ ] Set up local HTTPS (see `tasks/open/local-https-setup.md`)
+- [ ] Create production-like environment (see `tasks/open/production-like-local-env.md`)
+
 ### Priority 3: Next Development Phase
 6. **Fix Any Issues** - Address command failures or configuration problems  
 7. **Begin Next Development Phase** - Start implementing new features
 
-### Active Tasks in `tasks/open/`
+### Active Tasks in `tasks/open/` (By Priority)
+
+**Foundation Tasks (Do First):**
 - `reorganize-project-structure.md` - **HIGH PRIORITY** - Foundation for all other work
 - `modular-justfiles.md` - Depends on project structure being clean
 - `worklog-demo-commands.md` - Can be done in parallel with structure work
+
+**Containerization Phase 1 (Prerequisites):**
+- `containerize-services.md` - Overall containerization strategy (PostgreSQL + FastAPI)
+- `containerize-api-service.md` - FastAPI container implementation with hot-reload
+- `create-dev-overrides.md` - Development environment config for hot-reload
+- `add-docker-justfile-commands.md` - Docker command integration
+
+**Containerization Phase 2 (Core Features):**
+- `implement-migration-strategy.md` - Multiple migration approaches
+- `container-dev-experience.md` - Developer experience improvements
+- `container-troubleshooting-guide.md` - Troubleshooting documentation
+
+**Containerization Phase 3 (Enhancements):**
+- `local-cors-and-domains.md` - CORS and custom domain configuration
+- `local-https-setup.md` - HTTPS development environment
+- `production-like-local-env.md` - Full production-like setup with reverse proxy
 
 ---
 

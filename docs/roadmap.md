@@ -21,6 +21,26 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 - [ ] **Integration Test Fixes** - Resolve SQLAlchemy transaction management in tests
 
 ### Up Next
+
+#### Containerization (3 Phases)
+
+**Phase 1: Basic Containerization (Prerequisites)**
+- [ ] **Docker Setup** - PostgreSQL and FastAPI in containers with docker-compose
+- [ ] **Hot Reload** - Ensure development workflow with code changes
+- [ ] **Override Config** - Development-specific docker-compose.override.yml
+- [ ] **Just Commands** - Docker-aware commands in Justfile
+
+**Phase 2: Developer Experience (Core Features)**
+- [ ] **Migration Strategy** - Multiple approaches for database migrations
+- [ ] **Dev Experience** - Fix permissions, performance, debugging
+- [ ] **Troubleshooting** - Comprehensive guide for common issues
+
+**Phase 3: Production-Like Environment (Enhancements)**
+- [ ] **CORS/Domains** - Local domain setup to avoid CORS issues
+- [ ] **HTTPS Setup** - Local SSL certificates for secure development
+- [ ] **Reverse Proxy** - Production-like setup with Traefik/Caddy
+
+#### Feature Development (After Containerization)
 - [ ] **React Client Features** - Diff visualization interface
 - [ ] **API Enhancements** - Additional diff analysis features
 - [ ] **Shared SDK** - packages/sdk/ for API client library
@@ -41,6 +61,12 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 - [ ] **Webhook Integration** - Real-time diff notifications
 - [ ] **API Rate Limiting** - Protect against abuse
 
+### Infrastructure & DevOps
+- [ ] **Container Orchestration** - Production Docker setup with health checks
+- [ ] **CI/CD Pipeline** - Automated testing and deployment
+- [ ] **Monitoring Setup** - Prometheus/Grafana or similar
+- [ ] **Backup Strategy** - Database backup and recovery
+
 ### Developer Experience
 - [ ] **Shared SDK Package** - packages/sdk/ for API client
 - [ ] **CLI Tool** - Command-line diff generation
@@ -54,6 +80,7 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 ### High Priority
 - [ ] **Command Testing**: Verify all just commands work after monorepo restructure  
 - [ ] **Documentation Sync**: Update all docs to reflect current architecture
+- [ ] **Containerization**: Complete all three phases for better dev experience
 - [ ] **Error Handling**: Standardize error responses across REST/GraphQL
 - [ ] **API Documentation**: Auto-generate from OpenAPI/GraphQL schemas
 
