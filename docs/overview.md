@@ -238,9 +238,13 @@ just demo-diff-generation  # Demo git diff API (requires server)
 just clean             # Clean environment
 just --list            # Show all available commands
 
-# CLI tools  
-haven-cli list-commits     # List commits for diff generation
-haven-cli generate --verbose  # Generate diff files with progress
+# CLI tools (integrated with diff2html)
+just cli-list-commits          # List commits via Just command
+just cli-generate             # Generate HTML diffs via Just command  
+just cli-generate-to /path    # Generate diffs to specific directory
+
+haven-cli list-commits        # Direct CLI - List commits for diff generation
+haven-cli generate --verbose  # Direct CLI - Generate HTML diff files with progress
 
 # Direct script access
 ./scripts/demo-commits.sh apps/api .venv/bin/python  # Run demo script directly

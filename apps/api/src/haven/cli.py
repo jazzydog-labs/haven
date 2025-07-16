@@ -2,6 +2,7 @@
 """Haven CLI tool for git diff generation and analysis."""
 
 import asyncio
+import re
 import sys
 from pathlib import Path
 from typing import NamedTuple
@@ -30,7 +31,23 @@ async def run_command(cmd: list[str], cwd: Path | None = None) -> tuple[str, str
         cwd=cwd,
     )
     stdout, stderr = await process.communicate()
-    return stdout.decode(), stderr.decode(), process.returncode
+    return stdout.decode(), stderr.decode(), process.returncode or 0
+
+
+def sanitize_filename(text: str, max_length: int = 50) -> str:
+    """Sanitize text for use in filenames."""
+    sanitized = re.sub(r"[^a-zA-Z0-9]", "-", text)
+    return sanitized[:max_length]
+
+
+async def check_diff2html() -> None:
+    """Check if diff2html is installed."""
+    _, _, returncode = await run_command(["which", "diff2html"])
+    if returncode != 0:
+        # Try to install it
+        _, stderr, returncode = await run_command(["npm", "install", "-g", "diff2html-cli"])
+        if returncode != 0:
+            raise RuntimeError(f"Failed to install diff2html: {stderr}")
 
 
 async def get_git_commits(repo_path: Path, base_branch: str = "main") -> list[GitCommit]:
@@ -65,7 +82,7 @@ async def get_git_commits(repo_path: Path, base_branch: str = "main") -> list[Gi
     if returncode != 0:
         raise RuntimeError(f"Failed to get commits: {stderr}")
 
-    commits = []
+    commits: list[GitCommit] = []
     for line in stdout.strip().split("\n"):
         if line:
             parts = line.split("|", 3)
@@ -86,23 +103,27 @@ async def generate_diff_for_commit(
     repo_path: Path,
     commit_number: int
 ) -> str:
-    """Generate diff file for a single commit."""
-    # Get the diff
-    cmd = ["git", "show", "--no-merges", commit.hash]
-    stdout, stderr, returncode = await run_command(cmd, cwd=repo_path)
+    """Generate HTML diff file for a single commit using diff2html."""
+    # Generate filename
+    safe_message = sanitize_filename(commit.message)
+    filename = f"{commit_number:02d}-{commit.hash[:8]}-{safe_message}.html"
 
+    # Generate diff HTML using diff2html
+    diff_cmd = [
+        "diff2html",
+        "-s", "side",
+        "-f", "html",
+        "-F", str(output_dir / filename),
+        "-t", f"{commit.hash[:8]}: {commit.message}",
+        "--summary", "open",
+        "--highlightCode",
+        "--", f"{commit.hash}^..{commit.hash}",
+    ]
+
+    _, stderr, returncode = await run_command(diff_cmd, cwd=repo_path)
     if returncode != 0:
-        console.print(f"[yellow]Warning: Could not get diff for {commit.hash[:8]}: {stderr}[/yellow]")
+        console.print(f"[yellow]Warning: Could not generate diff for {commit.hash[:8]}: {stderr}[/yellow]")
         return ""
-
-    # Create filename
-    safe_message = "".join(c for c in commit.message if c.isalnum() or c in (' ', '-', '_')).rstrip()
-    safe_message = safe_message.replace(" ", "-")[:50]
-    filename = f"{commit_number:02d}-{commit.hash[:8]}-{safe_message}.diff"
-
-    # Write diff file
-    diff_file = output_dir / filename
-    diff_file.write_text(stdout)
 
     return filename
 
@@ -195,11 +216,23 @@ async def _generate_diffs_async(
     if verbose:
         console.print(f"[green]Found {len(commits)} commits[/green]")
 
+    # Check diff2html availability
+    if verbose:
+        console.print("\n[yellow]🔧 Checking diff2html...[/yellow]")
+
+    try:
+        await check_diff2html()
+        if verbose:
+            console.print("[green]✅ diff2html is available[/green]")
+    except RuntimeError as e:
+        console.print(f"[red]❌ diff2html setup failed: {e}[/red]")
+        return
+
     # Generate diffs
     if verbose:
-        console.print("\n[yellow]🔄 Generating diffs...[/yellow]")
+        console.print("\n[yellow]🔄 Generating HTML diffs...[/yellow]")
 
-    generated_files = []
+    generated_files: list[str] = []
     for i, commit in enumerate(commits, 1):
         if verbose:
             console.print(f"[dim]Processing commit {i}/{len(commits)}: {commit.hash[:8]}[/dim]")
@@ -210,27 +243,201 @@ async def _generate_diffs_async(
 
     # Generate summary
     if verbose:
-        console.print(f"\n[green]Generated {len(generated_files)} diff files[/green]")
+        console.print(f"\n[green]Generated {len(generated_files)} HTML diff files[/green]")
 
     # Create index file
     create_index_file(output_dir, commits, generated_files)
 
 
 def create_index_file(output_dir: Path, commits: list[GitCommit], diff_files: list[str]):
-    """Create an index.md file listing all commits and diffs."""
-    index_content = ["# Git Diff Summary\n"]
-    index_content.append(f"Generated {len(commits)} diff files:\n")
+    """Create an index.html file listing all commits and diffs."""
+    from datetime import datetime
 
+    # Calculate stats
+    unique_authors = len({c.author for c in commits})
+    date_range = f"{commits[0].date} - {commits[-1].date}" if commits else "No commits"
+
+    # Generate JavaScript array
+    commit_data_lines: list[str] = []
     for i, (commit, diff_file) in enumerate(zip(commits, diff_files), 1):
-        index_content.append(f"## {i}. {commit.message}")
-        index_content.append(f"- **Hash:** `{commit.hash}`")
-        index_content.append(f"- **Author:** {commit.author}")
-        index_content.append(f"- **Date:** {commit.date}")
-        index_content.append(f"- **Diff file:** [{diff_file}](./{diff_file})")
-        index_content.append("")
+        if diff_file:  # Only include files that were successfully generated
+            escaped_message = commit.message.replace('"', '\\"')
+            commit_data_lines.append(
+                f"{{number: {i}, hash: '{commit.hash[:8]}', "
+                f"message: \"{escaped_message}\", author: '{commit.author}', "
+                f"date: '{commit.date}', file: '{diff_file}'}}"
+            )
+    commit_data = ",\n            ".join(commit_data_lines)
 
-    index_file = output_dir / "index.md"
-    index_file.write_text("\n".join(index_content))
+    # HTML template (simplified version of API template)
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haven CLI - Commit Diff Index</title>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }}
+        h1 {{
+            color: #333;
+            border-bottom: 2px solid #0366d6;
+            padding-bottom: 10px;
+        }}
+        .info {{
+            background-color: #e3f2fd;
+            border-left: 4px solid #0366d6;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }}
+        .stats {{
+            margin: 20px 0;
+            display: flex;
+            gap: 20px;
+        }}
+        .stat {{
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }}
+        .stat-value {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #0366d6;
+        }}
+        .stat-label {{
+            font-size: 14px;
+            color: #586069;
+            margin-top: 5px;
+        }}
+        .commit-list {{
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }}
+        .commit {{
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e1e4e8;
+            transition: background-color 0.2s;
+        }}
+        .commit:hover {{
+            background-color: #f6f8fa;
+        }}
+        .commit:last-child {{
+            border-bottom: none;
+        }}
+        .commit-number {{
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background-color: #0366d6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }}
+        .commit-details {{
+            flex-grow: 1;
+            min-width: 0;
+        }}
+        .commit-message {{
+            font-weight: 500;
+            color: #0366d6;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }}
+        .commit-message:hover {{
+            text-decoration: underline;
+        }}
+        .commit-meta {{
+            font-size: 14px;
+            color: #586069;
+        }}
+        .commit-hash {{
+            font-family: monospace;
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }}
+    </style>
+</head>
+<body>
+    <h1>Haven CLI - Commit Diff Index</h1>
+
+    <div class="info">
+        <strong>Generated:</strong> {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}<br>
+        <strong>Total Commits:</strong> {len(commits)}
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value">{len(commits)}</div>
+            <div class="stat-label">Total Commits</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">{unique_authors}</div>
+            <div class="stat-label">Contributors</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">{date_range}</div>
+            <div class="stat-label">Date Range</div>
+        </div>
+    </div>
+
+    <div class="commit-list">
+        <!-- Commits will be inserted here -->
+    </div>
+
+    <script>
+        // Commit data
+        const commits = [
+            {commit_data}
+        ];
+
+        // Populate commit list
+        const commitList = document.querySelector('.commit-list');
+        commits.forEach(commit => {{
+            const commitDiv = document.createElement('div');
+            commitDiv.className = 'commit';
+            commitDiv.innerHTML = `
+                <div class="commit-number">${{commit.number}}</div>
+                <div class="commit-details">
+                    <a href="${{commit.file}}" class="commit-message" title="${{commit.message}}">${{commit.message}}</a>
+                    <div class="commit-meta">
+                        <span class="commit-hash">${{commit.hash}}</span>
+                        by <strong>${{commit.author}}</strong>
+                        on ${{commit.date}}
+                    </div>
+                </div>
+            `;
+            commitList.appendChild(commitDiv);
+        }});
+    </script>
+</body>
+</html>"""
+
+    # Write the file
+    index_file = output_dir / "index.html"
+    index_file.write_text(html_content)
 
 
 @cli.command()

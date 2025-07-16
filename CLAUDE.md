@@ -228,6 +228,7 @@ just --list
 
 ### Operations
 - **`docs/docker.md`** - Container build and security practices
+- **`docs/cli.md`** - Haven CLI tool for git diff generation
 
 ### When to Read Which Doc
 
