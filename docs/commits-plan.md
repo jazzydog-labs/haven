@@ -1,5 +1,12 @@
 maps the journey from skeleton to production-ready service.
 
+**Important**: Each commit represents a complete, working state. After implementing each milestone:
+1. Run all quality gates (`just check`)
+2. Commit immediately with descriptive message
+3. Only then move to the next milestone
+
+This ensures clean history and ability to rollback if needed.
+
 ---
 # Implementation Storyboard
 

@@ -22,6 +22,15 @@ just lint         # Quick syntax check
 just check        # Full quality gates (lint + type + test)
 ```
 
+### Development Cycle
+1. Pick a task from roadmap/todo
+2. Implement the feature
+3. Run `just check` to verify quality
+4. **Commit immediately** - don't batch changes
+5. Move to next task
+
+Each task should result in at least one atomic commit!
+
 ### Batch Operations
 ```bash
 # Add complete CRUD for new entity
@@ -41,6 +50,8 @@ just test tests/test_api.py::test_create_record
 - **Database**: PostgreSQL via SQLAlchemy 2.x async
 - **Config**: Hydra for multi-env support
 - **Testing**: pytest with 70% coverage target
+
+For detailed architecture patterns and layer responsibilities, see `docs/architecture.md`.
 
 ### Key Directories
 ```
@@ -112,6 +123,8 @@ just check         # Lint + Type + Test (30 seconds)
 just format        # Auto-fix style issues
 ```
 
+See `docs/quality.md` for linting/typing details and `docs/definition-of-done.md` for complete checklist.
+
 ## Implementation Status
 
 ### Current Phase: Initial Setup (Commit 0)
@@ -128,7 +141,10 @@ just format        # Auto-fix style issues
 4. Add health check endpoint
 
 ### Progress Tracking
-See `commits-plan.md` for detailed implementation phases.
+- `docs/commits-plan.md` - Detailed implementation phases
+- `docs/roadmap.md` - Features, tech debt, and long-term planning
+- `todo.md` - Immediate tasks and notes
+
 Currently on commit 0 of 11 planned commits.
 
 ## Tips for Speed
@@ -155,3 +171,38 @@ just --list
 ---
 
 *This file is designed for rapid development. Quality gates and full testing come after feature implementation.*
+
+## Documentation Directory
+
+### Core Documentation
+- **`docs/spec.md`** - Project requirements and success criteria
+- **`docs/overview.md`** - Complete documentation map
+- **`docs/architecture.md`** - Clean Architecture patterns and layer design
+- **`docs/roadmap.md`** - Development timeline and technical debt tracking
+
+### Developer Guides  
+- **`docs/local-setup.md`** - Environment setup and prerequisites
+- **`docs/testing.md`** - Test strategy, fixtures, and coverage requirements
+- **`docs/quality.md`** - Linting, type checking, and code standards
+- **`docs/definition-of-done.md`** - Complete checklist for task completion
+- **`docs/configuration.md`** - Hydra configuration management
+- **`docs/alembic.md`** - Database migration workflows
+- **`docs/refactoring.md`** - Safe code reorganization procedures
+
+### API References
+- **`docs/api/rest.md`** - REST endpoints with examples
+- **`docs/api/graphql.md`** - GraphQL schema and queries
+
+### Operations
+- **`docs/docker.md`** - Container build and security practices
+
+### When to Read Which Doc
+
+1. **Starting fresh?** → `docs/local-setup.md` then `docs/spec.md`
+2. **Adding a feature?** → `docs/architecture.md` then relevant API docs
+3. **Database changes?** → `docs/alembic.md`
+4. **Cleaning up code?** → `docs/refactoring.md`
+5. **Before committing?** → `docs/definition-of-done.md`
+6. **Lost or confused?** → `docs/overview.md` for the complete map
+
+**Remember**: Complete task → Run checks → Commit → Next task. Never leave work uncommitted!

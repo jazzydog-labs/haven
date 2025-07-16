@@ -45,6 +45,17 @@ Below is a narrative “sitemap” of every document we plan to maintain, where 
         
     - _When_: anytime the architecture evolves.
         
+- **`roadmap.md`**
+    
+    - _Why_: tracks planned features, technical debt, and incomplete items to maintain development flow.
+        
+    - _When_: weekly updates on progress, new items as discovered.
+        
+- **`definition-of-done.md`**
+    
+    - _Why_: clear checklist ensuring all code meets quality standards before merge.
+        
+    - _When_: rarely—only if team agrees on new criteria.
 
 ---
 
@@ -60,6 +71,8 @@ Below is a narrative “sitemap” of every document we plan to maintain, where 
     
 - **`database/alembic.md`** – migration workflow, branching, squash policy.
     
+- **`refactoring.md`** – safe procedures for reorganizing code, directories, and configurations.
+    
 
 _Update these whenever corresponding tooling or process changes._
 
@@ -67,9 +80,9 @@ _Update these whenever corresponding tooling or process changes._
 
 #### 4 API References – `docs/api/`
 
-- **`rest.md`** – endpoint list with example requests/responses.
+- **`api/rest.md`** – endpoint list with example requests/responses.
     
-- **`graphql.md`** – SDL, sample queries/mutations, pagination examples.
+- **`api/graphql.md`** – SDL, sample queries/mutations, pagination examples.
     
 
 _Regenerate or tweak whenever the surface changes._
@@ -93,20 +106,18 @@ _Revise when deployment mechanics evolve._
 
 Everything under `docs/` is automatically rendered by MkDocs-Material.  
 Top-level navigation is controlled by `mkdocs.yml`; rebuilding is as simple as `just docs`.
-> todo: implement
+
+**Note**: MkDocs configuration and theme setup to be implemented in a future commit.
 
 ---
 
 #### 7 Community & Future 
 
-Skip for now.
-(todo: implement later as needed)
-- ~~**`glossary.md`** – definitions of key terms (Record, UoW, etc.).
-    
-- ~~**`contributing.md`** – PR etiquette, code-review checklist.
-    
-- ~~**`roadmap.md`** – forward-looking ideas not yet scheduled.
-    
+These documents will be added as the project matures:
+
+- **`glossary.md`** – definitions of key terms (Record, UoW, etc.).
+- **`contributing.md`** – PR etiquette, code-review checklist.
+- **`changelog.md`** – user-facing changes per release.
 
 _Update these continuously as norms and ambitions grow._
 

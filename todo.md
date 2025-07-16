@@ -1,45 +1,70 @@
-Inside `CLAUDE.md` (or a separate `guardrails/checklist.yaml`) describe “definition of done”:
+[DONE] Definition of done has been documented in `docs/definition-of-done.md` with complete checklist:
 
-- Ruff = 0 errors
-    `just lint`
-- Pyright strict = pass
-    `just types`
-- pytest cov ≥ 70 %, all tests pass
-    `just test`
-- MkDocs build succeeds
-	- `just docs`
-- demo for the feature is built showcasing high-impact features and gets "wow!" response from user, also showing how to use it
-	- `just demo`
-- feature is commited
+- Ruff = 0 errors (`just lint`)
+- Pyright strict = pass (`just type`) 
+- pytest cov ≥ 70%, all tests pass (`just test`)
+- MkDocs build succeeds (`just docs`)
+- Demo showcasing high-impact features (`just demo`)
+- Feature is committed with clear message
+
+See also: `docs/quality.md` for detailed quality gate information.
 
 
-I put explanations of the code in other .md files. There's architecture.md, checklist.md, (feature).md, components.md, navigation.md.
+[DONE] Documentation structure has been established:
 
-These are designed to be easy for humans to read. There's also notes on things like deprecated libs to avoid, or how to use the design system. Get it to update things as they change.
+- `docs/architecture.md` - Clean Architecture patterns and layer design
+- `docs/definition-of-done.md` - Complete quality checklist
+- `docs/roadmap.md` - Feature planning and technical debt tracking
+- `docs/refactoring.md` - Safe code reorganization procedures
+- Additional feature-specific docs to be added as features are implemented
 
-Claude.md for me is a kind of directory to tell it what to read based on what it's trying to do.
+CLAUDE.md now serves as a directory pointing to relevant documentation based on the task at hand.
 
-Roadmap.md is one of my favorites. A lot of the problems that arise for both human and LLM coders is that we don't notice that there's tech debt or incomplete items. It's also easy to get back into 'flow' 7 months later.
-
-
+The roadmap.md is particularly useful for tracking tech debt and maintaining development flow across sessions.
 
 
-Track progress in todo.md
+
+
+[IN PROGRESS] Track progress across multiple documents:
+- This file (todo.md) - Immediate tasks and notes
+- `docs/roadmap.md` - Long-term planning and tech debt
+- `docs/commits-plan.md` - Implementation milestones
 
 
 
 When resuming work:
-1. Check todo.md for current progress
-2. Review docs for implementation strategy (todo: add the relevant docs in here)
-3. Continue from the next uncompleted task (see todo.md, commits-plan.md, and other relevant files) (todo: add relevant files here)
-4. Make commits at each major milestone (as outlined in project plan)
-5. Ensure tests pass before each commit as described in docs
+1. Check `todo.md` for immediate tasks
+2. Review docs for implementation strategy:
+   - `docs/roadmap.md` - Current sprint and backlog
+   - `docs/commits-plan.md` - Implementation order
+   - `docs/architecture.md` - Design patterns to follow
+   - `CLAUDE.md` - Quick reference and doc directory
+3. Continue from the next uncompleted task
+4. **Complete the task fully**
+5. Ensure all quality gates pass (see `docs/definition-of-done.md`)
+6. **Commit immediately with clear message**
+7. Move to the next task
+
+**Critical**: Never batch multiple tasks into one commit. Each logical unit of work should be committed separately for clear history and safe rollbacks.
 
 
-Anything that we need to keep track of as a configuration, we should be pulling that to our config, --it should not live in .md docs, but we start with tracking it in .md docs.
+[NOTE] Configuration management principle:
+- Start by documenting configs in .md files for visibility
+- Once stable, migrate to proper config files (Hydra yaml, pyproject.toml, etc.)
+- Config should live in code, not documentation
+- See `docs/configuration.md` for Hydra config management
 
 
-Add a refactor workflow document that reorganizes the directory, files, config, etc
+[DONE] Refactoring workflow documented in `docs/refactoring.md`:
+- Safe procedures for directory reorganization
+- Config migration strategies  
+- Code pattern refactoring
+- Database schema evolution
+- Rollback procedures
 
 
-**TODO**: For `rest.md` and `graphql.md`, regenerate or tweak whenever the API surface changes.
+[DONE] API documentation created:
+- `docs/api/rest.md` - REST endpoint reference with examples
+- `docs/api/graphql.md` - GraphQL schema and query examples
+
+**TODO**: Set up auto-generation from OpenAPI/GraphQL schemas in future commit.

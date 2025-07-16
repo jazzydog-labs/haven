@@ -141,7 +141,22 @@ Add more combos (e.g., `lint type test`) as aliases; Justfile is the canonical t
 
 ---
 
-## 7  Troubleshooting
+## 7  Definition of Done
+
+All code must meet these quality gates before being considered complete:
+
+1. **Linting**: `just lint` - 0 errors, 0 warnings
+2. **Type Check**: `just type` - All checks pass in strict mode  
+3. **Tests**: `just test` - All pass with ≥70% coverage
+4. **Docs Build**: `just docs` - Builds without errors
+5. **Demo**: Feature demonstrated with clear value proposition
+6. **Committed**: Changes are committed with clear message
+
+See `docs/definition-of-done.md` for the complete checklist.
+
+---
+
+## 8  Troubleshooting
 
 | Symptom                             | Fix                                                                                          |
 | ----------------------------------- | -------------------------------------------------------------------------------------------- |
