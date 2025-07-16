@@ -15,37 +15,18 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 - [x] **Quality System** - Comprehensive testing, linting, type checking
 - [x] **Production Readiness** - Docker containerization and deployment setup
 
-### In Progress
-- [x] **Script Organization** - Move complex logic from Justfile to dedicated shell scripts
-- [x] **Documentation Cleanup** - Updated all docs to reflect completed work
-- [x] **Justfile Modularization** - Split into package-specific modules
-- [ ] **Demo Commands** - Add demo commands for all worklog entries
-- [ ] **Integration Test Fixes** - Resolve SQLAlchemy transaction management in tests
+### Current Sprint Focus
 
-### Up Next
-
-#### Containerization (3 Phases)
-
-**Phase 1: Basic Containerization (✅ COMPLETED)**
-- [x] **Docker Setup** - PostgreSQL and FastAPI in containers with docker-compose
-- [x] **Hot Reload** - Ensure development workflow with code changes
-- [x] **Just Commands** - Docker-aware commands in Justfile
-- [x] **Dev Experience** - Fixed permissions, tool availability (diff2html)
-- [x] **Documentation** - Updated CLAUDE.md with Docker workflow
-
-**Phase 2: Developer Experience (✅ COMPLETED)**
-- [x] **Override Config** - Development-specific docker-compose.override.yml
-- [x] **Migration Strategy** - Multiple approaches for database migrations
-- [x] **Troubleshooting** - Comprehensive guide for common issues
-
-**Phase 3: Production-Like Environment (Enhancements)**
-- [ ] **CORS/Domains** - Local domain setup to avoid CORS issues
-- [ ] **HTTPS Setup** - Local SSL certificates for secure development
-- [ ] **Reverse Proxy** - Production-like setup with Traefik/Caddy
-
-#### Frontend Development (After Container Phase 2)
+**Frontend Development (Next Priority)**
 - [ ] **CRUD Frontend for Records** - Complete UI for Records entity with all operations
 - [ ] **Frontend-Backend Sync** - Automated type generation and API client from backend
+
+**Optional Enhancements (Lower Priority)**
+- [ ] **Integration Test Fixes** - Resolve SQLAlchemy transaction management in tests
+- [ ] **HTTPS Setup** - Local SSL certificates for secure development
+- [ ] **Production Environment** - Full production-like setup with reverse proxy
+
+#### Future Frontend Features
 - [ ] **React Client Features** - Diff visualization interface
 - [ ] **API Enhancements** - Additional diff analysis features
 - [ ] **Shared SDK** - packages/sdk/ for API client library
@@ -85,10 +66,7 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 ## 🏗️ Technical Debt Tracker
 
 ### High Priority
-- [x] **Command Testing**: Verified all just commands work after monorepo restructure  
-- [x] **Documentation Sync**: Updated all docs to reflect current architecture
-- [x] **Containerization Phase 1 & 2**: Completed basic and developer experience phases
-- [ ] **Containerization Phase 3**: Production-like environment with reverse proxy
+- [ ] **Frontend Development**: Complete CRUD UI and sync workflow
 - [ ] **Error Handling**: Standardize error responses across REST/GraphQL
 - [ ] **API Documentation**: Auto-generate from OpenAPI/GraphQL schemas
 

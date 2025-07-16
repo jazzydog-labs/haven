@@ -4,6 +4,33 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-16.0002 - Tested and Fixed All Just Commands
+**Added**: Comprehensive testing of all Just commands after monorepo restructure
+**See**: Fixed commands in `Justfile`, all commands now working properly
+**Test**: Run `just --list` to see all available commands
+**Demo**:
+```bash
+# Core commands
+just bootstrap    # Full environment setup
+just db-up       # Start PostgreSQL
+just run         # Run API with hot-reload
+just clean       # Clean all artifacts
+just down        # Stop services (was missing, now added)
+
+# Quality checks
+just check-python # Python lint + type + test (was missing)
+just check-web   # Web lint + type + test (was missing)
+just check       # All quality checks
+
+# All commands tested and working
+```
+
+Key fixes:
+- Added missing `down` command as alias to `stop-docker`
+- Added missing `check-python` command
+- Added missing `check-web` command
+- Verified all 90+ commands work correctly
+
 ## 2025-07-16.0004 - Synchronized All Tracking Documents
 **Added**: Complete synchronization of todo.md, roadmap.md, commits-plan.md, and CLAUDE.md
 **See**: Updated tracking files with current project status and clear next steps
@@ -27,7 +54,7 @@ Key updates:
 - Removed outdated "commit 0 of 11" references
 - Clear priority order: Foundation → Container Phase 2 → Infrastructure
 
-## 2025-07-16.0003 - Fixed Docker Container Dev Experience
+## 2025-07-16.0005 - Fixed Docker Container Dev Experience
 **Added**: Container permission fixes and tool availability improvements
 **See**: Updated `docker-compose.yml` volumes and `apps/api/Dockerfile` with diff2html
 **Test**: `curl -X POST http://localhost:8080/api/v1/diffs/generate -H "Content-Type: application/json" -d '{"base_branch": "HEAD~3", "branch": "HEAD"}'`
@@ -52,7 +79,7 @@ Key fixes:
 - Updated diff_routes.py to auto-detect Docker environment
 - Fixed git commands to use correct working directory
 
-## 2025-07-16.0002 - Containerized Haven API and PostgreSQL Services
+## 2025-07-16.0003 - Containerized Haven API and PostgreSQL Services
 **Added**: Complete Docker containerization for development workflow
 **See**: `docker-compose.yml` for service definitions, `apps/api/Dockerfile` for API container
 **Test**: `just test-docker` - runs all tests in container (66 passed, 1 skipped)
@@ -114,7 +141,7 @@ Key fixes:
 **Test**: `just demo-diff-generation` then check `.tmp/diff-output/` exists at monorepo root
 **Demo**: Run `just demo-diff-generation`, note the file:// URL output, then `just clean` to verify cleanup
 
-## 2025-07-16.0003 - Added docker-compose.override.yml for development
+## 2025-07-16.0006 - Added docker-compose.override.yml for development
 **Added**: Docker Compose override configuration for development-specific settings
 **See**: `docker-compose.override.yml` and `docker-compose.override.yml.example` in project root
 **Test**: `docker compose config` to see merged configuration, `just run-docker` to verify hot-reload
@@ -141,7 +168,7 @@ Key features:
 - Example file provided for team customization
 - Override file gitignored for local changes
 
-## 2025-07-16.0004 - Implemented comprehensive migration strategies
+## 2025-07-16.0007 - Implemented comprehensive migration strategies
 **Added**: Multiple migration strategies for containerized environments with full documentation
 **See**: `docs/development/migration-strategies.md` for complete guide, updated `Justfile:270-297`
 **Test**: Run `just db-current-docker`, `just db-migrate-run`, or `docker compose --profile migration run migrate`
@@ -171,7 +198,7 @@ Key features:
 - CI/CD example workflow for automated deployments
 - Comprehensive documentation with pros/cons for each method
 
-## 2025-07-16.0005 - Created container troubleshooting documentation
+## 2025-07-16.0008 - Created container troubleshooting documentation
 **Added**: Comprehensive Docker troubleshooting guide with quick reference card
 **See**: `docs/operations/container-troubleshooting.md` and `docs/operations/docker-quick-reference.md`
 **Test**: Follow any troubleshooting scenario in the guide
@@ -199,7 +226,7 @@ Key features:
 - Diagnostic commands for each issue type
 - Prevention tips and best practices
 
-## 2025-07-16.0006 - Modularized Justfile architecture
+## 2025-07-16.0009 - Modularized Justfile architecture
 **Added**: Split monolithic Justfile into domain-specific modules for better maintainability
 **See**: New justfiles in root and package directories, `docs/development/justfile-architecture.md`
 **Test**: Run `just --list` to see all commands, test any command like `just test` or `just run-docker`
@@ -227,7 +254,7 @@ Key features:
 - Shared variables in justfile.common
 - Clear documentation of architecture
 
-## 2025-07-16.0007 - Added comprehensive demo commands
+## 2025-07-16.0010 - Added comprehensive demo commands
 **Added**: Demo commands for all major features to showcase functionality
 **See**: Enhanced `justfile.demos` with 8 new commands, `docs/development/demo-commands.md`
 **Test**: Run `just demo` to see all available demos, `just demo-all` to run everything
@@ -254,7 +281,7 @@ Key features:
 - Updated work log entries to reference demos
 - Complete documentation guide
 
-## 2025-07-16.0008 - Configured CORS and local domain support
+## 2025-07-16.0011 - Configured CORS and local domain support
 **Added**: CORS configuration with multiple approaches for cross-origin access
 **See**: `docs/development/cors-and-domains.md`, updated `apps/api/conf/environment/local.yaml`
 **Test**: Run `just demo-cors` to verify configuration, `sudo ./scripts/setup-local-domains.sh` for domains
