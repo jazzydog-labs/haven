@@ -1,15 +1,12 @@
 """Integration tests for GraphQL API."""
 
-import pytest
 from fastapi.testclient import TestClient
-
-from haven.interface.api.app import create_app
 
 
 class TestGraphQLAPI:
     """Test cases for GraphQL API."""
 
-    def graphql_request(self, test_test_client: TestClient, query: str, variables: dict | None = None):
+    def graphql_request(self, test_client: TestClient, query: str, variables: dict | None = None):
         """Helper to make GraphQL requests."""
         response = test_client.post(
             "/graphql",
@@ -162,7 +159,9 @@ class TestGraphQLAPI:
             }
         }
         """
-        create_response = self.graphql_request(test_client, create_mutation, {"input": {"data": {}}})
+        create_response = self.graphql_request(
+            test_client, create_mutation, {"input": {"data": {}}}
+        )
         record_id = create_response.json()["data"]["createRecord"]["id"]
 
         # Delete it

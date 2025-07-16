@@ -1,6 +1,6 @@
 """Unit tests for Unit of Work implementation."""
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -14,7 +14,11 @@ class TestSQLAlchemyUnitOfWork:
     def mock_session(self) -> AsyncMock:
         """Create mock database session."""
         session = AsyncMock()
-        session.begin = AsyncMock(return_value=AsyncMock())
+        transaction = AsyncMock()
+        transaction.commit = AsyncMock()
+        transaction.rollback = AsyncMock()
+        session.begin = AsyncMock(return_value=transaction)
+        session.in_transaction = MagicMock(return_value=False)
         return session
 
     @pytest.fixture

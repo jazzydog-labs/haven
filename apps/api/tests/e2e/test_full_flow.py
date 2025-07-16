@@ -3,14 +3,12 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from haven.interface.api.app import create_app
-
 
 @pytest.mark.e2e
 class TestFullFlow:
     """Test complete user flows through the application."""
 
-    def test_complete_crud_flow_rest(self, test_test_client: TestClient) -> None:
+    def test_complete_crud_flow_rest(self, test_client: TestClient) -> None:
         """Test complete CRUD flow via REST API."""
         # 1. Create a record
         create_data = {
@@ -33,7 +31,9 @@ class TestFullFlow:
             "description": "Updated description",
             "metadata": {"tags": ["e2e", "updated"]},
         }
-        update_response = test_client.put(f"/api/v1/records/{record_id}", json={"data": update_data})
+        update_response = test_client.put(
+            f"/api/v1/records/{record_id}", json={"data": update_data}
+        )
         assert update_response.status_code == 200
         assert update_response.json()["data"] == update_data
 

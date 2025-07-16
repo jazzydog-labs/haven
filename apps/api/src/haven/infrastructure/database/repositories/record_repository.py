@@ -24,7 +24,9 @@ class SQLAlchemyRecordRepository(RecordRepository):
 
     async def get(self, record_id: UUID) -> Record | None:
         """Get a record by ID."""
-        result = await self._session.execute(select(RecordModel).where(RecordModel.id == str(record_id)))
+        result = await self._session.execute(
+            select(RecordModel).where(RecordModel.id == str(record_id))
+        )
         model = result.scalar_one_or_none()
 
         if model is None:
@@ -61,7 +63,9 @@ class SQLAlchemyRecordRepository(RecordRepository):
 
     async def delete(self, record_id: UUID) -> bool:
         """Delete a record by ID."""
-        result = await self._session.execute(delete(RecordModel).where(RecordModel.id == str(record_id)))
+        result = await self._session.execute(
+            delete(RecordModel).where(RecordModel.id == str(record_id))
+        )
         return result.rowcount > 0
 
     async def exists(self, record_id: UUID) -> bool:
