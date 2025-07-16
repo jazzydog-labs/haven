@@ -158,6 +158,34 @@ Key features:
 - CI/CD example workflow for automated deployments
 - Comprehensive documentation with pros/cons for each method
 
+## 2025-07-16.0005 - Created container troubleshooting documentation
+**Added**: Comprehensive Docker troubleshooting guide with quick reference card
+**See**: `docs/operations/container-troubleshooting.md` and `docs/operations/docker-quick-reference.md`
+**Test**: Follow any troubleshooting scenario in the guide
+**Demo**:
+```bash
+# View quick reference
+cat docs/operations/docker-quick-reference.md
+
+# Common diagnostics
+docker compose ps
+docker compose logs -f api | grep -i error
+docker compose exec api env | grep HAVEN
+
+# Platform-specific issues (e.g., macOS)
+ulimit -n 10000  # Fix file watching
+
+# Emergency recovery
+just reset-docker
+```
+
+Key features:
+- Detailed solutions for 6 major issue categories
+- Platform-specific sections for macOS/Windows/Linux
+- Quick reference card for printing/bookmarking
+- Diagnostic commands for each issue type
+- Prevention tips and best practices
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
