@@ -16,8 +16,9 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 - [x] **Production Readiness** - Docker containerization and deployment setup
 
 ### In Progress
+- [x] **Script Organization** - Move complex logic from Justfile to dedicated shell scripts
 - [ ] **Documentation Cleanup** - Update all docs to reflect completed work
-- [ ] **Command Verification** - Test all just commands after monorepo restructure
+- [ ] **Integration Test Fixes** - Resolve SQLAlchemy transaction management in tests
 
 ### Up Next
 - [ ] **React Client Features** - Diff visualization interface

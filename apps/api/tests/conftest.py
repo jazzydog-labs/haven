@@ -46,8 +46,10 @@ async def test_session(test_engine: AsyncEngine) -> AsyncGenerator[AsyncSession,
     async_session = create_session_factory(test_engine)
 
     async with async_session() as session:
-        yield session
-        await session.rollback()
+        # Start a transaction
+        async with session.begin():
+            yield session
+            # Transaction will be rolled back automatically
 
 
 @pytest.fixture

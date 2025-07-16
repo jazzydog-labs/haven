@@ -143,7 +143,7 @@ haven/
 │   └── web/          # React frontend (TypeScript + Vite)
 ├── packages/         # Shared libraries (future SDK)
 ├── docs/            # Documentation (MkDocs)
-├── scripts/         # Build and utility scripts
+├── scripts/         # Build and utility scripts (demo-commits.sh, demo-diff-generation.sh)
 └── tools/           # Development tooling
 ```
 
@@ -199,6 +199,7 @@ Use these tags to quickly find relevant documentation:
 - `#database #migrations #schema` → Database operations
 - `#rest #graphql #api` → API documentation
 - `#docker #containers #security` → Container and deployment
+- `#scripts #automation #demos` → Build scripts and demo automation
 - `#planning #features #debt` → Project planning and roadmap
 - `#completed #achievements #history` → Completed work tracking
 - `#current #tasks #immediate` → Current development tasks
@@ -225,9 +226,13 @@ just check-web         # All TypeScript quality gates
 
 # Utilities
 just docs              # Build documentation
-just demo-diff-generation  # Demo git diff API
+just demo-commits      # Demo git diff viewer (auto-starts server)
+just demo-diff-generation  # Demo git diff API (requires server)
 just clean             # Clean environment
 just --list            # Show all available commands
+
+# Direct script access
+./scripts/demo-commits.sh apps/api .venv/bin/python  # Run demo script directly
 ```
 
 ---

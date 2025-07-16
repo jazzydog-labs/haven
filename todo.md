@@ -11,9 +11,9 @@ This file tracks immediate tasks and notes. For completed work, see `work-log.md
 ### Documentation Updates (In Progress)
 - [x] Create work-log.md from completed development 
 - [x] Update this todo.md to remove completed items
-- [ ] Update docs/roadmap.md to reflect completed milestones
-- [ ] Update docs/commits-plan.md to mark commits 0-11 as done
-- [ ] Completely rewrite docs/overview.md with file tags
+- [x] Update docs/roadmap.md to reflect completed milestones
+- [x] Update docs/commits-plan.md to mark commits 0-11 as done
+- [x] Update docs/overview.md with new scripts organization
 
 ### Comprehensive Just Command Testing
 All commands need verification after monorepo restructure:

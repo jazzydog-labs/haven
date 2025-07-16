@@ -20,7 +20,8 @@ class TestRepositoryIntegration:
 
         # Save record
         saved = await repository.save(sample_record)
-        await test_session.commit()
+        # Flush to ensure data is available in the same transaction
+        await test_session.flush()
 
         # Retrieve record
         retrieved = await repository.get(saved.id)
@@ -38,12 +39,12 @@ class TestRepositoryIntegration:
 
         # Save initial record
         await repository.save(sample_record)
-        await test_session.commit()
+        await test_session.flush()
 
         # Update record
         sample_record.update_data({"updated": "data"})
         await repository.save(sample_record)
-        await test_session.commit()
+        await test_session.flush()
 
         # Verify update
         retrieved = await repository.get(sample_record.id)
@@ -58,11 +59,11 @@ class TestRepositoryIntegration:
 
         # Save record
         await repository.save(sample_record)
-        await test_session.commit()
+        await test_session.flush()
 
         # Delete record
         deleted = await repository.delete(sample_record.id)
-        await test_session.commit()
+        await test_session.flush()
 
         assert deleted is True
 
@@ -80,7 +81,7 @@ class TestRepositoryIntegration:
         # Save multiple records
         for record in sample_records:
             await repository.save(record)
-        await test_session.commit()
+        await test_session.flush()
 
         # Test pagination
         page1 = await repository.get_all(limit=2, offset=0)
@@ -104,7 +105,7 @@ class TestRepositoryIntegration:
         # Save records
         for record in sample_records:
             await repository.save(record)
-        await test_session.commit()
+        await test_session.flush()
 
         # Count after saving
         final_count = await repository.count()
@@ -121,7 +122,7 @@ class TestRepositoryIntegration:
 
         # Save record
         await repository.save(sample_record)
-        await test_session.commit()
+        await test_session.flush()
 
         # After saving
         exists_after = await repository.exists(sample_record.id)

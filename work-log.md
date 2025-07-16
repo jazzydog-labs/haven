@@ -211,4 +211,17 @@ The project has successfully evolved from initial concept to a production-ready,
 - Cleaned up imports and improved SQLAlchemy syntax
 - Verified unit tests pass (68% coverage), database migrations current
 
+## 2025-07-16.0002 - Refactored Justfile scripts to dedicated shell scripts
+**Added**: Proper script organization following best practices for build tools
+**See**: New `./scripts/` directory with `demo-commits.sh` and `demo-diff-generation.sh`
+**Test**: `just demo-commits` and `just demo-diff-generation` now call dedicated scripts
+**Demo**: `./scripts/demo-commits.sh apps/api .venv/bin/python` - shows proper error handling
+
+**Improvements:**
+- Extracted complex bash logic from Justfile to maintainable shell scripts
+- Added proper error handling and parameter validation
+- Made scripts executable and properly formatted
+- Simplified Justfile recipes to simple script calls
+- Better separation of concerns between build orchestration and script logic
+
 *This log captures the journey from empty repository to production-ready application with full CI/CD readiness.*
