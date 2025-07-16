@@ -4,6 +4,39 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-16.0002 - Containerized Haven API and PostgreSQL Services
+**Added**: Complete Docker containerization for development workflow
+**See**: `docker-compose.yml` for service definitions, `apps/api/Dockerfile` for API container
+**Test**: `just test-docker` - runs all tests in container (66 passed, 1 skipped)
+**Demo**: 
+```bash
+# Start services
+just run-docker-d
+
+# Check health
+curl http://localhost:8080/health
+
+# Access Swagger docs
+open http://localhost:8080/docs
+
+# Access GraphQL playground  
+open http://localhost:8080/graphql
+
+# Run tests
+just test-docker
+
+# Database console
+just db-console-docker
+```
+
+Key features:
+- PostgreSQL and FastAPI in separate containers with networking
+- Hot-reload enabled - code changes automatically restart API
+- All Justfile commands have Docker equivalents (suffix: -docker)
+- Proper volume mounts for development workflow
+- Health checks for both services
+- Migration support via `just db-migrate-docker`
+
 ## 2025-07-16.0001 - Fixed All Failing Tests and Achieved 92% Coverage
 **Added**: Comprehensive test fixes and coverage improvements
 **See**: All test files in `apps/api/tests/` directory now passing

@@ -2,6 +2,17 @@
 
 ## Quick Start
 
+### Option 1: Docker (Recommended)
+```bash
+# Start everything with Docker Compose
+just run-docker-d
+
+# Service is now running at http://localhost:8080
+# GraphiQL: http://localhost:8080/graphql
+# Swagger: http://localhost:8080/docs
+```
+
+### Option 2: Local Development
 ```bash
 # Bootstrap everything in one go
 just bootstrap && just db-up && just run
@@ -171,6 +182,38 @@ See `docs/quality.md` for linting/typing details and `docs/definition-of-done.md
 - `tasks/closed/` - Completed tasks for archival
 
 Currently on commit 0 of 11 planned commits.
+
+## Docker Workflow
+
+### Common Docker Commands
+```bash
+# Development
+just run-docker-d      # Start all services in background
+just stop-docker       # Stop all services
+just logs-docker api   # View API logs
+just shell-docker      # Shell into API container
+
+# Database
+just db-migrate-docker                    # Run migrations
+just db-make-docker "add_users_table"     # Create migration
+just db-console-docker                    # Database console
+
+# Testing & Quality
+just test-docker       # Run tests in container
+just lint-docker       # Run linting
+just check-docker      # Full quality checks
+
+# Utilities
+just ps-docker         # Show running containers
+just rebuild-docker    # Rebuild containers
+just reset-docker      # Full reset (data loss!)
+```
+
+### Docker vs Local Commands
+- All Docker commands end with `-docker` suffix
+- Docker commands work without local Python/Node setup
+- Use Docker for consistent environment across team
+- Use local for faster iteration during development
 
 ## Tips for Speed
 
