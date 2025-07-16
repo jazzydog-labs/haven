@@ -45,29 +45,29 @@ test_url "http://web.haven.local:3000" "Frontend (domain+port)"
 test_url "http://api.haven.local:8080/health" "Backend (domain+port)"
 echo ""
 
-# Test 4: Reverse proxy access
-echo "4. Testing reverse proxy access..."
-test_url "http://web.haven.local:8000" "Frontend (proxy)"
-test_url "http://haven.local:8000" "Main domain (proxy)"
-test_url "http://api.haven.local:8000/health" "Backend (proxy)"
-test_url "http://api.haven.local:8000/docs" "API Docs (proxy)"
+# Test 4: Reverse proxy access (with port 9000)
+echo "4. Testing reverse proxy access (port 9000)..."
+test_url "http://web.haven.local:9000" "Frontend (proxy)"
+test_url "http://haven.local:9000" "Main domain (proxy)"
+test_url "http://api.haven.local:9000/health" "Backend (proxy)"
+test_url "http://api.haven.local:9000/docs" "API Docs (proxy)"
 echo ""
 
 # Test 5: API endpoints
 echo "5. Testing API endpoints..."
-if curl -s "http://api.haven.local:8000/health" | grep -q "healthy"; then
+if curl -s "http://api.haven.local:9000/health" | grep -q "healthy"; then
     echo -e "  ✅ ${GREEN}Health endpoint working${NC}"
 else
     echo -e "  ❌ ${RED}Health endpoint not working${NC}"
 fi
 
-if curl -s "http://api.haven.local:8000/docs" | grep -q "swagger"; then
+if curl -s "http://api.haven.local:9000/docs" | grep -q "swagger"; then
     echo -e "  ✅ ${GREEN}Swagger docs working${NC}"
 else
     echo -e "  ❌ ${RED}Swagger docs not working${NC}"
 fi
 
-if curl -s "http://api.haven.local:8000/graphql" | grep -q "GraphQL"; then
+if curl -s "http://api.haven.local:9000/graphql" | grep -q "GraphQL"; then
     echo -e "  ✅ ${GREEN}GraphQL endpoint working${NC}"
 else
     echo -e "  ❌ ${RED}GraphQL endpoint not working${NC}"
@@ -76,7 +76,7 @@ echo ""
 
 # Test 6: Browser simulation
 echo "6. Testing browser compatibility..."
-if curl -s -H "User-Agent: Mozilla/5.0" "http://web.haven.local:8000" | grep -q "html"; then
+if curl -s -H "User-Agent: Mozilla/5.0" "http://web.haven.local:9000" | grep -q "html"; then
     echo -e "  ✅ ${GREEN}Frontend serves HTML${NC}"
 else
     echo -e "  ❌ ${RED}Frontend HTML not served${NC}"
@@ -87,15 +87,19 @@ echo "🎯 Summary:"
 echo "==========="
 echo ""
 echo "✅ Working URLs for browser testing:"
-echo "  • Frontend: http://web.haven.local:8000"
-echo "  • Main App: http://haven.local:8000"
-echo "  • API Health: http://api.haven.local:8000/health"
-echo "  • API Docs: http://api.haven.local:8000/docs"
-echo "  • GraphQL: http://api.haven.local:8000/graphql"
+echo "  • Frontend: http://web.haven.local:9000"
+echo "  • Main App: http://haven.local:9000"
+echo "  • API Health: http://api.haven.local:9000/health"
+echo "  • API Docs: http://api.haven.local:9000/docs"
+echo "  • GraphQL: http://api.haven.local:9000/graphql"
+echo ""
+echo "🎯 Want clean URLs without port numbers?"
+echo "  • Run: ./setup-port-forwarding.sh"
+echo "  • Then access: http://web.haven.local (no :9000 needed)"
 echo ""
 echo "🔧 Commands:"
 echo "  • Start everything: just run-proxy"
-echo "  • Stop everything: just stop-all"
+echo "  • Stop everything: just stop-proxy"
 echo "  • Remove domains: just remove-hosts"
 echo ""
-echo "🎉 You should now be able to access http://web.haven.local:8000 in your browser!"
+echo "🎉 You should now be able to access http://web.haven.local:9000 in your browser!"

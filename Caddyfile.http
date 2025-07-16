@@ -2,26 +2,26 @@
 {
     # Disable automatic HTTPS
     auto_https off
-    # Use non-privileged port
-    http_port 8000
+    # Use port 9000 for reverse proxy (no sudo required)
+    http_port 9000
 }
 
 # Main domain - serves the web app
-haven.local:8000 {
-    reverse_proxy localhost:3000
+haven.local {
+    reverse_proxy localhost:3003
 }
 
 # Web subdomain (alias for main domain)
-web.haven.local:8000 {
-    reverse_proxy localhost:3000
+web.haven.local {
+    reverse_proxy localhost:3003
 }
 
 # API subdomain
-api.haven.local:8000 {
+api.haven.local {
     reverse_proxy localhost:8080
 }
 
 # App subdomain (alias for main domain)
-app.haven.local:8000 {
-    reverse_proxy localhost:3000
+app.haven.local {
+    reverse_proxy localhost:3003
 }

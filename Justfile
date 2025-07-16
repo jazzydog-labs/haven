@@ -182,7 +182,7 @@ run-proxy: _check-hosts
     @echo ""
     
     # Start Caddy proxy (HTTP version for testing)
-    @echo "🔐 Starting Caddy reverse proxy..."
+    @echo "🔐 Starting Caddy reverse proxy on port 9000..."
     @cd {{ PROJECT_ROOT }} && caddy run --config ./Caddyfile.http --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
     
     # Wait for Caddy
@@ -195,15 +195,19 @@ run-proxy: _check-hosts
     @echo ""
     @echo "📱 Access your application at:"
     @echo ""
-    @echo "  🌐 Main:        http://haven.local:8000"
-    @echo "  🌐 Frontend:    http://web.haven.local:8000"
-    @echo "  📚 API:         http://api.haven.local:8000"
-    @echo "  📊 Swagger:     http://api.haven.local:8000/docs"
-    @echo "  🔮 GraphQL:     http://api.haven.local:8000/graphql"
-    @echo "  ❤️  Health:     http://api.haven.local:8000/health"
+    @echo "  🌐 Main:        http://haven.local:9000"
+    @echo "  🌐 Frontend:    http://web.haven.local:9000"
+    @echo "  📚 API:         http://api.haven.local:9000"
+    @echo "  📊 Swagger:     http://api.haven.local:9000/docs"
+    @echo "  🔮 GraphQL:     http://api.haven.local:9000/graphql"
+    @echo "  ❤️  Health:     http://api.haven.local:9000/health"
     @echo ""
     @echo "🔥 Hot-reload enabled for both frontend and backend!"
     @echo "🔒 HTTPS available at https://haven.local (if certificates are set up)"
+    @echo ""
+    @echo "🎯 Want clean URLs without port numbers?"
+    @echo "   Run: ./setup-port-forwarding.sh"
+    @echo "   Then access: http://web.haven.local (no :9000 needed)"
     @echo ""
     @echo "📝 Logs:"
     @echo "  Backend:  just docker::logs api"
