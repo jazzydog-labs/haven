@@ -103,6 +103,11 @@ run-all:
     @echo "  🔮 GraphQL:     http://localhost:8080/graphql"
     @echo "  ❤️  Health:     http://localhost:8080/health"
     @echo ""
+    @echo "🌐 Or use local domains (run 'just setup-hosts' first):"
+    @echo "  🌐 Frontend:    http://web.haven.local:3000"
+    @echo "  📚 API:         http://api.haven.local:8080"
+    @echo "  🎉 Better:      Run 'just run-proxy' for clean URLs"
+    @echo ""
     @echo "🔥 Hot-reload enabled for both frontend and backend!"
     @echo ""
     @echo "📝 Logs:"
@@ -381,3 +386,112 @@ run-https-d:
 # Stop HTTPS services
 stop-https:
     docker compose -f docker-compose.yml -f docker-compose.https.yml down
+
+# Setup local hosts entries
+setup-hosts:
+    @echo "🌐 Setting up local domain mappings"
+    @sudo ./scripts/setup-hosts.sh
+
+# Remove local hosts entries
+remove-hosts:
+    @echo "🧹 Removing Haven domain mappings"
+    @sudo ./scripts/setup-hosts.sh --remove
+
+# Run with local reverse proxy (includes hosts setup)
+run-proxy: setup-hosts
+    @echo "🚀 Starting Haven with reverse proxy..."
+    @echo "==========================================="
+    @echo ""
+    
+    # Start backend services in background
+    @just run-docker-d > /dev/null 2>&1
+    
+    # Wait for backend to be ready
+    @echo "⏳ Waiting for backend services to start..."
+    @while ! curl -s http://localhost:8080/health > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    @echo "✅ Backend services ready!"
+    @echo ""
+    
+    # Start frontend in background
+    @echo "🎨 Starting frontend development server..."
+    @cd {{ web_dir }} && npm run dev > /tmp/haven-frontend.log 2>&1 & echo $$! > /tmp/haven-frontend.pid
+    
+    # Wait for frontend
+    @echo "⏳ Waiting for frontend to start..."
+    @while ! curl -s http://localhost:3000 > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    @echo "✅ Frontend ready!"
+    @echo ""
+    
+    # Start Caddy proxy
+    @echo "🔐 Starting Caddy reverse proxy..."
+    @caddy run --config ./Caddyfile --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
+    
+    # Wait for Caddy
+    @sleep 2
+    
+    @echo ""
+    @echo "======================================"
+    @echo "🎉 Haven is running with reverse proxy!"
+    @echo "======================================"
+    @echo ""
+    @echo "📱 Access your application at:"
+    @echo ""
+    @echo "  🌐 Main:        http://haven.local"
+    @echo "  🌐 Frontend:    http://web.haven.local"
+    @echo "  📚 API:         http://api.haven.local"
+    @echo "  📊 Swagger:     http://api.haven.local/docs"
+    @echo "  🔮 GraphQL:     http://api.haven.local/graphql"
+    @echo "  ❤️  Health:     http://api.haven.local/health"
+    @echo ""
+    @echo "🔥 Hot-reload enabled for both frontend and backend!"
+    @echo "🔒 HTTPS available at https://haven.local (if certificates are set up)"
+    @echo ""
+    @echo "📝 Logs:"
+    @echo "  Backend:  just logs-docker api"
+    @echo "  Frontend: tail -f /tmp/haven-frontend.log"
+    @echo "  Proxy:    tail -f /tmp/haven-caddy.log"
+    @echo ""
+    @echo "🛑 To stop everything: just stop-proxy"
+    @echo ""
+    @echo "Press Ctrl+C to exit (services will continue running)"
+    @echo ""
+    
+    # Keep running to show the info
+    @while true; do sleep 60; done
+
+# Stop proxy and all services
+stop-proxy:
+    @echo "🛑 Stopping all Haven services..."
+    
+    # Stop Caddy if running
+    @if [ -f /tmp/haven-caddy.pid ]; then \
+        PID=`cat /tmp/haven-caddy.pid`; \
+        kill $$PID 2>/dev/null || true; \
+        rm -f /tmp/haven-caddy.pid; \
+        echo "✅ Caddy proxy stopped"; \
+    fi
+    
+    # Stop frontend if running
+    @if [ -f /tmp/haven-frontend.pid ]; then \
+        PID=`cat /tmp/haven-frontend.pid`; \
+        kill $$PID 2>/dev/null || true; \
+        rm -f /tmp/haven-frontend.pid; \
+        echo "✅ Frontend stopped"; \
+    fi
+    
+    # Stop backend
+    @just stop-docker > /dev/null 2>&1
+    @echo "✅ Backend stopped"
+    
+    # Clean up
+    @rm -f /tmp/haven-frontend.log /tmp/haven-caddy.log
+    
+    @echo "🏁 All services stopped"

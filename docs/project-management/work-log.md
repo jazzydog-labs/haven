@@ -585,6 +585,48 @@ Key features:
 - Comprehensive documentation and demo script
 - Fallback to self-signed certificates when mkcert unavailable
 
+## 2025-07-16.0015 - Local Hosts Mapping and Reverse Proxy Integration
+**Added**: Complete local domain mapping system with reverse proxy integration
+**See**: 
+- Setup script: `scripts/setup-hosts.sh`
+- Justfile commands: `setup-hosts`, `remove-hosts`, `run-proxy`, `stop-proxy`
+- Documentation: `docs/development/local-domains.md`
+- Updated Caddyfile with all domain mappings
+**Test**: 
+```bash
+# Setup hosts
+just setup-hosts
+
+# Verify entries
+grep haven.local /etc/hosts
+
+# Run with proxy
+just run-proxy
+```
+**Demo**: 
+```bash
+# Setup and run with clean URLs
+just setup-hosts
+just run-proxy
+
+# Access services without port numbers:
+# http://haven.local         (main app)
+# http://web.haven.local     (frontend)
+# http://api.haven.local     (backend API)
+# http://api.haven.local/docs (Swagger)
+
+# Remove hosts when done
+just remove-hosts
+```
+
+Key features:
+- Managed hosts file entries via Just commands
+- Support for haven.local, web.haven.local, api.haven.local, app.haven.local
+- Integrated Caddy reverse proxy for clean URLs (no port numbers)
+- Automatic hosts setup when running proxy mode
+- Safe add/remove with backup creation
+- Updated documentation to prefer domain names over localhost:port
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*

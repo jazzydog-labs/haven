@@ -7,13 +7,16 @@
 # Start EVERYTHING (backend + frontend with hot-reload)
 just run
 
+# Or with local domains (recommended):
+just run-proxy
+
 # Access your app:
-# 🌐 Frontend:    http://localhost:3000
-# 📚 API Docs:    http://localhost:8080/docs
-# 🔮 GraphQL:     http://localhost:8080/graphql
+# 🌐 Frontend:    http://web.haven.local
+# 📚 API Docs:    http://api.haven.local/docs
+# 🔮 GraphQL:     http://api.haven.local/graphql
 
 # Stop everything:
-just stop-all
+just stop-all      # (or stop-proxy if using domains)
 ```
 
 ### Alternative Methods
@@ -70,7 +73,7 @@ just test tests/test_api.py::test_create_record
 ## Project Context
 
 ### Architecture
-- **API Layer**: FastAPI (REST) + Strawberry (GraphQL) at :8080
+- **API Layer**: FastAPI (REST) + Strawberry (GraphQL) at api.haven.local
 - **Database**: PostgreSQL via SQLAlchemy 2.x async
 - **Config**: Hydra for multi-env support
 - **Testing**: pytest with 70% coverage target
@@ -132,7 +135,7 @@ class Query:
         db = info.context["db"]
         return await get_all_items(db)
 
-# 2. Check GraphiQL at http://localhost:8080/graphql
+# 2. Check GraphiQL at http://api.haven.local/graphql
 ```
 
 ### Create Migration
@@ -323,7 +326,7 @@ Example format:
 ```markdown
 ## 2025-07-16.0001 - Added GraphQL health check endpoint
 **Added**: Basic GraphQL health check query returning service status
-**See**: Visit http://localhost:8080/graphql and run `{ health { status } }`
+**See**: Visit http://api.haven.local/graphql and run `{ health { status } }`
 **Test**: `just test tests/integration/test_graphql.py::test_health_query`
 **Demo**: Start service with `just run`, open GraphiQL, execute health query
 ```

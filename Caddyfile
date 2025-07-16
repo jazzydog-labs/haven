@@ -10,9 +10,19 @@ haven.local {
     reverse_proxy localhost:3000
 }
 
+# Web subdomain (alias for main domain)
+web.haven.local {
+    reverse_proxy localhost:3000
+}
+
 # API subdomain
 api.haven.local {
     reverse_proxy localhost:8080
+}
+
+# App subdomain (alias for main domain)
+app.haven.local {
+    reverse_proxy localhost:3000
 }
 
 # Alternative: serve everything from one domain
