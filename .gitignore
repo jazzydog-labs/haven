@@ -90,3 +90,6 @@ Thumbs.db
 diff-out*/
 diff-demo*/
 server.log
+
+# Docker
+docker-compose.override.yml

@@ -1,0 +1,100 @@
+# Docker Compose Override Example for Development
+# 
+# Copy this file to docker-compose.override.yml to use it.
+# The actual override file is gitignored so you can customize it locally.
+#
+# Usage:
+#   cp docker-compose.override.yml.example docker-compose.override.yml
+#   # Edit as needed for your local setup
+#   docker-compose up
+
+services:
+  api:
+    # Use development stage from Dockerfile
+    build:
+      target: development
+    
+    # Development volumes for hot-reload
+    volumes:
+      # Mount source code for instant updates
+      - ./apps/api/src:/app/src:delegated
+      - ./apps/api/conf:/app/conf:delegated
+      - ./apps/api/alembic:/app/alembic:delegated
+      - ./apps/api/alembic.ini:/app/alembic.ini:delegated
+      - ./apps/api/tests:/app/tests:delegated
+      - ./apps/api/pyproject.toml:/app/pyproject.toml:delegated
+      - ./apps/api/pytest.ini:/app/pytest.ini:delegated
+      # Mount logs directory
+      - ./apps/api/logs:/app/logs
+      # Mount .tmp directory for diff generation output
+      - ./.tmp:/app/.tmp
+      # Mount git repository for diff generation (read-only)
+      - ./:/repo:ro
+      
+      # Optional: Share local virtual environment (faster startup)
+      # - ./apps/api/.venv:/app/.venv:delegated
+    
+    # Development environment variables
+    environment:
+      # FastAPI/Uvicorn settings
+      ENVIRONMENT: local
+      DEBUG: "true"
+      RELOAD: "true"
+      LOG_LEVEL: debug
+      # Database connection using container networking
+      HAVEN_DATABASE__HOST: postgres
+      HAVEN_DATABASE__PORT: 5432
+      HAVEN_DATABASE__USERNAME: haven
+      HAVEN_DATABASE__PASSWORD: haven
+      HAVEN_DATABASE__DATABASE: haven
+      # Hydra config overrides
+      HYDRA_FULL_ERROR: 1
+      
+      # Optional: Python debugging
+      # PYTHONBREAKPOINT: "ipdb.set_trace"
+      # PYTHONDONTWRITEBYTECODE: 1
+      # PYTHONUNBUFFERED: 1
+    
+    # Enable interactive terminal for debugging
+    stdin_open: true
+    tty: true
+    
+    # Override command for development with explicit reload
+    command: ["python", "-m", "uvicorn", "haven.main:app", "--reload", "--host", "0.0.0.0", "--port", "8080", "--log-level", "debug"]
+    
+    # Optional: Debugging ports
+    # ports:
+    #   - "5678:5678"  # Python debugger port
+    
+  postgres:
+    # Expose PostgreSQL for local development tools
+    ports:
+      - "5432:5432"
+    
+    # Development environment
+    environment:
+      POSTGRES_USER: haven
+      POSTGRES_PASSWORD: haven
+      POSTGRES_DB: haven
+      # Enable query logging for debugging
+      POSTGRES_INITDB_ARGS: "-c log_statement=all"
+      
+    # Optional: Mount custom PostgreSQL config
+    # volumes:
+    #   - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+
+# Optional: Additional development services
+# services:
+#   # pgAdmin for database management
+#   pgadmin:
+#     image: dpage/pgadmin4:latest
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: admin@haven.local
+#       PGADMIN_DEFAULT_PASSWORD: admin
+#       PGADMIN_CONFIG_SERVER_MODE: "False"
+#     ports:
+#       - "5050:80"
+#     depends_on:
+#       - postgres
+#     networks:
+#       - haven-network
