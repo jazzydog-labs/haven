@@ -12,13 +12,20 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    host: '0.0.0.0', // Allow external connections
+    allowedHosts: [
+      'localhost',
+      'web.haven.local',
+      'app.haven.local',
+      'haven.local',
+    ],
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://api.haven.local:8080',
         changeOrigin: true,
       },
       '/graphql': {
-        target: 'http://localhost:8080',
+        target: 'http://api.haven.local:8080',
         changeOrigin: true,
       },
     },

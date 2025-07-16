@@ -1,0 +1,27 @@
+# HTTP Caddy configuration for local development
+{
+    # Disable automatic HTTPS
+    auto_https off
+    # Use non-privileged port
+    http_port 8000
+}
+
+# Main domain - serves the web app
+haven.local:8000 {
+    reverse_proxy localhost:3000
+}
+
+# Web subdomain (alias for main domain)
+web.haven.local:8000 {
+    reverse_proxy localhost:3000
+}
+
+# API subdomain
+api.haven.local:8000 {
+    reverse_proxy localhost:8080
+}
+
+# App subdomain (alias for main domain)
+app.haven.local:8000 {
+    reverse_proxy localhost:3000
+}

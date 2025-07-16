@@ -171,9 +171,9 @@ run-proxy: setup-hosts
     @just _success "Frontend ready!"
     @echo ""
     
-    # Start Caddy proxy
+    # Start Caddy proxy (HTTP version for testing)
     @echo "🔐 Starting Caddy reverse proxy..."
-    @caddy run --config ./Caddyfile --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
+    @cd {{ ROOT_DIR }} && caddy run --config ./Caddyfile.http --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
     
     # Wait for Caddy
     @sleep 2
@@ -185,12 +185,12 @@ run-proxy: setup-hosts
     @echo ""
     @echo "📱 Access your application at:"
     @echo ""
-    @echo "  🌐 Main:        http://haven.local"
-    @echo "  🌐 Frontend:    http://web.haven.local"
-    @echo "  📚 API:         http://api.haven.local"
-    @echo "  📊 Swagger:     http://api.haven.local/docs"
-    @echo "  🔮 GraphQL:     http://api.haven.local/graphql"
-    @echo "  ❤️  Health:     http://api.haven.local/health"
+    @echo "  🌐 Main:        http://haven.local:8000"
+    @echo "  🌐 Frontend:    http://web.haven.local:8000"
+    @echo "  📚 API:         http://api.haven.local:8000"
+    @echo "  📊 Swagger:     http://api.haven.local:8000/docs"
+    @echo "  🔮 GraphQL:     http://api.haven.local:8000/graphql"
+    @echo "  ❤️  Health:     http://api.haven.local:8000/health"
     @echo ""
     @echo "🔥 Hot-reload enabled for both frontend and backend!"
     @echo "🔒 HTTPS available at https://haven.local (if certificates are set up)"

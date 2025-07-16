@@ -744,6 +744,58 @@ Key achievements:
 - All command examples now match current project structure
 - Zero remaining command/URL inconsistencies
 
+## 2025-07-16.0019 - Implemented Commit Domain Entity for TTR System
+**Added**: Complete Commit domain entity implementation with review workflow support
+**See**: 
+- Domain entity: `apps/api/src/haven/domain/entities/commit.py`
+- Repository: `apps/api/src/haven/infrastructure/database/repositories/commit_repository.py`
+- Service: `apps/api/src/haven/application/services/commit_service.py`
+- Migration: `apps/api/alembic/versions/20250716_2040_add_commit_and_commit_review_tables.py`
+**Test**: 
+```bash
+# Run all commit-related tests
+python -m pytest tests/unit/domain/test_commit.py -v
+python -m pytest tests/unit/application/test_commit_service.py -v
+python -m pytest tests/unit/infrastructure/test_commit_repository.py -v
+```
+**Demo**: 
+```bash
+# Test commit domain entity
+cd apps/api && python -c "
+from haven.domain.entities.commit import Commit, DiffStats, ReviewStatus
+from datetime import datetime, timezone
+
+# Create commit with diff stats
+commit = Commit(
+    repository_id=1,
+    commit_hash='abc123def456',
+    message='Add new feature',
+    author_name='John Doe',
+    author_email='john@example.com',
+    committer_name='John Doe',
+    committer_email='john@example.com',
+    committed_at=datetime.now(timezone.utc),
+    diff_stats=DiffStats(files_changed=3, insertions=50, deletions=25)
+)
+
+print(f'Commit: {commit.short_hash} - {commit.summary}')
+print(f'Changes: {commit.diff_stats.total_changes} lines')
+print(f'Is merge: {commit.is_merge_commit}')
+"
+```
+
+Key features:
+- Complete Commit and CommitReview domain entities with validation
+- DiffStats tracking for files changed, insertions, deletions
+- ReviewStatus enum with pending/approved/needs revision/draft states
+- Git commit metadata support (hash, message, author, committer, timestamps)
+- Repository interfaces and SQLAlchemy implementations
+- CommitService with Git sync functionality and review management
+- Database models with proper relationships and constraints
+- Comprehensive unit tests for all layers (16 domain + 19 service tests)
+- Alembic migration for commits and commit_reviews tables
+- Full Clean Architecture separation with 84% service coverage
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
