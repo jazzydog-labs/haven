@@ -16,6 +16,7 @@ console = Console()
 
 class GitCommit(NamedTuple):
     """Represents a git commit."""
+
     hash: str
     message: str
     author: str
@@ -50,12 +51,12 @@ async def check_diff2html() -> None:
             raise RuntimeError(f"Failed to install diff2html: {stderr}")
 
 
-async def get_git_commits(repo_path: Path, base_branch: str = "main", max_commits: int = 50) -> list[GitCommit]:
+async def get_git_commits(
+    repo_path: Path, base_branch: str = "main", max_commits: int = 50
+) -> list[GitCommit]:
     """Get list of commits from git repository."""
     # Check if we're in a git repository
-    stdout, stderr, returncode = await run_command(
-        ["git", "rev-parse", "--git-dir"], cwd=repo_path
-    )
+    stdout, stderr, returncode = await run_command(["git", "rev-parse", "--git-dir"], cwd=repo_path)
     if returncode != 0:
         raise RuntimeError(f"Not a git repository: {repo_path}")
 
@@ -91,21 +92,20 @@ async def get_git_commits(repo_path: Path, base_branch: str = "main", max_commit
         if line:
             parts = line.split("|", 3)
             if len(parts) == 4:
-                commits.append(GitCommit(
-                    hash=parts[0],
-                    message=parts[1],
-                    author=parts[2],
-                    date=parts[3],
-                ))
+                commits.append(
+                    GitCommit(
+                        hash=parts[0],
+                        message=parts[1],
+                        author=parts[2],
+                        date=parts[3],
+                    )
+                )
 
     return commits
 
 
 async def generate_diff_for_commit(
-    commit: GitCommit,
-    output_dir: Path,
-    repo_path: Path,
-    commit_number: int
+    commit: GitCommit, output_dir: Path, repo_path: Path, commit_number: int
 ) -> str:
     """Generate HTML diff file for a single commit using diff2html."""
     # Generate filename
@@ -118,18 +118,26 @@ async def generate_diff_for_commit(
     # Generate diff HTML using diff2html (commit vs its parent)
     diff_cmd = [
         "diff2html",
-        "-s", "side",
-        "-f", "html",
-        "-F", str(output_dir / filename),
-        "-t", f"{commit.hash[:8]}: {commit.message}",
-        "--summary", "open",
+        "-s",
+        "side",
+        "-f",
+        "html",
+        "-F",
+        str(output_dir / filename),
+        "-t",
+        f"{commit.hash[:8]}: {commit.message}",
+        "--summary",
+        "open",
         "--highlightCode",
-        "--", f"{commit.hash}^..{commit.hash}",
+        "--",
+        f"{commit.hash}^..{commit.hash}",
     ]
 
     _, stderr, returncode = await run_command(diff_cmd, cwd=repo_path)
     if returncode != 0:
-        console.print(f"[yellow]Warning: Could not generate diff for {commit.hash[:8]}: {stderr}[/yellow]")
+        console.print(
+            f"[yellow]Warning: Could not generate diff for {commit.hash[:8]}: {stderr}[/yellow]"
+        )
         return ""
 
     return filename
@@ -231,9 +239,13 @@ async def _generate_diffs_async(
 
     if not commits:
         console.print("[yellow]⚠️ No commits found[/yellow]")
-        console.print(f"[dim]Tip: Branch '{base_branch}' may not exist or have no commits. Try:[/dim]")
+        console.print(
+            f"[dim]Tip: Branch '{base_branch}' may not exist or have no commits. Try:[/dim]"
+        )
         console.print("[dim]  haven-cli generate --base-branch HEAD  # Use current branch[/dim]")
-        console.print("[dim]  haven-cli list-commits --base-branch HEAD  # List commits on current branch[/dim]")
+        console.print(
+            "[dim]  haven-cli list-commits --base-branch HEAD  # List commits on current branch[/dim]"
+        )
         # Still create an index file for empty state
         create_index_file(output_dir, [], [])
         index_path = output_dir / "index.html"

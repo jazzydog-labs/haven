@@ -5,7 +5,7 @@ from typing import Any
 
 from hydra import compose, initialize_config_dir
 from hydra.core.global_hydra import GlobalHydra
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -109,7 +109,8 @@ class AppSettings(BaseSettings):
         env_file = None
         case_sensitive = False
 
-    @validator("database", pre=True)
+    @field_validator("database", mode="before")
+    @classmethod
     def validate_database(cls, v: Any) -> Any:
         """Ensure database settings are properly structured."""
         if isinstance(v, dict) and "pool" in v and isinstance(v["pool"], dict):

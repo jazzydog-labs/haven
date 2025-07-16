@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, ClassVar
 from uuid import UUID
 
-from sqlalchemy import JSON, DateTime, func
+from sqlalchemy import JSON, DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -23,7 +23,8 @@ class RecordModel(Base):
 
     __tablename__ = "records"
 
-    id: Mapped[UUID] = mapped_column(PostgresUUID(as_uuid=True), primary_key=True)
+    # Use String for SQLite testing, PostgresUUID for production
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
     data: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

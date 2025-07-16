@@ -11,6 +11,8 @@
   "typeCheckingMode": "strict",
   "pythonVersion": "3.12",
   "pythonPlatform": "All",
+  "venvPath": ".",
+  "venv": ".venv",
   "reportMissingImports": true,
   "reportMissingTypeStubs": false,
   "reportPrivateImportUsage": false,

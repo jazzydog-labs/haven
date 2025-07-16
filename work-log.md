@@ -266,4 +266,23 @@ The project has successfully evolved from initial concept to a production-ready,
 - Async operations for better performance with large repositories
 - Comprehensive error handling with clear user feedback
 
+## 2025-07-16.0005 - Added CLI wrapper script for direct command access
+**Added**: Executable wrapper script at repository root for direct CLI access
+**See**: Use `./haven-cli generate --max-commits 10 --verbose` from repo root
+**Test**: `./haven-cli list-commits` and `./haven-cli generate --help` for full options
+**Demo**: `./haven-cli generate --max-commits 5` then open the generated file:// URL
+
+**Access methods now available:**
+- `just cli-generate` - Just command integration (recommended for daily use)
+- `./haven-cli generate` - Direct CLI wrapper script from repo root
+- Module access - `cd apps/api && .venv/bin/python -m haven.cli` for full control
+
+**Final functionality:**
+- Generates diffs for every commit on branch (commit vs parent)
+- Professional HTML output with side-by-side diffs and syntax highlighting
+- Interactive index with commit statistics and clickable navigation
+- Configurable commit limits via --max-commits option
+- Reliable directory creation and file:// URL generation
+- Works from any directory with proper path resolution
+
 *This log captures the journey from empty repository to production-ready application with full CI/CD readiness.*

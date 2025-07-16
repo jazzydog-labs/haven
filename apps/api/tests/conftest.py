@@ -8,7 +8,8 @@ import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
 
-from haven.infrastructure.database.models import Base
+from haven.domain.entities import Record
+from haven.infrastructure.database.models import Base, RecordModel  # noqa: F401
 from haven.infrastructure.database.session import create_session_factory
 
 
@@ -57,3 +58,9 @@ async def test_session(test_engine: AsyncEngine) -> AsyncGenerator[AsyncSession,
 def anyio_backend() -> str:
     """Configure anyio backend for async tests."""
     return "asyncio"
+
+
+@pytest.fixture
+def sample_record() -> Record:
+    """Create a sample record for testing."""
+    return Record(data={"test": "data", "value": 42})
