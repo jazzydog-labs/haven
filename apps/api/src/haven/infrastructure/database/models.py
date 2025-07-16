@@ -4,9 +4,9 @@ from datetime import datetime
 from typing import Any, ClassVar
 from uuid import UUID
 
-from sqlalchemy import JSON, DateTime, String, Text, func
+from sqlalchemy import JSON, DateTime, String, Text, func, Boolean, Integer, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -18,7 +18,7 @@ class Base(DeclarativeBase):
     }
 
 
-__all__ = ["Base", "RecordModel", "RepositoryModel", "UserModel"]
+__all__ = ["Base", "RecordModel", "RepositoryModel", "UserModel", "TaskModel", "CommentModel", "TimeLogModel"]
 
 
 class RecordModel(Base):
@@ -100,3 +100,115 @@ class RepositoryModel(Base):
     def __repr__(self) -> str:
         """String representation of RepositoryModel."""
         return f"<RepositoryModel(id={self.id}, name={self.name}, url={self.url})>"
+
+
+class TaskModel(Base):
+    """SQLAlchemy model for Task entity."""
+
+    __tablename__ = "tasks"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="open", index=True)
+    priority: Mapped[str] = mapped_column(String(20), nullable=False, default="medium", index=True)
+    task_type: Mapped[str] = mapped_column(String(50), nullable=False, default="task", index=True)
+    
+    # Relationships
+    assignee_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    repository_id: Mapped[int | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
+    
+    # Time tracking
+    estimated_hours: Mapped[float | None] = mapped_column(nullable=True)
+    actual_hours: Mapped[float | None] = mapped_column(nullable=True)
+    
+    # Dates
+    due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Audit fields
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        """String representation of TaskModel."""
+        return f"<TaskModel(id={self.id}, title={self.title[:50]}, status={self.status})>"
+
+
+class CommentModel(Base):
+    """SQLAlchemy model for Comment entity."""
+
+    __tablename__ = "comments"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    comment_type: Mapped[str] = mapped_column(String(50), nullable=False, default="comment", index=True)
+    
+    # Relationships
+    task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=False, index=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    
+    # Metadata
+    comment_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    
+    # Audit fields
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        """String representation of CommentModel."""
+        return f"<CommentModel(id={self.id}, task_id={self.task_id}, author_id={self.author_id})>"
+
+
+class TimeLogModel(Base):
+    """SQLAlchemy model for TimeLog entity."""
+
+    __tablename__ = "time_logs"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    hours: Mapped[float] = mapped_column(nullable=False)
+    log_type: Mapped[str] = mapped_column(String(50), nullable=False, default="work", index=True)
+    
+    # Relationships
+    task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    
+    # Date tracking
+    logged_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    
+    # Audit fields
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        """String representation of TimeLogModel."""
+        return f"<TimeLogModel(id={self.id}, task_id={self.task_id}, hours={self.hours})>"
