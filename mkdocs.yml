@@ -1,0 +1,143 @@
+site_name: Haven Documentation
+site_description: Self-contained microservice with REST and GraphQL APIs
+site_author: Haven Team
+site_url: https://jazzydog-labs.github.io/haven
+
+# Repository
+repo_name: jazzydog-labs/haven
+repo_url: https://github.com/jazzydog-labs/haven
+edit_uri: edit/main/docs/
+
+# Theme
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.follow
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Plugins
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_toc_entry: true
+            show_signature_annotations: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            merge_init_into_class: true
+            separate_signature: true
+
+# Navigation
+nav:
+  - Home:
+    - Overview: index.md
+    - Quick Start: quickstart.md
+    - Specification: spec.md
+    - Commits Plan: commits-plan.md
+  
+  - Architecture:
+    - Overview: architecture.md
+    - Clean Architecture: architecture.md
+    - API Design: api/index.md
+    
+  - Development:
+    - Local Setup: local-setup.md
+    - Configuration: configuration.md
+    - Testing: testing.md
+    - Code Quality: quality.md
+    - Database Migrations: alembic.md
+    - Refactoring Guide: refactoring.md
+    - Definition of Done: definition-of-done.md
+    
+  - API Reference:
+    - REST API: api/rest.md
+    - GraphQL API: api/graphql.md
+    - OpenAPI Schema: api/openapi.md
+    
+  - Operations:
+    - Docker: docker.md
+    - Deployment: deployment.md
+    - Monitoring: monitoring.md
+    
+  - Project:
+    - Roadmap: roadmap.md
+    - Contributing: contributing.md
+    - Changelog: changelog.md
+
+# Extra
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jazzydog-labs/haven
+  version:
+    provider: mike
