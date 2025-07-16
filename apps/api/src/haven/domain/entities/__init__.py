@@ -1,6 +1,7 @@
 """Domain entities."""
 
 from haven.domain.entities.comment import Comment
+from haven.domain.entities.commit import Commit, CommitReview, DiffStats, ReviewStatus
 from haven.domain.entities.milestone import Milestone
 from haven.domain.entities.record import Record
 from haven.domain.entities.repository import Repository
@@ -12,9 +13,13 @@ from haven.domain.entities.user import User
 
 __all__ = [
     "Comment",
+    "Commit",
+    "CommitReview",
+    "DiffStats",
     "Milestone",
     "Record",
     "Repository",
+    "ReviewStatus",
     "Roadmap",
     "Task",
     "TimeLog",

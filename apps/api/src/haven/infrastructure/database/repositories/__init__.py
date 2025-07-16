@@ -3,6 +3,10 @@
 from haven.infrastructure.database.repositories.comment_repository import (
     CommentRepositoryImpl,
 )
+from haven.infrastructure.database.repositories.commit_repository import (
+    SQLAlchemyCommitRepository,
+    SQLAlchemyCommitReviewRepository,
+)
 from haven.infrastructure.database.repositories.record_repository import (
     SQLAlchemyRecordRepository,
 )
@@ -22,6 +26,8 @@ from haven.infrastructure.database.repositories.user_repository import (
 __all__ = [
     "CommentRepositoryImpl",
     "RepositoryRepositoryImpl",
+    "SQLAlchemyCommitRepository",
+    "SQLAlchemyCommitReviewRepository",
     "SQLAlchemyRecordRepository",
     "TaskRepositoryImpl",
     "TimeLogRepositoryImpl",
