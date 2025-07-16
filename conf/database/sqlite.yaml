@@ -1,0 +1,17 @@
+database:
+  driver: sqlite+aiosqlite
+  host: ""
+  port: 0
+  name: ":memory:"
+  user: ""
+  password: ""
+  
+  # Constructed DSN
+  dsn: ${database.driver}:///${database.name}
+  
+  # Connection pool settings (not applicable for SQLite)
+  pool:
+    size: 1
+    max_overflow: 0
+    timeout: 30
+    recycle: -1

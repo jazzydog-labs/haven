@@ -1,0 +1,17 @@
+database:
+  driver: postgresql+asyncpg
+  host: ${oc.env:DB_HOST,localhost}
+  port: ${oc.env:DB_PORT,5432}
+  name: ${oc.env:DB_NAME,haven}
+  user: ${oc.env:DB_USER,haven}
+  password: ${oc.env:DB_PASSWORD,haven}
+  
+  # Constructed DSN
+  dsn: ${oc.env:DATABASE_URL,${database.driver}://${database.user}:${database.password}@${database.host}:${database.port}/${database.name}}
+  
+  # Connection pool settings
+  pool:
+    size: ${oc.env:DB_POOL_SIZE,20}
+    max_overflow: ${oc.env:DB_MAX_OVERFLOW,10}
+    timeout: ${oc.env:DB_TIMEOUT,30}
+    recycle: ${oc.env:DB_RECYCLE,3600}

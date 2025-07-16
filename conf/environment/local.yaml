@@ -1,0 +1,16 @@
+app:
+  name: haven
+  version: ${oc.env:APP_VERSION,0.1.0}
+  debug: true
+  env: local
+
+server:
+  host: ${oc.env:APP_HOST,0.0.0.0}
+  port: ${oc.env:APP_PORT,8080}
+  reload: true
+
+cors:
+  allow_origins: ["*"]
+  allow_credentials: true
+  allow_methods: ["*"]
+  allow_headers: ["*"]

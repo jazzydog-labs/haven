@@ -1,0 +1,30 @@
+logging:
+  level: ${oc.env:LOG_LEVEL,INFO}
+  format: ${oc.env:LOG_FORMAT,json}
+  
+  # Structured logging configuration
+  structured:
+    enabled: true
+    include_timestamp: true
+    include_level: true
+    include_logger: true
+    include_hostname: false
+    include_process: false
+    
+  # Console output
+  console:
+    enabled: true
+    colorize: ${oc.env:LOG_COLORIZE,true}
+    
+  # File output (optional)
+  file:
+    enabled: false
+    path: ${oc.env:LOG_FILE,logs/haven.log}
+    rotation: "100 MB"
+    retention: "10 days"
+    
+  # Specific logger levels
+  loggers:
+    uvicorn: ${oc.env:UVICORN_LOG_LEVEL,WARNING}
+    sqlalchemy: ${oc.env:SQLALCHEMY_LOG_LEVEL,WARNING}
+    alembic: ${oc.env:ALEMBIC_LOG_LEVEL,INFO}

@@ -1,0 +1,4 @@
+defaults:
+  - environment: local
+  - database: postgres
+  - logging: default

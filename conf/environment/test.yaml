@@ -1,0 +1,16 @@
+app:
+  name: haven
+  version: ${oc.env:APP_VERSION,0.1.0}
+  debug: false
+  env: test
+
+server:
+  host: 127.0.0.1
+  port: 8081
+  reload: false
+
+cors:
+  allow_origins: ["http://localhost:8081"]
+  allow_credentials: false
+  allow_methods: ["GET", "POST", "PUT", "DELETE"]
+  allow_headers: ["Content-Type", "Authorization"]

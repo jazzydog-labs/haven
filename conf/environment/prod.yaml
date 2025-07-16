@@ -1,0 +1,16 @@
+app:
+  name: haven
+  version: ${oc.env:APP_VERSION}
+  debug: false
+  env: production
+
+server:
+  host: ${oc.env:APP_HOST,0.0.0.0}
+  port: ${oc.env:APP_PORT,8080}
+  reload: false
+
+cors:
+  allow_origins: ${oc.env:CORS_ORIGINS,["https://api.example.com"]}
+  allow_credentials: ${oc.env:CORS_CREDENTIALS,false}
+  allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+  allow_headers: ["Content-Type", "Authorization", "X-Request-ID"]
