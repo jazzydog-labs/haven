@@ -23,12 +23,13 @@ just check        # Full quality gates (lint + type + test)
 ```
 
 ### Development Cycle
-1. Pick a task from roadmap/todo
+1. Pick a task from roadmap/todo or `tasks/open/`
 2. Implement the feature
 3. Run `just check` to verify quality
 4. **Commit immediately** - don't batch changes
 5. **Update work log** - append entry to `work-log.md`
-6. Move to next task
+6. Move task to `tasks/closed/` if complete
+7. Move to next task
 
 Each task should result in at least one atomic commit and work log entry!
 
@@ -67,6 +68,26 @@ alembic/        # Database migrations
 ```
 
 ## Common Tasks
+
+### Create New Task
+```bash
+# Create task file with descriptive name
+touch tasks/open/feature-name.md
+
+# Follow template: Title, Description, Acceptance Criteria, Implementation Notes, Definition of Done
+# See docs/tasks-workflow.md for complete workflow
+```
+
+### Add New Workflow
+```bash
+# Create workflow documentation in docs/
+touch docs/workflow-name.md
+
+# Include: Overview, When to Use, Steps, Examples, Tools/Commands
+# Add to CLAUDE.md Developer Guides section
+# Reference from relevant Common Tasks sections
+# Workflows are reusable processes, not one-time tasks
+```
 
 ### Add New REST Endpoint
 ```python
@@ -146,6 +167,8 @@ See `docs/quality.md` for linting/typing details and `docs/definition-of-done.md
 - `docs/roadmap.md` - Features, tech debt, and long-term planning
 - `todo.md` - Immediate tasks and notes
 - `work-log.md` - Append-only log of completed work
+- `tasks/open/` - Active tasks awaiting implementation
+- `tasks/closed/` - Completed tasks for archival
 
 Currently on commit 0 of 11 planned commits.
 
@@ -180,7 +203,15 @@ just --list
 - **`docs/spec.md`** - Project requirements and success criteria
 - **`docs/overview.md`** - Complete documentation map
 - **`docs/architecture.md`** - Clean Architecture patterns and layer design
+
+### Task & Project Management
 - **`docs/roadmap.md`** - Development timeline and technical debt tracking
+- **`docs/commits-plan.md`** - Detailed implementation phases
+- **`docs/tasks-workflow.md`** - Task lifecycle from creation to completion
+- **`todo.md`** - Immediate tasks and notes
+- **`work-log.md`** - Append-only log of completed work
+- **`tasks/open/`** - Active tasks awaiting implementation
+- **`tasks/closed/`** - Completed tasks for archival
 
 ### Developer Guides  
 - **`docs/local-setup.md`** - Environment setup and prerequisites
@@ -202,10 +233,11 @@ just --list
 
 1. **Starting fresh?** → `docs/local-setup.md` then `docs/spec.md`
 2. **Adding a feature?** → `docs/architecture.md` then relevant API docs
-3. **Database changes?** → `docs/alembic.md`
-4. **Cleaning up code?** → `docs/refactoring.md`
-5. **Before committing?** → `docs/definition-of-done.md`
-6. **Lost or confused?** → `docs/overview.md` for the complete map
+3. **Managing tasks?** → `docs/tasks-workflow.md`
+4. **Database changes?** → `docs/alembic.md`
+5. **Cleaning up code?** → `docs/refactoring.md`
+6. **Before committing?** → `docs/definition-of-done.md`
+7. **Lost or confused?** → `docs/overview.md` for the complete map
 
 **Remember**: Complete task → Run checks → Commit → Update work log → Next task. Never leave work uncommitted!
 
