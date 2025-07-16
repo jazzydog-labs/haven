@@ -6,17 +6,20 @@ This file tracks immediate tasks and notes. For completed work, see `work-log.md
 
 ---
 
-## 🎯 Current Focus: Frontend Development Phase
+## 🎯 Current Focus: Documentation Audit Phase
 
 ### 🚀 WHAT TO WORK ON NEXT (Priority Order)
 
-All previous phases are now complete! Next priorities:
+**CRITICAL PRIORITY**: Documentation is likely out of sync with recent changes.
 
-1. **Frontend Development** (Priority 3):
+1. **Documentation Audit** (Priority 1 - CRITICAL):
+   - [ ] Comprehensive Documentation Audit (`tasks/open/comprehensive-docs-audit.md`)
+
+2. **Frontend Development** (Priority 2):
    - [ ] CRUD Frontend for Records (`tasks/open/crud-frontend-records.md`)
    - [ ] Frontend-Backend Sync Workflow (`tasks/open/frontend-backend-sync-workflow.md`)
 
-2. **Containerization Phase 3** (Enhancements):
+3. **Containerization Phase 3** (Enhancements):
    - [ ] Set up local HTTPS (`tasks/open/local-https-setup.md`)
    - [ ] Create production-like environment (`tasks/open/production-like-local-env.md`)
 
@@ -29,19 +32,25 @@ All previous phases are now complete! Next priorities:
 ### ✅ Completed Phases
 All foundation, containerization, and infrastructure tasks are complete. See work-log.md for detailed documentation of all completed work.
 
-### 🎯 Current Focus: Frontend Development
+### 🎯 Current Focus: Documentation Audit
+
+**CRITICAL**: Documentation may be out of sync with recent modularization changes.
 
 Current next steps:
-1. **CRUD Frontend for Records** - Complete UI for Records management (see `tasks/open/crud-frontend-records.md`)
-2. **Frontend-Backend Sync Workflow** - Automated type generation and API sync (see `tasks/open/frontend-backend-sync-workflow.md`)
+1. **Comprehensive Documentation Audit** - Review all docs for accuracy (see `tasks/open/comprehensive-docs-audit.md`)
+2. **CRUD Frontend for Records** - Complete UI for Records management (see `tasks/open/crud-frontend-records.md`)
+3. **Frontend-Backend Sync Workflow** - Automated type generation and API sync (see `tasks/open/frontend-backend-sync-workflow.md`)
 
 ### Active Tasks in `tasks/open/` (By Priority)
 
-**Frontend Development (Priority 1):**
+**Documentation Audit (Priority 1 - CRITICAL):**
+- `comprehensive-docs-audit.md` - Audit all docs for consistency with current project state
+
+**Frontend Development (Priority 2):**
 - `crud-frontend-records.md` - Complete CRUD UI for Records management
 - `frontend-backend-sync-workflow.md` - Automated type generation from backend
 
-**Optional Enhancements (Priority 2):**
+**Optional Enhancements (Priority 3):**
 - `local-https-setup.md` - HTTPS development environment
 - `production-like-local-env.md` - Full production-like setup with reverse proxy
 

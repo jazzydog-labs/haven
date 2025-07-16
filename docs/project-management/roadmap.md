@@ -17,6 +17,10 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 
 ### Current Sprint Focus
 
+**Documentation Audit (Critical Priority)**
+- [ ] **Comprehensive Documentation Audit** - Review all docs for accuracy and consistency
+- [ ] **Workflow Documentation** - Create systematic process for maintaining doc consistency
+
 **Frontend Development (Next Priority)**
 - [ ] **CRUD Frontend for Records** - Complete UI for Records entity with all operations
 - [ ] **Frontend-Backend Sync** - Automated type generation and API client from backend
