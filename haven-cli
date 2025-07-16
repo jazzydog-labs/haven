@@ -1,0 +1,5 @@
+#!/bin/bash
+# Haven CLI wrapper script
+
+# Change to the API directory and run the CLI module
+cd "$(dirname "$0")/apps/api" && .venv/bin/python -m haven.cli "$@"

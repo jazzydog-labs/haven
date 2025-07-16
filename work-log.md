@@ -245,4 +245,25 @@ The project has successfully evolved from initial concept to a production-ready,
 - Added comprehensive CLI documentation with examples
 - Updated project overview with CLI tool integration
 
+## 2025-07-16.0004 - Integrated CLI with diff2html for professional HTML output
+**Added**: Enhanced Haven CLI to generate professional HTML diff files using diff2html
+**See**: CLI generates HTML files in `diff-output/` with interactive index at `index.html`
+**Test**: `just cli-list-commits` and `just cli-generate --verbose` for full CLI workflow
+**Demo**: Run `just cli-generate` then open `diff-output/index.html` in browser for rich diff viewing
+
+**Key enhancements:**
+- CLI now uses diff2html like the API server for consistent HTML output
+- Generated files include side-by-side diffs with syntax highlighting
+- Interactive HTML index with commit statistics and responsive design
+- Automatic diff2html installation via npm if not available
+- Added Just commands: `cli-list-commits`, `cli-generate`, `cli-generate-to`
+- Updated all documentation to reflect new HTML output capabilities
+- Fixed type checking issues and maintained backward compatibility
+
+**Integration details:**
+- Shared sanitization and diff generation logic with API server
+- Same HTML template structure for consistent user experience
+- Async operations for better performance with large repositories
+- Comprehensive error handling with clear user feedback
+
 *This log captures the journey from empty repository to production-ready application with full CI/CD readiness.*
