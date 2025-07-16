@@ -15,8 +15,6 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 # Import models and settings
-from hydra import initialize_config_dir, compose
-from hydra.core.global_hydra import GlobalHydra
 from src.haven.infrastructure.database.models import Base
 
 # this is the Alembic Config object, which provides

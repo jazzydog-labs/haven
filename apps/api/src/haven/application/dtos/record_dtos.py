@@ -1,7 +1,7 @@
 """DTOs for Record operations."""
 
 from datetime import datetime
-from typing import Any
+from typing import Any, ClassVar
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -15,7 +15,7 @@ class RecordCreateDTO(BaseModel):
     class Config:
         """Pydantic configuration."""
 
-        json_schema_extra = {
+        json_schema_extra: ClassVar[dict[str, Any]] = {
             "example": {
                 "data": {
                     "name": "Example Record",
@@ -34,7 +34,7 @@ class RecordUpdateDTO(BaseModel):
     class Config:
         """Pydantic configuration."""
 
-        json_schema_extra = {
+        json_schema_extra: ClassVar[dict[str, Any]] = {
             "example": {
                 "data": {
                     "name": "Updated Record",
@@ -56,7 +56,7 @@ class RecordResponseDTO(BaseModel):
     class Config:
         """Pydantic configuration."""
 
-        json_schema_extra = {
+        json_schema_extra: ClassVar[dict[str, Any]] = {
             "example": {
                 "id": "550e8400-e29b-41d4-a716-446655440000",
                 "data": {
@@ -80,7 +80,7 @@ class RecordListResponseDTO(BaseModel):
     class Config:
         """Pydantic configuration."""
 
-        json_schema_extra = {
+        json_schema_extra: ClassVar[dict[str, Any]] = {
             "example": {
                 "items": [
                     {

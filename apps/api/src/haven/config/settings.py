@@ -126,8 +126,11 @@ def get_settings() -> AppSettings:
 
     # Initialize Hydra with config directory
     import os
+
     # From src/haven/config/settings.py -> apps/api/conf
-    config_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "conf")
+    config_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "conf"
+    )
     initialize_config_dir(config_dir=config_dir, version_base="1.3")
 
     # Compose configuration

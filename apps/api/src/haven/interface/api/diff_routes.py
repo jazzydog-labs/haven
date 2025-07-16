@@ -186,11 +186,8 @@ async def generate_index_html(
         branch_display = branch
 
     # Calculate stats
-    unique_authors = len(set(c.author for c in commits))
-    if commits:
-        date_range = f"{commits[0].date} - {commits[-1].date}"
-    else:
-        date_range = "No commits"
+    unique_authors = len({c.author for c in commits})
+    date_range = f"{commits[0].date} - {commits[-1].date}" if commits else "No commits"
 
     # Generate JavaScript array
     commit_data_lines = []

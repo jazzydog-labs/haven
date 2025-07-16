@@ -32,9 +32,11 @@ class DatabaseFactory:
         """
         self._ensure_initialized()
         assert self._session_factory is not None
-        async with self._session_factory() as session:
-            async with SQLAlchemyUnitOfWork(session) as uow:
-                yield uow
+        async with (
+            self._session_factory() as session,
+            SQLAlchemyUnitOfWork(session) as uow,
+        ):
+            yield uow
 
     async def dispose(self) -> None:
         """Dispose of database connections."""

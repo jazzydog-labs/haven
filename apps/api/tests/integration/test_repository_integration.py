@@ -42,7 +42,7 @@ class TestRepositoryIntegration:
 
         # Update record
         sample_record.update_data({"updated": "data"})
-        updated = await repository.save(sample_record)
+        await repository.save(sample_record)
         await test_session.commit()
 
         # Verify update

@@ -260,32 +260,7 @@ demo-commits:
     @echo "🔍 Starting commit diff viewer in browser"
     @echo "This will start the server and open all commits with diffs in your browser"
     @echo ""
-    #!/bin/bash
-    set -e
-    # Start server in background if not running
-    if ! curl -s http://localhost:8080/health > /dev/null 2>&1; then
-        echo "🚀 Starting server in background..."
-        just run &
-        SERVER_PID=$!
-        echo "⏳ Waiting for server to be ready..."
-        sleep 5
-        # Wait for server to be ready
-        for i in {1..30}; do
-            if curl -s http://localhost:8080/health > /dev/null 2>&1; then
-                echo "✅ Server is ready!"
-                break
-            fi
-            sleep 1
-        done
-    fi
-    # Run the demo
-    cd {{ api_dir }} && {{ python }} scripts/demo-diff-generation.py
-    # Keep server running for viewing
-    echo "🌐 Server running at http://localhost:8080"
-    echo "Press Ctrl+C to stop the server"
-    if [ ! -z "$SERVER_PID" ]; then
-        wait $SERVER_PID
-    fi
+    bash -c 'set -e; if ! curl -s http://localhost:8080/health > /dev/null 2>&1; then echo "🚀 Starting server in background..."; just run & SERVER_PID=$$!; echo "⏳ Waiting for server to be ready..."; sleep 5; for i in {1..30}; do if curl -s http://localhost:8080/health > /dev/null 2>&1; then echo "✅ Server is ready!"; break; fi; sleep 1; done; fi; cd {{ api_dir }} && {{ python }} scripts/demo-diff-generation.py; echo "🌐 Server running at http://localhost:8080"; echo "Press Ctrl+C to stop the server"; if [ ! -z "$$SERVER_PID" ]; then wait $$SERVER_PID; fi'
 
 # Demo: Diff Generation API (legacy - requires manual server start)
 demo-diff-generation:

@@ -1,7 +1,7 @@
 """SQLAlchemy models for database persistence."""
 
 from datetime import datetime
-from typing import Any
+from typing import Any, ClassVar
 from uuid import UUID
 
 from sqlalchemy import JSON, DateTime, func
@@ -12,7 +12,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 class Base(DeclarativeBase):
     """Base class for all database models."""
 
-    type_annotation_map = {
+    type_annotation_map: ClassVar[dict[type, Any]] = {
         UUID: PostgresUUID(as_uuid=True),
         dict[str, Any]: JSON,
     }
