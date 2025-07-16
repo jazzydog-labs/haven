@@ -74,7 +74,7 @@ class UserModel(Base):
 Create Alembic migration for users table:
 
 ```bash
-just db-make "create_users_table"
+just database::make "create_users_table"
 ```
 
 ## Tests

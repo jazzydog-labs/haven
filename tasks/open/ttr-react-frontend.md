@@ -59,7 +59,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:8080/graphql',
+  uri: 'http://api.haven.local/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -915,11 +915,11 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/graphql': {
-        target: 'http://localhost:8080',
+        target: 'http://api.haven.local',
         changeOrigin: true,
       },
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://api.haven.local',
         changeOrigin: true,
       },
     },

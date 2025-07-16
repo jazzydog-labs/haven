@@ -17,9 +17,9 @@ The API is pre-configured with CORS support for common development scenarios.
 ### Allowed Origins
 
 The local environment allows these origins by default:
-- `http://localhost:3000` - React development server
+- `http://web.haven.local` - React development server
 - `http://localhost:5173` - Vite development server
-- `http://localhost:8080` - API documentation
+- `http://api.haven.local` - API documentation
 - `http://app.haven.local:3000` - Custom domain for app
 - `http://api.haven.local:8080` - Custom domain for API
 
@@ -30,7 +30,7 @@ Edit `apps/api/conf/environment/local.yaml`:
 ```yaml
 cors:
   allow_origins: 
-    - "http://localhost:3000"
+    - "http://web.haven.local"
     - "http://your-custom-origin.com"
   allow_credentials: true
   allow_methods: ["*"]
@@ -39,7 +39,7 @@ cors:
 
 Or use environment variables:
 ```bash
-export HAVEN_CORS__ALLOW_ORIGINS='["http://localhost:3000","http://localhost:5173"]'
+export HAVEN_CORS__ALLOW_ORIGINS='["http://web.haven.local","http://localhost:5173"]'
 ```
 
 ## Option 2: Custom Local Domains

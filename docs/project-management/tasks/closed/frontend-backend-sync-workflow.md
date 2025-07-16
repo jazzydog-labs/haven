@@ -15,7 +15,7 @@ Establish a recurring workflow to keep the React frontend in sync with backend A
 ### 1. TypeScript Type Generation
 ```bash
 # Generate types from OpenAPI spec
-npx openapi-typescript http://localhost:8080/openapi.json \
+npx openapi-typescript http://api.haven.local/openapi.json \
   --output apps/web/src/types/api-generated.ts
 
 # Or from Python models using datamodel-code-generator
@@ -28,7 +28,7 @@ datamodel-codegen --input apps/api/src/haven/domain/entities \
 ```bash
 # Generate API client from OpenAPI
 npx openapi-generator-cli generate \
-  -i http://localhost:8080/openapi.json \
+  -i http://api.haven.local/openapi.json \
   -g typescript-fetch \
   -o apps/web/src/services/api/generated
 ```
@@ -41,20 +41,20 @@ npx openapi-generator-cli generate \
 echo "🔄 Syncing frontend with backend API..."
 
 # 1. Ensure backend is running
-if ! curl -s http://localhost:8080/health > /dev/null; then
+if ! curl -s http://api.haven.local/health > /dev/null; then
   echo "❌ Backend not running. Start with: just run-api"
   exit 1
 fi
 
 # 2. Generate TypeScript types
 echo "📝 Generating TypeScript types..."
-npx openapi-typescript http://localhost:8080/openapi.json \
+npx openapi-typescript http://api.haven.local/openapi.json \
   --output apps/web/src/types/api-generated.ts
 
 # 3. Generate API client
 echo "🔧 Generating API client..."
 npx openapi-generator-cli generate \
-  -i http://localhost:8080/openapi.json \
+  -i http://api.haven.local/openapi.json \
   -g typescript-fetch \
   -o apps/web/src/services/api/generated \
   --additional-properties=supportsES6=true,npmVersion=10.0.0
@@ -106,7 +106,7 @@ sync-types:
 
 # Check for API breaking changes
 check-api-compat:
-    oasdiff diff http://localhost:8080/openapi.json \
+    oasdiff diff http://api.haven.local/openapi.json \
       <(git show main:apps/api/openapi.json) \
       --fail-on breaking
 

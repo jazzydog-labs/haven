@@ -114,7 +114,7 @@ db_connections = Gauge(
 
 ```bash
 # Access metrics
-curl http://localhost:8080/metrics
+curl http://api.haven.local/metrics
 ```
 
 ### Key Metrics to Monitor
@@ -317,7 +317,7 @@ Enable debug logging temporarily:
 export LOG_LEVEL=DEBUG
 
 # Or via API (if implemented)
-curl -X POST http://localhost:8080/admin/debug \
+curl -X POST http://api.haven.local/admin/debug \
   -H "Authorization: Bearer $ADMIN_TOKEN" \
   -d '{"enabled": true, "duration": 300}'
 ```

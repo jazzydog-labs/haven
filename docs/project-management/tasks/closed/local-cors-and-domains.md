@@ -18,7 +18,7 @@ Set up local development environment to avoid CORS issues and simulate productio
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
+        "http://web.haven.local",
         "http://localhost:5173",  # Vite default
         "http://app.haven.local:3000",
         "https://app.haven.local:3000",

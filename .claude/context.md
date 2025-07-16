@@ -50,6 +50,6 @@
 ### Notes for Resume
 - All permissions should be set to allow everything without prompting
 - Run `just bootstrap` to create virtual environment when ready
-- Run `just db-up` to start PostgreSQL
+- Run `just database::up` to start PostgreSQL
 - Current working directory: /Users/paul/dev/jazzydog-labs/haven
 - All documentation is in place and cross-referenced

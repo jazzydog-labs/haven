@@ -18,7 +18,7 @@ Run the sync workflow when you:
 
 ```bash
 # Ensure backend is running
-just run-docker-d
+just docker::up-d
 
 # Run the sync
 just sync-types
@@ -91,7 +91,7 @@ Add to GitHub Actions:
 ```yaml
 - name: Check API Compatibility
   run: |
-    just run-docker-d
+    just docker::up-d
     just sync-types
     git diff --exit-code apps/web/src/types/
 ```
@@ -112,7 +112,7 @@ If sync fails with "Backend not running":
 
 ```bash
 # Start the backend
-just run-docker-d
+just docker::up-d
 
 # Wait for it to be healthy
 sleep 10
@@ -137,7 +137,7 @@ To generate a full API client:
 
 ```bash
 npx @hey-api/openapi-ts \
-  -i http://localhost:8080/openapi.json \
+  -i http://api.haven.local/openapi.json \
   -o apps/web/src/services/api/generated \
   -c fetch
 ```

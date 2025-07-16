@@ -18,13 +18,13 @@ docker compose exec api bash   # Shell into API container
 docker compose restart api     # Restart API service
 
 # Haven-Specific (via Justfile)
-just run-docker               # Start all services
-just stop-docker              # Stop all services
-just reset-docker             # Full reset (removes data)
-just shell-docker             # Shell into API container
-just db-console-docker        # PostgreSQL console
-just test-docker              # Run tests in container
-just lint-docker              # Run linting in container
+just docker::up               # Start all services
+just docker::down              # Stop all services
+just docker::reset             # Full reset (removes data)
+just docker::shell             # Shell into API container
+just database::console-docker        # PostgreSQL console
+just docker::test              # Run tests in container
+just docker::lint              # Run linting in container
 
 # Debugging
 docker compose exec api env                    # Check environment
@@ -83,10 +83,10 @@ LOG_LEVEL=debug
 
 ## URLs & Endpoints
 
-- API: http://localhost:8080
-- Health: http://localhost:8080/health
-- Swagger: http://localhost:8080/docs
-- GraphQL: http://localhost:8080/graphql
+- API: http://api.haven.local
+- Health: http://api.haven.local/health
+- Swagger: http://api.haven.local/docs
+- GraphQL: http://api.haven.local/graphql
 - PostgreSQL: localhost:5432
 
 ## Quick Diagnostics
@@ -118,8 +118,8 @@ rm -rf ./.tmp ./apps/api/logs
 
 # Fresh start
 just bootstrap
-just db-up
-just run-docker
+just database::up
+just docker::up
 ```
 
 ---

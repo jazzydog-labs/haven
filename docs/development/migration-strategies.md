@@ -6,7 +6,7 @@ This guide explains the different approaches for running Alembic migrations in t
 
 ### 1. Host-based Migration (Original)
 ```bash
-just db-migrate
+just database::migrate
 ```
 
 **When to use:**
@@ -25,7 +25,7 @@ just db-migrate
 
 ### 2. Exec into Running Container
 ```bash
-just db-migrate-docker
+just database::migrate-docker
 ```
 
 **When to use:**
@@ -44,7 +44,7 @@ just db-migrate-docker
 
 ### 3. One-shot Container
 ```bash
-just db-migrate-run
+just database::migrate-run
 ```
 
 **When to use:**
@@ -63,7 +63,7 @@ just db-migrate-run
 
 ### 4. Dedicated Migration Service
 ```bash
-just db-migrate-service
+just database::migrate-service
 # or
 docker compose --profile migration up migrate
 ```
@@ -95,7 +95,7 @@ docker compose --profile migration up migrate
 - Example GitHub Actions workflow:
 ```yaml
 - name: Run migrations
-  run: just db-migrate-run
+  run: just database::migrate-run
 ```
 
 ### Production
@@ -109,10 +109,10 @@ New migrations should always be created from the host or exec method:
 
 ```bash
 # From host (recommended)
-just db-make "add_user_table"
+just database::make "add_user_table"
 
 # From running container
-just db-make-docker "add_user_table"
+just database::make-docker "add_user_table"
 ```
 
 ## Additional Migration Commands
@@ -121,10 +121,10 @@ All migration commands have Docker equivalents:
 
 | Host Command | Docker Command | Description |
 |--------------|----------------|-------------|
-| `just db-history` | `just db-history-docker` | Show migration history |
-| `just db-current` | `just db-current-docker` | Show current migration |
-| `just db-downgrade` | `just db-downgrade-docker` | Rollback migrations |
-| `just db-reset` | `just db-reset-docker` | Reset database completely |
+| `just database::history` | `just database::history-docker` | Show migration history |
+| `just database::current` | `just database::current-docker` | Show current migration |
+| `just database::downgrade` | `just database::downgrade-docker` | Rollback migrations |
+| `just database::reset` | `just database::reset-docker` | Reset database completely |
 
 ## Troubleshooting
 

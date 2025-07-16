@@ -14,7 +14,7 @@ Create multiple options for running Alembic migrations in a containerized enviro
 
 ### Method 1: Host-based (Current)
 ```bash
-just db-migrate  # Runs from local Python environment
+just database::migrate  # Runs from local Python environment
 ```
 
 ### Method 2: API Container

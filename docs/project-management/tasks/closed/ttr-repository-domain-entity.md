@@ -112,7 +112,7 @@ class RepositoryService:
 
 ## Migration
 ```bash
-just db-make "create_repositories_table"
+just database::make "create_repositories_table"
 ```
 
 ## Tests

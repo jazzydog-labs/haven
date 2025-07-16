@@ -192,16 +192,16 @@ __all__ = [
 ### Step 1: Create Migration Files
 ```bash
 # Create users table
-just db-make "create_users_table"
+just database::make "create_users_table"
 
 # Create repositories table
-just db-make "create_repositories_table"
+just database::make "create_repositories_table"
 
 # Create commits and commit_reviews tables
-just db-make "create_commits_and_reviews_tables"
+just database::make "create_commits_and_reviews_tables"
 
 # Create comments table
-just db-make "create_comments_table"
+just database::make "create_comments_table"
 ```
 
 ### Step 2: Migration Content Examples

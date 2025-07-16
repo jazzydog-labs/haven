@@ -28,19 +28,19 @@ cd haven
 just bootstrap
 
 # Start PostgreSQL
-just db-up
+just database::up
 
 # Run database migrations
-just db-migrate
+just database::migrate
 
 # Start the application
 just run
 ```
 
 The application will be available at:
-- REST API: http://localhost:8080/docs
-- GraphQL: http://localhost:8080/graphql
-- Health: http://localhost:8080/health
+- REST API: http://api.haven.local/docs
+- GraphQL: http://api.haven.local/graphql
+- Health: http://api.haven.local/health
 
 ## Project Structure
 
@@ -86,7 +86,7 @@ just test
 just test-file tests/unit/domain/test_record.py
 
 # Run with coverage report
-just test-cov
+just testing::coverage
 ```
 
 ### Code Quality
@@ -108,12 +108,12 @@ just type
 
 ```bash
 # Create a record
-curl -X POST http://localhost:8080/api/v1/records \
+curl -X POST http://api.haven.local/api/v1/records \
   -H "Content-Type: application/json" \
   -d '{"data": {"name": "Example", "value": 42}}'
 
 # Get all records
-curl http://localhost:8080/api/v1/records
+curl http://api.haven.local/api/v1/records
 ```
 
 ### GraphQL API

@@ -15,14 +15,14 @@ Audit all entries in `work-log.md` and ensure each has an associated `just demo-
 - Demo commands should follow naming pattern: `just demo-<feature-name>`
 - Each demo should be self-contained and show the feature working
 - Demo commands should include clear output/feedback to show success
-- Consider creating a master `just demo-all` command that runs all demos
+- Consider creating a master `just demos::all` command that runs all demos
 - Some demos may need test data or specific setup steps
 
 ## Examples of Demo Commands Needed
 - `just demo-diffs` - Show diff generation functionality
-- `just demo-graphql` - Demonstrate GraphQL queries
-- `just demo-api` - Show REST API endpoints
-- `just demo-health` - Test health check endpoints
+- `just demos::graphql` - Demonstrate GraphQL queries
+- `just demos::api` - Show REST API endpoints
+- `just demos::health` - Test health check endpoints
 
 ## Definition of Done
 - [ ] All worklog entries have associated demo commands

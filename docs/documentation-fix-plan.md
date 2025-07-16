@@ -26,28 +26,28 @@ All Just commands need updating to new module syntax:
 
 **Common replacements:**
 ```
-just db-up           → just database::up
-just db-migrate      → just database::migrate
-just db-console      → just database::console
-just db-make         → just database::make
-just db-reset        → just database::reset
+just database::up           → just database::up
+just database::migrate      → just database::migrate
+just database::console      → just database::console
+just database::make         → just database::make
+just database::reset        → just database::reset
 
-just run-docker      → just docker::up
-just run-docker-d    → just docker::up-d
-just stop-docker     → just docker::down
-just logs-docker     → just docker::logs
-just ps-docker       → just docker::ps
-just shell-docker    → just docker::shell
-just rebuild-docker  → just docker::rebuild
-just reset-docker    → just docker::reset
+just docker::up      → just docker::up
+just docker::up-d    → just docker::up-d
+just docker::down     → just docker::down
+just docker::logs     → just docker::logs
+just docker::ps       → just docker::ps
+just docker::shell    → just docker::shell
+just docker::rebuild  → just docker::rebuild
+just docker::reset    → just docker::reset
 
-just test-python     → just testing::python
-just test-web        → just testing::web
-just test-fast       → just testing::fast
-just test-docker     → just docker::test
+just testing::python     → just testing::python
+just testing::web        → just testing::web
+just testing::fast       → just testing::fast
+just docker::test     → just docker::test
 
-just lint-docker     → just docker::lint
-just check-docker    → just docker::type-check
+just docker::lint     → just docker::lint
+just docker::type-check    → just docker::type-check
 ```
 
 ## Priority 2: User Experience
@@ -56,11 +56,11 @@ just check-docker    → just docker::type-check
 Replace all localhost references with domain names:
 
 ```
-http://localhost:3000      → http://web.haven.local
-http://localhost:8080      → http://api.haven.local
-http://localhost:8080/docs  → http://api.haven.local/docs
-http://localhost:8080/graphql → http://api.haven.local/graphql
-http://localhost:8001      → http://docs.haven.local
+http://web.haven.local      → http://web.haven.local
+http://api.haven.local      → http://api.haven.local
+http://api.haven.local/docs  → http://api.haven.local/docs
+http://api.haven.local/graphql → http://api.haven.local/graphql
+http://docs.haven.local      → http://docs.haven.local
 ```
 
 ### Fix Broken Internal Links
@@ -96,31 +96,31 @@ cp CLAUDE.md CLAUDE.md.backup
 cp README.md README.md.backup
 
 # Update Just commands
-find . -name "*.md" -exec sed -i.bak 's/just db-up/just database::up/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just db-migrate/just database::migrate/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just db-console/just database::console/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just db-make/just database::make/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just db-reset/just database::reset/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just database::up/just database::up/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just database::migrate/just database::migrate/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just database::console/just database::console/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just database::make/just database::make/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just database::reset/just database::reset/g' {} \;
 
-find . -name "*.md" -exec sed -i.bak 's/just run-docker-d/just docker::up-d/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just run-docker/just docker::up/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just stop-docker/just docker::down/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just logs-docker/just docker::logs/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just ps-docker/just docker::ps/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just shell-docker/just docker::shell/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just rebuild-docker/just docker::rebuild/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just reset-docker/just docker::reset/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::up-d/just docker::up-d/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::up/just docker::up/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::down/just docker::down/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::logs/just docker::logs/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::ps/just docker::ps/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::shell/just docker::shell/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::rebuild/just docker::rebuild/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::reset/just docker::reset/g' {} \;
 
-find . -name "*.md" -exec sed -i.bak 's/just test-python/just testing::python/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just test-web/just testing::web/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just test-fast/just testing::fast/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just test-docker/just docker::test/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just testing::python/just testing::python/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just testing::web/just testing::web/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just testing::fast/just testing::fast/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::test/just docker::test/g' {} \;
 
-find . -name "*.md" -exec sed -i.bak 's/just lint-docker/just docker::lint/g' {} \;
-find . -name "*.md" -exec sed -i.bak 's/just check-docker/just docker::type-check/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::lint/just docker::lint/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just docker::type-check/just docker::type-check/g' {} \;
 
 # Fix special cases
-find . -name "*.md" -exec sed -i.bak 's/just add-entity/just api::add-entity/g' {} \;
+find . -name "*.md" -exec sed -i.bak 's/just api::add-entity/just api::add-entity/g' {} \;
 
 # Clean up backup files
 find . -name "*.bak" -delete
@@ -130,9 +130,9 @@ find . -name "*.bak" -delete
 
 ```bash
 # Update localhost URLs
-find . -name "*.md" -exec sed -i.bak 's|http://localhost:3000|http://web.haven.local|g' {} \;
-find . -name "*.md" -exec sed -i.bak 's|http://localhost:8080|http://api.haven.local|g' {} \;
-find . -name "*.md" -exec sed -i.bak 's|localhost:8001|docs.haven.local|g' {} \;
+find . -name "*.md" -exec sed -i.bak 's|http://web.haven.local|http://web.haven.local|g' {} \;
+find . -name "*.md" -exec sed -i.bak 's|http://api.haven.local|http://api.haven.local|g' {} \;
+find . -name "*.md" -exec sed -i.bak 's|docs.haven.local|docs.haven.local|g' {} \;
 
 # Clean up
 find . -name "*.bak" -delete

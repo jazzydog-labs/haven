@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-The development server will start at http://localhost:3000 with API proxy to http://localhost:8080.
+The development server will start at http://web.haven.local with API proxy to http://api.haven.local.
 
 ## Available Scripts
 
@@ -58,8 +58,8 @@ apps/web/
 ### API Integration
 
 The development server proxies API requests to the Haven API server:
-- `/api/*` → `http://localhost:8080/api/*`
-- `/graphql` → `http://localhost:8080/graphql`
+- `/api/*` → `http://api.haven.local/api/*`
+- `/graphql` → `http://api.haven.local/graphql`
 
 Make sure the API server is running on port 8080 before starting the web client.
 

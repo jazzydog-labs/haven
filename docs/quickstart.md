@@ -26,10 +26,10 @@ cd haven
     just bootstrap
     
     # Start PostgreSQL
-    just db-up
+    just database::up
     
     # Run database migrations
-    just db-migrate
+    just database::migrate
     
     # Start the application
     just run
@@ -57,22 +57,22 @@ cd haven
 
 ### 3. Verify Installation
 
-The application should now be running at `http://localhost:8080`
+The application should now be running at `http://api.haven.local`
 
 Check the health endpoint:
 ```bash
-curl http://localhost:8080/health
+curl http://api.haven.local/health
 ```
 
 ## Explore the APIs
 
 ### REST API (Swagger UI)
 
-Open [http://localhost:8080/docs](http://localhost:8080/docs) in your browser to explore the REST API using Swagger UI.
+Open [http://api.haven.local/docs](http://api.haven.local/docs) in your browser to explore the REST API using Swagger UI.
 
 ### GraphQL (GraphiQL)
 
-Open [http://localhost:8080/graphql](http://localhost:8080/graphql) to interact with the GraphQL API using GraphiQL.
+Open [http://api.haven.local/graphql](http://api.haven.local/graphql) to interact with the GraphQL API using GraphiQL.
 
 ## Create Your First Record
 
@@ -80,7 +80,7 @@ Open [http://localhost:8080/graphql](http://localhost:8080/graphql) to interact 
 
 ```bash
 # Create a record
-curl -X POST http://localhost:8080/api/v1/records \
+curl -X POST http://api.haven.local/api/v1/records \
   -H "Content-Type: application/json" \
   -d '{"data": {"name": "My First Record", "value": 42}}'
 
@@ -117,7 +117,7 @@ mutation CreateRecord {
 
 **REST:**
 ```bash
-curl http://localhost:8080/api/v1/records
+curl http://api.haven.local/api/v1/records
 ```
 
 **GraphQL:**
@@ -138,7 +138,7 @@ query ListRecords {
 
 **REST:**
 ```bash
-curl -X PUT http://localhost:8080/api/v1/records/{id} \
+curl -X PUT http://api.haven.local/api/v1/records/{id} \
   -H "Content-Type: application/json" \
   -d '{"data": {"name": "Updated Record", "value": 100}}'
 ```

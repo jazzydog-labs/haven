@@ -49,9 +49,9 @@
 - **Line 371**: Invalid Path - `/docs/project-management/`
 - **Line 37**: Invalid Command - `just database::up     # Start PostgreSQL`
 - **Line 37**: Invalid Command - `just testing::fast    # Run unit tests only (quick feedback)`
-- **Line 62**: Invalid Command - `just add-entity User`
+- **Line 62**: Invalid Command - `just api::add-entity User`
 - **Line 62**: Invalid Command - `just database::make "add_users_table" && just database::migrate`
-- **Line 142**: Invalid Command - `just db-make "add_status_to_items"`
+- **Line 142**: Invalid Command - `just database::make "add_status_to_items"`
 - **Line 149**: Invalid Command - `just database::console`
 - **Line 149**: Invalid Command - `just shell`
 - **Line 202**: Invalid Command - `just docker::up-d      # Start all services in background`
@@ -106,16 +106,16 @@
 - **Line 71**: Invalid Command - `just docs-serve  # Preview documentation locally`
 - **Line 71**: Invalid Command - `just docker-build # Build Docker image`
 - **Line 81**: Invalid Command - `just test-file tests/unit/domain/test_record.py`
-- **Line 81**: Invalid Command - `just test-cov`
+- **Line 81**: Invalid Command - `just testing::coverage`
 - **Line 147**: Broken Link - [Architecture Overview](docs/architecture.md)
 - **Line 148**: Broken Link - [Local Setup Guide](docs/local-setup.md)
 - **Line 150**: Broken Link - [Testing Guide](docs/testing.md)
 - **Line 151**: Broken Link - [Deployment Guide](docs/deployment.md)
-- **Line 41**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 42**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 43**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 111**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 116**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 41**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 42**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 43**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 111**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 116**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### apps/api/README.md
 
@@ -128,21 +128,21 @@
 - **Line 62**: Invalid Path - `application/json`
 - **Line 48**: Invalid Command - `just type-python      # Type checking`
 - **Line 48**: Invalid Command - `just format-python    # Format code`
-- **Line 25**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 26**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 27**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 61**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 66**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 25**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 26**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 27**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 61**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 66**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### apps/web/README.md
 
 - **Line 25**: Invalid Path - `//localhost`
 - **Line 61**: Invalid Path - `8080/api/`
 - **Line 62**: Invalid Path - `8080/graphql`
-- **Line 25**: Localhost Url - `http://localhost:3000` → `http://web.haven.local`
-- **Line 25**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 61**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 62**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 25**: Localhost Url - `http://web.haven.local` → `http://web.haven.local`
+- **Line 25**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 61**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 62**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/api/diff-generation.md
 
@@ -154,7 +154,7 @@
 - **Line 64**: Invalid Path - `/api/v1/diffs/status/`
 - **Line 79**: Invalid Path - `/api/v1/diffs/`
 - **Line 17**: Invalid Command - `just demo-diff-generation`
-- **Line 29**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 29**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/api/graphql.md
 
@@ -173,9 +173,9 @@
 - **Line 95**: Invalid Path - `queries/hour`
 - **Line 112**: Invalid Path - `/api/v1/`
 - **Line 112**: Invalid Path - `/api/v2/`
-- **Line 19**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 24**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 41**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 19**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 24**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 41**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/api/openapi.md
 
@@ -194,17 +194,17 @@
 - **Line 149**: Invalid Path - `stoplight/spectral-cli`
 - **Line 158**: Invalid Path - `//fastapi.tiangolo.com/`
 - **Line 159**: Invalid Path - `//swagger.io/specification/`
-- **Line 8**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 8**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 11**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 11**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 15**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 40**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 46**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 55**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 62**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 137**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 140**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 8**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 8**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 11**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 11**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 15**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 40**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 46**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 55**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 62**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 137**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 140**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/api/rest.md
 
@@ -221,11 +221,11 @@
 - **Line 308**: Invalid Path - `8080/api/v1/records`
 - **Line 313**: Invalid Path - `8080/api/v1/records/550e8400-e29b-41d4-a716-446655440000`
 - **Line 342**: Invalid Command - `just docs`
-- **Line 12**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 308**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 313**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 320**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 332**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 12**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 308**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 313**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 320**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 332**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/architecture/architecture.md
 
@@ -266,7 +266,7 @@
 - **Line 53**: Invalid Path - `//github.com/your-username/haven.git`
 - **Line 57**: Invalid Path - `//github.com/jazzydog-labs/haven.git`
 - **Line 79**: Invalid Path - `feature/your-feature-name`
-- **Line 93**: Invalid Command - `just test-cov`
+- **Line 93**: Invalid Command - `just testing::coverage`
 - **Line 26**: Broken Link - [roadmap](roadmap.md)
 
 ### docs/development/alembic.md
@@ -281,12 +281,12 @@
 - **Line 195**: Invalid Path - `CI/CD`
 - **Line 234**: Invalid Path - `//alembic.sqlalchemy.org/en/latest/branches.html`
 - **Line 234**: Invalid Path - `//alembic.sqlalchemy.org/en/latest/cookbook.html`
-- **Line 45**: Invalid Command - `just db-make "add tag column to record"`
-- **Line 164**: Invalid Command - `just db-downgrade 1`
-- **Line 58**: Invalid Command - `just db-make "<message>"`
-- **Line 71**: Invalid Command - `just db-make`
-- **Line 152**: Invalid Command - `just db-migrate-prod`
-- **Line 191**: Invalid Command - `just db-migrate-offline`
+- **Line 45**: Invalid Command - `just database::make "add tag column to record"`
+- **Line 164**: Invalid Command - `just database::downgrade 1`
+- **Line 58**: Invalid Command - `just database::make "<message>"`
+- **Line 71**: Invalid Command - `just database::make`
+- **Line 152**: Invalid Command - `just database::migrate-prod`
+- **Line 191**: Invalid Command - `just database::migrate-offline`
 
 ### docs/development/configuration.md
 
@@ -325,11 +325,11 @@
 - **Line 161**: Invalid Path - `/operations/production-setup.md`
 - **Line 160**: Broken Link - [Local HTTPS Setup](local-https-setup.md)
 - **Line 161**: Broken Link - [Production Environment](../operations/production-setup.md)
-- **Line 20**: Localhost Url - `http://localhost:3000` → `http://web.haven.local`
+- **Line 20**: Localhost Url - `http://web.haven.local` → `http://web.haven.local`
 - **Line 21**: Localhost Url - `http://localhost:5173` → `http://haven.local:5173`
-- **Line 22**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 33**: Localhost Url - `http://localhost:3000` → `http://web.haven.local`
-- **Line 42**: Localhost Url - `http://localhost:3000` → `http://web.haven.local`
+- **Line 22**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 33**: Localhost Url - `http://web.haven.local` → `http://web.haven.local`
+- **Line 42**: Localhost Url - `http://web.haven.local` → `http://web.haven.local`
 - **Line 42**: Localhost Url - `http://localhost:5173` → `http://haven.local:5173`
 
 ### docs/development/definition-of-done.md
@@ -344,21 +344,21 @@
 
 - **Line 115**: Invalid Path - `justfile.demos`
 - **Line 147**: Invalid Path - `/operations/container-troubleshooting.md`
-- **Line 81**: Invalid Command - `just demo-health`
-- **Line 81**: Invalid Command - `just demo-api`
-- **Line 93**: Invalid Command - `just demo-all`
-- **Line 102**: Invalid Command - `just demo-docker`
-- **Line 102**: Invalid Command - `just demo-graphql`
-- **Line 102**: Invalid Command - `just demo-migrations`
+- **Line 81**: Invalid Command - `just demos::health`
+- **Line 81**: Invalid Command - `just demos::api`
+- **Line 93**: Invalid Command - `just demos::all`
+- **Line 102**: Invalid Command - `just demos::docker`
+- **Line 102**: Invalid Command - `just demos::graphql`
+- **Line 102**: Invalid Command - `just demos::migrations`
 - **Line 7**: Invalid Command - `just demo-<feature>`
-- **Line 18**: Invalid Command - `just demo-health`
-- **Line 24**: Invalid Command - `just demo-api`
-- **Line 31**: Invalid Command - `just demo-graphql`
-- **Line 38**: Invalid Command - `just demo-docker`
-- **Line 45**: Invalid Command - `just demo-migrations`
+- **Line 18**: Invalid Command - `just demos::health`
+- **Line 24**: Invalid Command - `just demos::api`
+- **Line 31**: Invalid Command - `just demos::graphql`
+- **Line 38**: Invalid Command - `just demos::docker`
+- **Line 45**: Invalid Command - `just demos::migrations`
 - **Line 51**: Invalid Command - `just demo-commits`
 - **Line 57**: Invalid Command - `just demo-diff-generation`
-- **Line 63**: Invalid Command - `just demo-all`
+- **Line 63**: Invalid Command - `just demos::all`
 - **Line 73**: Invalid Command - `just demo-commits-docker`
 - **Line 74**: Invalid Command - `just demo-diff-generation-docker`
 
@@ -420,25 +420,25 @@
 - **Line 63**: Invalid Command - `just db-down         # stop and remove the compose stack`
 - **Line 128**: Invalid Command - `just db-down     # stop containers`
 - **Line 120**: Invalid Command - `just claude`
-- **Line 77**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 79**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 80**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 77**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 79**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 80**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/development/migration-strategies.md
 
 - **Line 43**: Invalid Path - `CI/CD`
-- **Line 27**: Invalid Command - `just db-migrate-docker`
-- **Line 46**: Invalid Command - `just db-migrate-run`
-- **Line 65**: Invalid Command - `just db-migrate-service`
-- **Line 110**: Invalid Command - `just db-make "add_user_table"`
-- **Line 110**: Invalid Command - `just db-make-docker "add_user_table"`
-- **Line 124**: Invalid Command - `just db-history`
-- **Line 124**: Invalid Command - `just db-history-docker`
-- **Line 125**: Invalid Command - `just db-current`
-- **Line 125**: Invalid Command - `just db-current-docker`
-- **Line 126**: Invalid Command - `just db-downgrade`
-- **Line 126**: Invalid Command - `just db-downgrade-docker`
-- **Line 127**: Invalid Command - `just db-reset-docker`
+- **Line 27**: Invalid Command - `just database::migrate-docker`
+- **Line 46**: Invalid Command - `just database::migrate-run`
+- **Line 65**: Invalid Command - `just database::migrate-service`
+- **Line 110**: Invalid Command - `just database::make "add_user_table"`
+- **Line 110**: Invalid Command - `just database::make-docker "add_user_table"`
+- **Line 124**: Invalid Command - `just database::history`
+- **Line 124**: Invalid Command - `just database::history-docker`
+- **Line 125**: Invalid Command - `just database::current`
+- **Line 125**: Invalid Command - `just database::current-docker`
+- **Line 126**: Invalid Command - `just database::downgrade`
+- **Line 126**: Invalid Command - `just database::downgrade-docker`
+- **Line 127**: Invalid Command - `just database::reset-docker`
 
 ### docs/development/quality.md
 
@@ -543,7 +543,7 @@
 - **Line 136**: Invalid Path - `setup/teardown.`
 - **Line 143**: Invalid Path - `code/api`
 - **Line 148**: Invalid Command - `just db-down`
-- **Line 118**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 118**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/development/ttr-demo.md
 
@@ -557,10 +557,10 @@
 - **Line 146**: Invalid Path - `jazzydog-labs/haven`
 - **Line 156**: Invalid Path - `user/test-repo`
 - **Line 157**: Invalid Path - `//github.com/user/test-repo.git`
-- **Line 7**: Invalid Command - `just demo-ttr`
-- **Line 231**: Invalid Command - `just db-current`
-- **Line 231**: Invalid Command - `just db-history`
-- **Line 243**: Invalid Command - `just test-cov`
+- **Line 7**: Invalid Command - `just demos::ttr`
+- **Line 231**: Invalid Command - `just database::current`
+- **Line 231**: Invalid Command - `just database::history`
+- **Line 243**: Invalid Command - `just testing::coverage`
 
 ### docs/index.md
 
@@ -599,7 +599,7 @@
 - **Line 231**: Invalid Path - `//localhost`
 - **Line 231**: Invalid Path - `8080/health`
 - **Line 241**: Invalid Path - `//api`
-- **Line 231**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 231**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/operations/deployment.md
 
@@ -638,16 +638,16 @@
 - **Line 87**: Invalid Path - `8080/health`
 - **Line 88**: Invalid Path - `8080/docs`
 - **Line 89**: Invalid Path - `8080/graphql`
-- **Line 5**: Invalid Command - `just reset-docker             # Full reset (removes data)`
-- **Line 5**: Invalid Command - `just shell-docker             # Shell into API container`
-- **Line 5**: Invalid Command - `just db-console-docker        # PostgreSQL console`
-- **Line 5**: Invalid Command - `just test-docker              # Run tests in container`
-- **Line 5**: Invalid Command - `just lint-docker              # Run linting in container`
+- **Line 5**: Invalid Command - `just docker::reset             # Full reset (removes data)`
+- **Line 5**: Invalid Command - `just docker::shell             # Shell into API container`
+- **Line 5**: Invalid Command - `just database::console-docker        # PostgreSQL console`
+- **Line 5**: Invalid Command - `just docker::test              # Run tests in container`
+- **Line 5**: Invalid Command - `just docker::lint              # Run linting in container`
 - **Line 5**: Invalid Command - `just clean-docker                             # Project cleanup`
-- **Line 86**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 87**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 88**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 89**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 86**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 87**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 88**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 89**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/operations/docker.md
 
@@ -681,8 +681,8 @@
 - **Line 388**: Invalid Path - `created/updated`
 - **Line 431**: Broken Link - [Configuration Reference](configuration.md)
 - **Line 432**: Broken Link - [Troubleshooting Guide](troubleshooting.md)
-- **Line 117**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 320**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 117**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 320**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/overview.md
 
@@ -779,7 +779,7 @@
 - **Line 101**: Invalid Command - `just docs`
 - **Line 102**: Invalid Command - `just build`
 - **Line 132**: Invalid Command - `just docs`
-- **Line 139**: Invalid Command - `just install && just db-up && just run`
+- **Line 139**: Invalid Command - `just install && just database::up && just run`
 
 ### docs/project-management/tasks/closed/container-dev-experience.md
 
@@ -801,7 +801,7 @@
 - **Line 35**: Invalid Path - `//haven`
 - **Line 35**: Invalid Path - `5432/haven`
 - **Line 42**: Invalid Path - `//localhost`
-- **Line 42**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 42**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/project-management/tasks/closed/containerize-services.md
 
@@ -849,12 +849,12 @@
 - **Line 124**: Invalid Path - `domain/entities`
 - **Line 129**: Invalid Path - `interface/api`
 - **Line 139**: Invalid Path - `Add/modify`
-- **Line 18**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 31**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 44**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 51**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 57**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 109**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 18**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 31**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 44**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 51**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 57**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 109**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/project-management/tasks/closed/implement-migration-strategy.md
 
@@ -869,7 +869,7 @@
 - **Line 54**: Invalid Path - `haven.local`
 - **Line 21**: Invalid Path - `//localhost`
 - **Line 23**: Invalid Path - `//app.haven.local`
-- **Line 21**: Localhost Url - `http://localhost:3000` → `http://web.haven.local`
+- **Line 21**: Localhost Url - `http://web.haven.local` → `http://web.haven.local`
 - **Line 22**: Localhost Url - `http://localhost:5173` → `http://haven.local:5173`
 
 ### docs/project-management/tasks/closed/local-https-setup.md
@@ -912,7 +912,7 @@
 - **Line 79**: Invalid Path - `commits.id`
 - **Line 80**: Invalid Path - `users.id`
 - **Line 232**: Invalid Path - `src/main.py`
-- **Line 201**: Invalid Command - `just db-make "create_comments_table"`
+- **Line 201**: Invalid Command - `just database::make "create_comments_table"`
 
 ### docs/project-management/tasks/closed/ttr-repository-domain-entity.md
 
@@ -924,7 +924,7 @@
 - **Line 128**: Invalid Path - `jazzydog-labs/haven`
 - **Line 157**: Invalid Path - `user/test`
 - **Line 158**: Invalid Path - `//github.com/user/test.git`
-- **Line 114**: Invalid Command - `just db-make "create_repositories_table"`
+- **Line 114**: Invalid Command - `just database::make "create_repositories_table"`
 
 ### docs/project-management/tasks/closed/ttr-user-domain-entity.md
 
@@ -932,7 +932,7 @@
 - **Line 49**: Invalid Path - `src/haven/infrastructure/database/models/user.py`
 - **Line 81**: Invalid Path - `tests/unit/domain/entities/test_user.py`
 - **Line 9**: Invalid Path - `dataclass/model`
-- **Line 76**: Invalid Command - `just db-make "create_users_table"`
+- **Line 76**: Invalid Command - `just database::make "create_users_table"`
 
 ### docs/project-management/tasks/closed/update-containerization-docs.md
 
@@ -942,12 +942,12 @@
 - **Line 65**: Invalid Path - `CI/CD`
 - **Line 87**: Invalid Path - `8080/5432`
 - **Line 19**: Invalid Command - `just run-api-docker         # Start API with hot-reload`
-- **Line 19**: Invalid Command - `just db-migrate-docker`
-- **Line 60**: Invalid Command - `just db-make "add_user_table"    # Generate migration`
-- **Line 66**: Invalid Command - `just db-migrate-docker           # Apply migrations`
-- **Line 66**: Invalid Command - `just db-make-docker "add_field"  # Generate in container`
-- **Line 31**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 32**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 19**: Invalid Command - `just database::migrate-docker`
+- **Line 60**: Invalid Command - `just database::make "add_user_table"    # Generate migration`
+- **Line 66**: Invalid Command - `just database::migrate-docker           # Apply migrations`
+- **Line 66**: Invalid Command - `just database::make-docker "add_field"  # Generate in container`
+- **Line 31**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 32**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/project-management/tasks/closed/worklog-demo-commands.md
 
@@ -957,11 +957,11 @@
 - **Line 4**: Invalid Command - `just demo-*`
 - **Line 8**: Invalid Command - `just demo-*`
 - **Line 15**: Invalid Command - `just demo-<feature-name>`
-- **Line 18**: Invalid Command - `just demo-all`
+- **Line 18**: Invalid Command - `just demos::all`
 - **Line 22**: Invalid Command - `just demo-diffs`
-- **Line 23**: Invalid Command - `just demo-graphql`
-- **Line 24**: Invalid Command - `just demo-api`
-- **Line 25**: Invalid Command - `just demo-health`
+- **Line 23**: Invalid Command - `just demos::graphql`
+- **Line 24**: Invalid Command - `just demos::api`
+- **Line 25**: Invalid Command - `just demos::health`
 
 ### docs/project-management/tasks/open/production-like-local-env.md
 
@@ -981,7 +981,7 @@
 - **Line 117**: Invalid Path - `repositories.id`
 - **Line 148**: Invalid Path - `commits.id`
 - **Line 149**: Invalid Path - `users.id`
-- **Line 222**: Invalid Command - `just db-make "create_commits_and_reviews_tables"`
+- **Line 222**: Invalid Command - `just database::make "create_commits_and_reviews_tables"`
 
 ### docs/project-management/todo.md
 
@@ -1047,28 +1047,28 @@
 - **Line 661**: Invalid Path - `just/common.just`
 - **Line 170**: Invalid Command - `just check-python # Python lint + type + test (was missing)`
 - **Line 170**: Invalid Command - `just check-web   # Web lint + type + test (was missing)`
-- **Line 245**: Invalid Command - `just demo-docker`
-- **Line 245**: Invalid Command - `just demo-health`
-- **Line 245**: Invalid Command - `just test-docker`
-- **Line 245**: Invalid Command - `just db-console-docker`
-- **Line 276**: Invalid Command - `just test-cov`
-- **Line 276**: Invalid Command - `just demo-api`
-- **Line 276**: Invalid Command - `just demo-graphql`
-- **Line 334**: Invalid Command - `just demo-migrations`
-- **Line 334**: Invalid Command - `just db-current-docker`
-- **Line 334**: Invalid Command - `just db-migrate-run`
+- **Line 245**: Invalid Command - `just demos::docker`
+- **Line 245**: Invalid Command - `just demos::health`
+- **Line 245**: Invalid Command - `just docker::test`
+- **Line 245**: Invalid Command - `just database::console-docker`
+- **Line 276**: Invalid Command - `just testing::coverage`
+- **Line 276**: Invalid Command - `just demos::api`
+- **Line 276**: Invalid Command - `just demos::graphql`
+- **Line 334**: Invalid Command - `just demos::migrations`
+- **Line 334**: Invalid Command - `just database::current-docker`
+- **Line 334**: Invalid Command - `just database::migrate-run`
 - **Line 334**: Invalid Command - `just --list | grep db-.*-docker`
-- **Line 364**: Invalid Command - `just reset-docker`
-- **Line 420**: Invalid Command - `just demo-health      # Health endpoints`
-- **Line 420**: Invalid Command - `just demo-api         # REST CRUD operations`
-- **Line 420**: Invalid Command - `just demo-graphql     # GraphQL queries`
-- **Line 420**: Invalid Command - `just demo-docker      # Container status`
-- **Line 420**: Invalid Command - `just demo-migrations  # Migration strategies`
-- **Line 420**: Invalid Command - `just demo-all`
-- **Line 447**: Invalid Command - `just demo-cors`
-- **Line 518**: Invalid Command - `just demo-sync`
+- **Line 364**: Invalid Command - `just docker::reset`
+- **Line 420**: Invalid Command - `just demos::health      # Health endpoints`
+- **Line 420**: Invalid Command - `just demos::api         # REST CRUD operations`
+- **Line 420**: Invalid Command - `just demos::graphql     # GraphQL queries`
+- **Line 420**: Invalid Command - `just demos::docker      # Container status`
+- **Line 420**: Invalid Command - `just demos::migrations  # Migration strategies`
+- **Line 420**: Invalid Command - `just demos::all`
+- **Line 447**: Invalid Command - `just demos::cors`
+- **Line 518**: Invalid Command - `just demos::sync`
 - **Line 526**: Invalid Command - `just check-api-compat`
-- **Line 556**: Invalid Command - `just demo-https`
+- **Line 556**: Invalid Command - `just demos::https`
 - **Line 638**: Invalid Command - `just --list         # All commands`
 - **Line 638**: Invalid Command - `just docker::help   # Module help`
 - **Line 638**: Invalid Command - `just testing::all   # Module commands`
@@ -1076,24 +1076,24 @@
 - **Line 646**: Invalid Command - `just docker::logs api    # View API logs`
 - **Line 646**: Invalid Command - `just testing::python     # Run Python tests`
 - **Line 646**: Invalid Command - `just demos::all          # Run all demos`
-- **Line 10**: Invalid Command - `just test-docker`
+- **Line 10**: Invalid Command - `just docker::test`
 - **Line 168**: Invalid Command - `just --list`
-- **Line 243**: Invalid Command - `just test-docker`
-- **Line 269**: Invalid Command - `just db-migrate-docker`
+- **Line 243**: Invalid Command - `just docker::test`
+- **Line 269**: Invalid Command - `just database::migrate-docker`
 - **Line 299**: Invalid Command - `just demo-diff-generation`
 - **Line 300**: Invalid Command - `just demo-diff-generation`
-- **Line 332**: Invalid Command - `just db-current-docker`
-- **Line 332**: Invalid Command - `just db-migrate-run`
+- **Line 332**: Invalid Command - `just database::current-docker`
+- **Line 332**: Invalid Command - `just database::migrate-run`
 - **Line 390**: Invalid Command - `just --list`
-- **Line 418**: Invalid Command - `just demo-all`
-- **Line 445**: Invalid Command - `just demo-cors`
-- **Line 17**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 18**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 21**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 218**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 222**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 227**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 494**: Localhost Url - `http://localhost:3000` → `http://web.haven.local`
+- **Line 418**: Invalid Command - `just demos::all`
+- **Line 445**: Invalid Command - `just demos::cors`
+- **Line 17**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 18**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 21**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 218**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 222**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 227**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 494**: Localhost Url - `http://web.haven.local` → `http://web.haven.local`
 
 ### docs/quickstart.md
 
@@ -1113,15 +1113,15 @@
 - **Line 179**: Broken Link - [Development Environment](local-setup.md)
 - **Line 180**: Broken Link - [Testing](testing.md)
 - **Line 180**: Broken Link - [Code Quality](quality.md)
-- **Line 60**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 64**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 71**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 71**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 75**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 75**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 83**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 120**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
-- **Line 141**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 60**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 64**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 71**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 71**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 75**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 75**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 83**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 120**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
+- **Line 141**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/workflow/frontend-backend-sync.md
 
@@ -1135,7 +1135,7 @@
 - **Line 140**: Invalid Path - `8080/openapi.json`
 - **Line 141**: Invalid Path - `apps/web/src/services/api/generated`
 - **Line 19**: Invalid Command - `just check-api-compat`
-- **Line 140**: Localhost Url - `http://localhost:8080` → `http://api.haven.local`
+- **Line 140**: Localhost Url - `http://api.haven.local` → `http://api.haven.local`
 
 ### docs/workflow/normalize-docs.md
 
@@ -1154,4 +1154,4 @@
 - **Line 243**: Invalid Path - `weekly/monthly`
 - **Line 279**: Invalid Path - `compile/run`
 - **Line 293**: Invalid Path - `movements/renames`
-- **Line 59**: Invalid Command - `just test-docker`
+- **Line 59**: Invalid Command - `just docker::test`

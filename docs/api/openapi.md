@@ -5,14 +5,14 @@ Haven automatically generates an OpenAPI 3.0 specification from the FastAPI rout
 ## Accessing the OpenAPI Schema
 
 ### Interactive Documentation (Swagger UI)
-Visit [http://localhost:8080/docs](http://localhost:8080/docs)
+Visit [http://api.haven.local/docs](http://api.haven.local/docs)
 
 ### Alternative Documentation (ReDoc)
-Visit [http://localhost:8080/redoc](http://localhost:8080/redoc)
+Visit [http://api.haven.local/redoc](http://api.haven.local/redoc)
 
 ### Raw OpenAPI JSON
 ```bash
-curl http://localhost:8080/openapi.json
+curl http://api.haven.local/openapi.json
 ```
 
 ## Schema Overview
@@ -37,13 +37,13 @@ npm install -g @openapitools/openapi-generator-cli
 
 # Generate Python client
 openapi-generator-cli generate \
-  -i http://localhost:8080/openapi.json \
+  -i http://api.haven.local/openapi.json \
   -g python \
   -o ./haven-client-python
 
 # Generate TypeScript client  
 openapi-generator-cli generate \
-  -i http://localhost:8080/openapi.json \
+  -i http://api.haven.local/openapi.json \
   -g typescript-axios \
   -o ./haven-client-typescript
 ```
@@ -52,14 +52,14 @@ openapi-generator-cli generate \
 
 1. Open Postman
 2. Click "Import" 
-3. Enter URL: `http://localhost:8080/openapi.json`
+3. Enter URL: `http://api.haven.local/openapi.json`
 4. Postman will create a collection with all endpoints
 
 ### Use with Insomnia
 
 1. In Insomnia, create new Request Collection
 2. Click "Import/Export" 
-3. Import from URL: `http://localhost:8080/openapi.json`
+3. Import from URL: `http://api.haven.local/openapi.json`
 
 ## Schema Customization
 
@@ -134,10 +134,10 @@ To save the schema locally:
 
 ```bash
 # Save as JSON
-curl http://localhost:8080/openapi.json > openapi.json
+curl http://api.haven.local/openapi.json > openapi.json
 
 # Convert to YAML (requires yq)
-curl http://localhost:8080/openapi.json | yq -P > openapi.yaml
+curl http://api.haven.local/openapi.json | yq -P > openapi.yaml
 ```
 
 ## Validation

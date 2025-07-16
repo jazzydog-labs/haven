@@ -18,18 +18,18 @@ Update CLAUDE.md and other relevant documentation to include the new containeriz
 
 ```bash
 # Start everything with one command
-just run-docker
+just docker::up
 
 # Or step by step:
-just db-up                  # Start PostgreSQL
+just database::up                  # Start PostgreSQL
 just run-api-docker         # Start API with hot-reload
 
 # Run migrations
-just db-migrate-docker
+just database::migrate-docker
 
 # Access the services
-# API: http://localhost:8080
-# GraphQL: http://localhost:8080/graphql
+# API: http://api.haven.local
+# GraphQL: http://api.haven.local/graphql
 ```
 ```
 
@@ -58,14 +58,14 @@ Use when:
 
 ### From Host (Recommended for development)
 ```bash
-just db-make "add_user_table"    # Generate migration
-just db-migrate                  # Apply migrations
+just database::make "add_user_table"    # Generate migration
+just database::migrate                  # Apply migrations
 ```
 
 ### From Container (Recommended for CI/CD)
 ```bash
-just db-migrate-docker           # Apply migrations
-just db-make-docker "add_field"  # Generate in container
+just database::migrate-docker           # Apply migrations
+just database::make-docker "add_field"  # Generate in container
 ```
 ```
 

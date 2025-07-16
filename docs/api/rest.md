@@ -9,7 +9,7 @@ Haven exposes a RESTful API built with FastAPI. The interactive documentation is
 ## 1. Base URL
 
 ```
-http://localhost:8080/api/v1
+http://api.haven.local/api/v1
 ```
 
 All endpoints are prefixed with `/api/v1` for versioning.
@@ -305,19 +305,19 @@ Haven will support webhooks for real-time notifications:
 ### cURL
 ```bash
 # Create record
-curl -X POST http://localhost:8080/api/v1/records \
+curl -X POST http://api.haven.local/api/v1/records \
   -H "Content-Type: application/json" \
   -d '{"data": {"key": "value"}}'
 
 # Get record
-curl http://localhost:8080/api/v1/records/550e8400-e29b-41d4-a716-446655440000
+curl http://api.haven.local/api/v1/records/550e8400-e29b-41d4-a716-446655440000
 ```
 
 ### Python (httpx)
 ```python
 import httpx
 
-async with httpx.AsyncClient(base_url="http://localhost:8080") as client:
+async with httpx.AsyncClient(base_url="http://api.haven.local") as client:
     # Create
     response = await client.post("/api/v1/records", json={"data": {"key": "value"}})
     record = response.json()
@@ -329,7 +329,7 @@ async with httpx.AsyncClient(base_url="http://localhost:8080") as client:
 ### JavaScript (fetch)
 ```javascript
 // Create record
-const response = await fetch('http://localhost:8080/api/v1/records', {
+const response = await fetch('http://api.haven.local/api/v1/records', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},
   body: JSON.stringify({data: {key: 'value'}})

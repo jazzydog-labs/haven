@@ -43,7 +43,7 @@ The Alembic section is isolated inside the package so importing models from `env
 Example command:
 
 ```bash
-just db-make "add tag column to record"
+just database::make "add tag column to record"
 # Creates versions/20250715_02_add_tag_column_to_record.py
 ```
 
@@ -53,11 +53,11 @@ just db-make "add tag column to record"
 
 ## 4  Creating a Migration (local dev)
 
-1. Ensure Postgres is running: `just db-up`.
+1. Ensure Postgres is running: `just database::up`.
 2. Edit or add models in `models.py`.
-3. Run `just db-make "<message>"`.
+3. Run `just database::make "<message>"`.
 4. **Review** the generated file—especially `op.add_column` / `op.drop_column` statements.
-5. Upgrade your dev DB: `just db-migrate`.
+5. Upgrade your dev DB: `just database::migrate`.
 6. Run tests: `just test`.
 
 > If Alembic generates a *noop* (no schema diff) verify `__tablename__` and field types; then rerun.
@@ -68,7 +68,7 @@ just db-make "add tag column to record"
 
 * **Feature branch** creates migrations as needed (1–n revisions).
 * Before merge into `main`, **rebase** on latest `main` so your head is descendant of the tip.
-* Resolve conflicts by regenerating (`just db-make`) after rebase, or manually editing versions.
+* Resolve conflicts by regenerating (`just database::make`) after rebase, or manually editing versions.
 
 The goal is **one canonical head**; Alembic will complain if multiple heads exist.
 
@@ -149,7 +149,7 @@ UPDATE alembic_version SET version_num = 'abc123def456';
 Production migrations follow a careful process:
 
 1. **Pre-deployment**: Migrations are applied as a separate job before app deployment
-2. **Migration job**: Runs `just db-migrate-prod` which uses offline mode
+2. **Migration job**: Runs `just database::migrate-prod` which uses offline mode
 3. **Long migrations**: For DDL that takes >30s, schedule maintenance window
 4. **Verification**: Health checks confirm schema version matches app expectations
 
@@ -162,7 +162,7 @@ Never run migrations on app startup in production—this causes race conditions 
 Alembic downgrade is **disabled** in production (irreversible migrations). However, local dev can roll back one step:
 
 ```bash
-just db-downgrade 1
+just database::downgrade 1
 ```
 
 This runs `alembic downgrade -1` against the dev DB. Use with caution—data loss likely.
@@ -188,7 +188,7 @@ All commands respect `DATABASE_URL` from your `.env` or Hydra config.
 
 ~~## 10  CI / CD Hooks~~
 
-~~* **PR checks** run `just db-migrate-offline` to verify migrations generate valid SQL without touching DB.~~
+~~* **PR checks** run `just database::migrate-offline` to verify migrations generate valid SQL without touching DB.~~
 ~~* **Integration tests** spin up a fresh Postgres, apply migrations, and exercise repositories.~~
 ~~* **Production deploy** runs migrations in a separate job before rolling out new app version.~~
 
@@ -202,14 +202,14 @@ If a migration fails midway:
 
 1. **Local dev**: Drop and recreate the database, then reapply all migrations
    ```bash
-   just db-down && just db-up && just db-migrate
+   just db-down && just database::up && just database::migrate
    ```
 
 2. **Staging**: Restore from backup, fix the migration, reapply
    ```bash
    # Restore DB backup
    # Fix migration file
-   just db-migrate
+   just database::migrate
    ```
 
 3. **Production**: Requires careful manual intervention
@@ -224,7 +224,7 @@ Never attempt to manually edit the `alembic_version` table unless you fully unde
 ## 12  Troubleshooting
 
 * **Multiple heads detected** – run `alembic heads`, rebase, regenerate.
-* **Target database is not up‑to‑date** – ensure CI ran `just db-migrate` or run it locally.
+* **Target database is not up‑to‑date** – ensure CI ran `just database::migrate` or run it locally.
 * **Autogenerate misses diff** – compare metadata binds; ensure all models import inside `env.py`.
 * **"Can't locate revision"** – check if you need to pull latest migrations from `main`.
 * **Async engine errors** – remember migrations run synchronously; the async engine is adapted in `env.py`.

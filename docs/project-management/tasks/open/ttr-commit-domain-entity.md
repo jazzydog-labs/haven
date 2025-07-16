@@ -220,7 +220,7 @@ class CommitService:
 
 ## Migration
 ```bash
-just db-make "create_commits_and_reviews_tables"
+just database::make "create_commits_and_reviews_tables"
 ```
 
 ## Tests

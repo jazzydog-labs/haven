@@ -6,15 +6,15 @@ This guide shows how to test and demo the TTR (Task, Todo, Review) system featur
 
 ```bash
 # 1. Start the database
-just db-up
+just database::up
 
 # 2. Run migrations to create TTR tables
-just db-migrate
+just database::migrate
 
 # 3. Run the TTR demo (two options)
 
 # Option A: Using main Justfile
-just demo-ttr
+just demos::ttr
 
 # Option B: Using demo Justfile directly
 just -f justfile.demos.standalone demo-ttr
@@ -164,7 +164,7 @@ remote_repo = Repository(
 
 ```bash
 # Connect to database to inspect data
-just db-console
+just database::console
 
 # Example queries
 \dt  -- List all tables
@@ -230,13 +230,13 @@ Current test coverage for TTR features:
 ### Database Issues
 ```bash
 # Reset database if needed
-just db-reset
+just database::reset
 
 # Check migration status
-just db-current
+just database::current
 
 # View migration history
-just db-history
+just database::history
 ```
 
 ### Test Issues
@@ -245,7 +245,7 @@ just db-history
 just test tests/unit/domain/test_user.py -v
 
 # Run with coverage
-just test-cov
+just testing::coverage
 
 # Debug test failures
 just test tests/unit/infrastructure/test_user_repository.py -v -s
@@ -257,5 +257,5 @@ just test tests/unit/infrastructure/test_user_repository.py -v -s
 just info
 
 # Restart services
-just down && just db-up && just run
+just down && just database::up && just run
 ```

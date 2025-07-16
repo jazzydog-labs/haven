@@ -114,22 +114,22 @@ Transform the current Justfile architecture to follow the scalable monorepo patt
 - `just clean` → `just clean` (orchestrates all)
 
 **Docker Commands:**
-- `just run-docker` → `just docker::up`
-- `just stop-docker` → `just docker::down`
-- `just logs-docker` → `just docker::logs`
-- `just rebuild-docker` → `just docker::rebuild`
+- `just docker::up` → `just docker::up`
+- `just docker::down` → `just docker::down`
+- `just docker::logs` → `just docker::logs`
+- `just docker::rebuild` → `just docker::rebuild`
 
 **Database Commands:**
-- `just db-up` → `just database::up`
-- `just db-migrate` → `just database::migrate`
-- `just db-console` → `just database::console`
-- `just db-reset` → `just database::reset`
+- `just database::up` → `just database::up`
+- `just database::migrate` → `just database::migrate`
+- `just database::console` → `just database::console`
+- `just database::reset` → `just database::reset`
 
 **Testing Commands:**
 - `just test` → `just test::all`
-- `just test-python` → `just test::python`
-- `just test-web` → `just test::web`
-- `just test-docker` → `just test::docker`
+- `just testing::python` → `just test::python`
+- `just testing::web` → `just test::web`
+- `just docker::test` → `just test::docker`
 
 **Package Commands:**
 - `just run-api` → `just api::dev`

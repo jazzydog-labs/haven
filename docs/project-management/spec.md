@@ -94,8 +94,8 @@ This mirrors the proven layout in *architecture.md* while stripping domain-speci
 | Command | Action |
 |---------|--------|
 | `just install` | `uv sync` + `hatch env create` |
-| `just db-up` / `db-down` | Bring Postgres (compose) up/down |
-| `just db-migrate` | Run Alembic `upgrade head` |
+| `just database::up` / `db-down` | Bring Postgres (compose) up/down |
+| `just database::migrate` | Run Alembic `upgrade head` |
 | `just run` | `uvicorn datastore_service.main:app --reload --port 8080` |
 | `just lint / type / test` | Quality checks |
 | `just docs` | Live-reload MkDocs site |
@@ -129,14 +129,14 @@ Coverage target aggregated to **≥ 70 %** across all tiers.
 ## 11  Documentation
 
 * **MkDocs-Material** with `mkdocstrings[python]` to auto-render API refs.  
-* Deployment preview via `just docs` (serves on `localhost:8001`).  
+* Deployment preview via `just docs` (serves on `docs.haven.local`).  
 * ADRs stored under `docs/adr/` to capture architectural decisions.
 
 ---
 
 ## 12  Success Criteria
 
-1. **Bootstrap ≤ 30 min**: `just install && just db-up && just run` yields live service and docs.  
+1. **Bootstrap ≤ 30 min**: `just install && just database::up && just run` yields live service and docs.  
 2. **Green quality gate**: lint, type, tests all pass on every commit.  
 3. **70 %+ coverage** enforced; failing gate blocks merge.  
 4. **Swagger & GraphiQL** both functional out of the box.  

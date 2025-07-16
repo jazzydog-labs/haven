@@ -82,11 +82,11 @@ All existing commands from the monolithic Justfile are preserved:
 # Root-level commands work as before
 just run
 just test
-just db-migrate
+just database::migrate
 
 # Package-specific commands via delegation
 just run-api      # Delegates to apps/api/justfile
-just test-python  # Delegates to apps/api/justfile
+just testing::python  # Delegates to apps/api/justfile
 
 # Direct package commands (from package directory)
 cd apps/api && just test

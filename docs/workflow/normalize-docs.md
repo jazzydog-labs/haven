@@ -44,7 +44,7 @@ Open `docs/documentation-audit-report.md` and review:
 Group issues into categories:
 
 #### Quick Fixes (< 5 minutes each)
-- Updated command syntax (e.g., `just db-up` → `just database::up`)
+- Updated command syntax (e.g., `just database::up` → `just database::up`)
 - Localhost URLs → domain names
 - Simple path corrections
 
@@ -86,12 +86,12 @@ For common patterns, use sed or similar tools:
 
 ```bash
 # Update old Just commands to new module syntax
-find docs -name "*.md" -exec sed -i.bak 's/just db-up/just database::up/g' {} \;
-find docs -name "*.md" -exec sed -i.bak 's/just run-docker/just docker::up/g' {} \;
+find docs -name "*.md" -exec sed -i.bak 's/just database::up/just database::up/g' {} \;
+find docs -name "*.md" -exec sed -i.bak 's/just docker::up/just docker::up/g' {} \;
 
 # Update localhost URLs
-find docs -name "*.md" -exec sed -i.bak 's|http://localhost:3000|http://web.haven.local|g' {} \;
-find docs -name "*.md" -exec sed -i.bak 's|http://localhost:8080|http://api.haven.local|g' {} \;
+find docs -name "*.md" -exec sed -i.bak 's|http://web.haven.local|http://web.haven.local|g' {} \;
+find docs -name "*.md" -exec sed -i.bak 's|http://api.haven.local|http://api.haven.local|g' {} \;
 ```
 
 #### Manual Fixes
@@ -137,22 +137,22 @@ echo "## $(date +%Y-%m-%d).NNNN - Documentation normalization
 
 Old → New mappings:
 ```
-just db-up           → just database::up
-just db-migrate      → just database::migrate
-just db-console      → just database::console
-just run-docker      → just docker::up
-just stop-docker     → just docker::down
-just test-python     → just testing::python
-just test-web        → just testing::web
+just database::up           → just database::up
+just database::migrate      → just database::migrate
+just database::console      → just database::console
+just docker::up      → just docker::up
+just docker::down     → just docker::down
+just testing::python     → just testing::python
+just testing::web        → just testing::web
 ```
 
 ### URL Updates
 
 Development URLs:
 ```
-http://localhost:3000      → http://web.haven.local
-http://localhost:8080      → http://api.haven.local
-http://localhost:8080/docs → http://api.haven.local/docs
+http://web.haven.local      → http://web.haven.local
+http://api.haven.local      → http://api.haven.local
+http://api.haven.local/docs → http://api.haven.local/docs
 ```
 
 ### Path Updates

@@ -233,16 +233,16 @@ Use these tags to quickly find relevant documentation:
 ```bash
 # Setup and run
 just bootstrap          # Complete environment setup
-just db-up             # Start PostgreSQL
+just database::up             # Start PostgreSQL
 just run               # Start API server with hot reload
 
 # Development workflow  
-just test-python       # Run Python tests
+just testing::python       # Run Python tests
 just lint-python       # Check Python code quality
 just type-python       # Python type checking
 just check-python      # All Python quality gates
 
-just test-web          # Run TypeScript/React tests
+just testing::web          # Run TypeScript/React tests
 just lint-web          # Check TypeScript code quality
 just check-web         # All TypeScript quality gates
 

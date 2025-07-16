@@ -16,12 +16,12 @@ A RESTful API built with FastAPI that provides:
 
 ### Base URL
 ```
-http://localhost:8080/api/v1
+http://api.haven.local/api/v1
 ```
 
 ### Example
 ```bash
-curl http://localhost:8080/api/v1/records
+curl http://api.haven.local/api/v1/records
 ```
 
 ## GraphQL API
@@ -38,7 +38,7 @@ A flexible GraphQL API built with Strawberry that offers:
 
 ### Endpoint
 ```
-http://localhost:8080/graphql
+http://api.haven.local/graphql
 ```
 
 ### Example

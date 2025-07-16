@@ -199,7 +199,7 @@ class CommentRepository(ABC):
 
 ## Migration
 ```bash
-just db-make "create_comments_table"
+just database::make "create_comments_table"
 ```
 
 ## Tests

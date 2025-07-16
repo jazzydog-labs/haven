@@ -39,7 +39,7 @@ services:
 ## Definition of Done
 - [ ] Service starts with docker-compose up
 - [ ] Code changes trigger automatic reload
-- [ ] Can access API at http://localhost:8080
+- [ ] Can access API at http://api.haven.local
 - [ ] GraphQL playground accessible
 - [ ] Database connections work properly
 - [ ] Work log entry added

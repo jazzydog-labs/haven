@@ -22,7 +22,7 @@ just stop-all      # (or stop-proxy if using domains)
 ### Alternative Methods
 ```bash
 # Backend only
-just run-docker-d
+just docker::up-d
 
 # Frontend only  
 cd apps/web && npm run dev
@@ -61,7 +61,7 @@ Each task should result in at least one atomic commit and synchronized documenta
 ### Batch Operations
 ```bash
 # Add complete CRUD for new entity
-just add-entity User
+just api::add-entity User
 
 # Generate and apply migration
 just database::make "add_users_table" && just database::migrate
@@ -122,7 +122,7 @@ async def create_item(item: ItemCreate, db: AsyncSession = Depends(get_db)):
     return await create_item_in_db(db, item)
 
 # 2. Test immediately
-just test-fast tests/interface/api/test_routes.py
+just testing::fast tests/interface/api/test_routes.py
 ```
 
 ### Add GraphQL Query
@@ -141,8 +141,8 @@ class Query:
 ### Create Migration
 ```bash
 # Make changes to models in src/domain/models.py
-just db-make "add_status_to_items"
-just db-migrate
+just database::make "add_status_to_items"
+just database::migrate
 ```
 
 ### Quick Debugging

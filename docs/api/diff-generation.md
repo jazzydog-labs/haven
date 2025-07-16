@@ -26,7 +26,7 @@ just demo-diff-generation
 
 ```bash
 # Generate diffs for last 10 commits
-curl -X POST http://localhost:8080/api/v1/diffs/generate \
+curl -X POST http://api.haven.local/api/v1/diffs/generate \
   -H "Content-Type: application/json" \
   -d '{
     "branch": "HEAD",

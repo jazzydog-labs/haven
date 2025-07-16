@@ -15,34 +15,34 @@ Demo commands follow the pattern `just demo-<feature>` and are designed to:
 ### `just demo`
 Shows a list of all available demo commands with descriptions.
 
-### `just demo-health`
+### `just demos::health`
 Tests both REST and GraphQL health endpoints.
 - Verifies API is running
 - Shows health status response format
 - Tests both REST and GraphQL endpoints
 
-### `just demo-api`
+### `just demos::api`
 Demonstrates REST API CRUD operations.
 - Creates a new record
 - Lists all records
 - Shows proper JSON formatting
 - Includes link to Swagger documentation
 
-### `just demo-graphql`
+### `just demos::graphql`
 Shows GraphQL query and mutation examples.
 - Queries all records
 - Creates a record via mutation
 - Demonstrates GraphQL request format
 - Includes link to GraphQL playground
 
-### `just demo-docker`
+### `just demos::docker`
 Verifies Docker containerization setup.
 - Shows container status
 - Tests containerized API health
 - Verifies database connectivity
 - Useful for debugging container issues
 
-### `just demo-migrations`
+### `just demos::migrations`
 Demonstrates all migration strategies.
 - Shows current migration status
 - Lists all available migration methods
@@ -60,7 +60,7 @@ Shows the diff generation API in action.
 - Demonstrates background task processing
 - Shows HTML diff output generation
 
-### `just demo-all`
+### `just demos::all`
 Runs all demos in sequence.
 - Comprehensive feature verification
 - Good for testing after major changes
@@ -83,29 +83,29 @@ Use these when testing containerized deployments.
 just run
 
 # Test it's working
-just demo-health
+just demos::health
 
 # Try CRUD operations
-just demo-api
+just demos::api
 ```
 
 ### Full System Test
 ```bash
 # Start everything in Docker
-just run-docker
+just docker::up
 
 # Run all demos
-just demo-all
+just demos::all
 ```
 
 ### Debugging Issues
 ```bash
 # Check Docker setup
-just demo-docker
+just demos::docker
 
 # Test specific features
-just demo-graphql
-just demo-migrations
+just demos::graphql
+just demos::migrations
 ```
 
 ## Adding New Demo Commands
@@ -139,9 +139,9 @@ demo-your-feature:
 
 If a demo fails:
 
-1. Ensure services are running: `just run` or `just run-docker`
-2. Check database is up: `just db-up`
-3. Verify migrations: `just db-migrate`
+1. Ensure services are running: `just run` or `just docker::up`
+2. Check database is up: `just database::up`
+3. Verify migrations: `just database::migrate`
 4. See logs: `just logs`
 
 For more help, see the [Container Troubleshooting Guide](../operations/container-troubleshooting.md).

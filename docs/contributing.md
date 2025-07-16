@@ -60,7 +60,7 @@ git remote add upstream https://github.com/jazzydog-labs/haven.git
 just bootstrap
 
 # Start services
-just db-up
+just database::up
 
 # Run tests
 just test
@@ -98,7 +98,7 @@ just check
 just test tests/path/to/test.py
 
 # Check coverage
-just test-cov
+just testing::coverage
 ```
 
 ### 4. Commit Your Changes

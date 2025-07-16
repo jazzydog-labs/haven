@@ -228,7 +228,7 @@ docker compose run --rm api bash
    docker compose port api 8080
    
    # Test connectivity
-   curl http://localhost:8080/health
+   curl http://api.haven.local/health
    
    # Check firewall
    sudo iptables -L -n | grep 8080
@@ -357,8 +357,8 @@ docker system prune -a -f      # Remove everything unused
 just clean-docker              # Project-specific cleanup
 
 # Common Fixes
-just reset-docker              # Full reset
-just rebuild-docker            # Force rebuild
+just docker::reset              # Full reset
+just docker::rebuild            # Force rebuild
 export DOCKER_BUILDKIT=0       # Disable BuildKit if issues
 ```
 

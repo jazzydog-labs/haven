@@ -115,7 +115,7 @@ File: `tests/e2e/smoke_test.py`
 ```python
 import httpx, os, pytest
 
-BASE = os.getenv("HAVEN_BASE", "http://localhost:8080")
+BASE = os.getenv("HAVEN_BASE", "http://api.haven.local")
 
 @pytest.mark.skipif("CI" not in os.environ, reason="run only in CI")
 @pytest.mark.timeout(30)
