@@ -99,6 +99,11 @@
   - Alembic usage and best practices
   - **When to read**: Making database schema changes
 
+- **[`docs/development/migration-strategies.md`](development/migration-strategies.md)** `#migrations #containers #deployment`
+  - Containerized migration strategies and options
+  - When to use each migration approach
+  - **When to read**: Running migrations in Docker or CI/CD
+
 ### 🔄 Safe Refactoring
 - **[`docs/development/refactoring.md`](development/refactoring.md)** `#refactoring #safety #procedures`
   - Safe code reorganization procedures
@@ -130,6 +135,16 @@
   - Container build and security practices
   - Multi-stage Dockerfile and hardening
   - **When to read**: Deploying or optimizing containers
+
+- **[`docs/operations/container-troubleshooting.md`](operations/container-troubleshooting.md)** `#troubleshooting #docker #debugging`
+  - Common container issues and solutions
+  - Platform-specific problems and fixes
+  - **When to read**: Container or Docker issues
+
+- **[`docs/operations/docker-quick-reference.md`](operations/docker-quick-reference.md)** `#reference #commands #quick`
+  - Essential Docker commands reference card
+  - Common issues and quick fixes
+  - **When to read**: Need quick command reference
 
 ### 🖥️ Command Line Interface
 - **[`docs/operations/cli.md`](operations/cli.md)** `#cli #commands #diff-generation`

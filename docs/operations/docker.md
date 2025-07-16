@@ -1,8 +1,10 @@
 # Haven – Docker Image Guide
 
-*Last updated: 2025‑07‑15*
+*Last updated: 2025‑07‑16*
 
-This document explains how we containerise Haven while keeping the final image **distroless and non‑root**. 
+This document explains how we containerise Haven while keeping the final image **distroless and non‑root**.
+
+> **Having issues?** See the [Container Troubleshooting Guide](container-troubleshooting.md) for common problems and solutions. 
 ---
 
 ## 1  Why Chainguard?
