@@ -224,4 +224,25 @@ The project has successfully evolved from initial concept to a production-ready,
 - Simplified Justfile recipes to simple script calls
 - Better separation of concerns between build orchestration and script logic
 
+## 2025-07-16.0003 - Implemented Haven CLI tool for git diff generation
+**Added**: Standalone command-line interface for git diff generation and analysis
+**See**: New `haven-cli` command with `list-commits` and `generate` subcommands
+**Test**: `haven-cli --help` shows usage, `haven-cli list-commits` displays commit table
+**Demo**: `haven-cli generate --verbose` creates diff files with progress indicators
+
+**Features:**
+- Rich console output with colored tables and progress messages
+- Async git operations for better performance with large repositories
+- Flexible options for repository path, base branch, and output directory
+- Generates numbered diff files and markdown index for easy navigation
+- Comprehensive error handling and user-friendly feedback
+- Integration with existing pyproject.toml console scripts
+
+**Technical details:**
+- Added click and rich dependencies for CLI framework and formatting
+- Implemented proper async subprocess handling for git commands
+- Created GitCommit NamedTuple for type-safe commit representation
+- Added comprehensive CLI documentation with examples
+- Updated project overview with CLI tool integration
+
 *This log captures the journey from empty repository to production-ready application with full CI/CD readiness.*
