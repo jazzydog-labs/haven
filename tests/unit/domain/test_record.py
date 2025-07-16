@@ -8,6 +8,7 @@ import pytest
 from haven.domain.entities import Record
 
 
+@pytest.mark.unit
 class TestRecord:
     """Test cases for Record entity."""
 
