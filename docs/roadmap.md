@@ -24,15 +24,16 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 
 #### Containerization (3 Phases)
 
-**Phase 1: Basic Containerization (Prerequisites)**
-- [ ] **Docker Setup** - PostgreSQL and FastAPI in containers with docker-compose
-- [ ] **Hot Reload** - Ensure development workflow with code changes
-- [ ] **Override Config** - Development-specific docker-compose.override.yml
-- [ ] **Just Commands** - Docker-aware commands in Justfile
+**Phase 1: Basic Containerization (✅ COMPLETED)**
+- [x] **Docker Setup** - PostgreSQL and FastAPI in containers with docker-compose
+- [x] **Hot Reload** - Ensure development workflow with code changes
+- [x] **Just Commands** - Docker-aware commands in Justfile
+- [x] **Dev Experience** - Fixed permissions, tool availability (diff2html)
+- [x] **Documentation** - Updated CLAUDE.md with Docker workflow
 
-**Phase 2: Developer Experience (Core Features)**
+**Phase 2: Developer Experience (Next Up)**
+- [ ] **Override Config** - Development-specific docker-compose.override.yml
 - [ ] **Migration Strategy** - Multiple approaches for database migrations
-- [ ] **Dev Experience** - Fix permissions, performance, debugging
 - [ ] **Troubleshooting** - Comprehensive guide for common issues
 
 **Phase 3: Production-Like Environment (Enhancements)**

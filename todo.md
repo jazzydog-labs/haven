@@ -8,6 +8,22 @@ This file tracks immediate tasks and notes. For completed work, see `work-log.md
 
 ## 🎯 Current Focus: Documentation & Testing Phase
 
+### 🚀 WHAT TO WORK ON NEXT (Priority Order)
+
+1. **Foundation Tasks** (Do these first - they affect everything else):
+   - [ ] Reorganize project structure (`tasks/open/reorganize-project-structure.md`)
+   - [ ] Test all Just commands after monorepo restructure (list below)
+   - [ ] Complete documentation sync (this task is in progress)
+
+2. **Containerization Phase 2** (After foundation tasks):
+   - [ ] Create docker-compose.override.yml (`tasks/open/create-dev-overrides.md`)
+   - [ ] Implement migration strategies (`tasks/open/implement-migration-strategy.md`)
+   - [ ] Create troubleshooting guide (`tasks/open/container-troubleshooting-guide.md`)
+
+3. **Development Infrastructure** (Can be done in parallel):
+   - [ ] Modularize Justfiles (`tasks/open/modular-justfiles.md`)
+   - [ ] Add demo commands for all worklog entries (`tasks/open/worklog-demo-commands.md`)
+
 ### Documentation Updates (In Progress)
 - [x] Create work-log.md from completed development 
 - [x] Update this todo.md to remove completed items
@@ -63,17 +79,18 @@ All commands need verification after monorepo restructure:
 4. **Modularize Justfiles** - Break down justfile into package-specific modules (see `tasks/open/modular-justfiles.md`)
 5. **Add Demo Commands** - Ensure all worklog entries have demo commands (see `tasks/open/worklog-demo-commands.md`)
 
-### Priority 2.5: Containerization - Phase 1 (Prerequisites)
-**Must be done first:**
-- [ ] Containerize PostgreSQL and FastAPI services (see `tasks/open/containerize-services.md`)
-- [ ] Containerize FastAPI with hot-reload support (see `tasks/open/containerize-api-service.md`)
-- [ ] Create docker-compose.override.yml (see `tasks/open/create-dev-overrides.md`)
-- [ ] Add Docker commands to Justfile (see `tasks/open/add-docker-justfile-commands.md`)
+### Priority 2.5: ✅ Containerization - Phase 1 (COMPLETED)
+**Completed tasks:**
+- [x] Containerize PostgreSQL and FastAPI services (see `tasks/closed/containerize-services.md`)
+- [x] Containerize FastAPI with hot-reload support (see `tasks/closed/containerize-api-service.md`)
+- [x] Add Docker commands to Justfile (see `tasks/closed/add-docker-justfile-commands.md`)
+- [x] Resolve developer experience issues (see `tasks/closed/container-dev-experience.md`)
+- [x] Update containerization docs (see `tasks/closed/update-containerization-docs.md`)
 
-### Priority 2.6: Containerization - Phase 2 (Core Features)
-**Can be done after Phase 1:**
+### Priority 2.6: Containerization - Phase 2 (Next Up)
+**Ready to implement:**
+- [ ] Create docker-compose.override.yml (see `tasks/open/create-dev-overrides.md`)
 - [ ] Implement migration strategies (see `tasks/open/implement-migration-strategy.md`)
-- [ ] Resolve developer experience issues (see `tasks/open/container-dev-experience.md`)
 - [ ] Create troubleshooting guide (see `tasks/open/container-troubleshooting-guide.md`)
 
 ### Priority 2.7: Containerization - Phase 3 (Enhancements)
@@ -93,15 +110,9 @@ All commands need verification after monorepo restructure:
 - `modular-justfiles.md` - Depends on project structure being clean
 - `worklog-demo-commands.md` - Can be done in parallel with structure work
 
-**Containerization Phase 1 (Prerequisites):**
-- `containerize-services.md` - Overall containerization strategy (PostgreSQL + FastAPI)
-- `containerize-api-service.md` - FastAPI container implementation with hot-reload
+**Containerization Phase 2 (Ready to Implement):**
 - `create-dev-overrides.md` - Development environment config for hot-reload
-- `add-docker-justfile-commands.md` - Docker command integration
-
-**Containerization Phase 2 (Core Features):**
 - `implement-migration-strategy.md` - Multiple migration approaches
-- `container-dev-experience.md` - Developer experience improvements
 - `container-troubleshooting-guide.md` - Troubleshooting documentation
 
 **Containerization Phase 3 (Enhancements):**

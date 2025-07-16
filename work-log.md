@@ -4,6 +4,31 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-16.0003 - Fixed Docker Container Dev Experience
+**Added**: Container permission fixes and tool availability improvements
+**See**: Updated `docker-compose.yml` volumes and `apps/api/Dockerfile` with diff2html
+**Test**: `curl -X POST http://localhost:8080/api/v1/diffs/generate -H "Content-Type: application/json" -d '{"base_branch": "HEAD~3", "branch": "HEAD"}'`
+**Demo**:
+```bash
+# Generate diffs in container
+curl -X POST http://localhost:8080/api/v1/diffs/generate \
+  -H "Content-Type: application/json" \
+  -d '{"base_branch": "HEAD~3", "branch": "HEAD"}' | jq
+
+# Check status (use returned task_id)
+curl http://localhost:8080/api/v1/diffs/status/<task_id> | jq
+
+# View generated files
+ls -la .tmp/diff-output/diff-out-*/
+```
+
+Key fixes:
+- Added diff2html-cli to container via npm install
+- Mounted .tmp directory for write access
+- Mounted repository read-only at /repo for git operations
+- Updated diff_routes.py to auto-detect Docker environment
+- Fixed git commands to use correct working directory
+
 ## 2025-07-16.0002 - Containerized Haven API and PostgreSQL Services
 **Added**: Complete Docker containerization for development workflow
 **See**: `docker-compose.yml` for service definitions, `apps/api/Dockerfile` for API container
