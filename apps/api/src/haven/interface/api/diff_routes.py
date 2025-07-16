@@ -215,13 +215,13 @@ async def generate_index_html(
             padding: 20px;
             background-color: #f5f5f5;
         }}
-        
+
         h1 {{
             color: #333;
             border-bottom: 2px solid #0366d6;
             padding-bottom: 10px;
         }}
-        
+
         .info {{
             background-color: #e3f2fd;
             border-left: 4px solid #0366d6;
@@ -229,14 +229,14 @@ async def generate_index_html(
             margin-bottom: 20px;
             border-radius: 4px;
         }}
-        
+
         .commit-list {{
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             overflow: hidden;
         }}
-        
+
         .commit {{
             display: flex;
             align-items: center;
@@ -244,15 +244,15 @@ async def generate_index_html(
             border-bottom: 1px solid #e1e4e8;
             transition: background-color 0.2s;
         }}
-        
+
         .commit:hover {{
             background-color: #f6f8fa;
         }}
-        
+
         .commit:last-child {{
             border-bottom: none;
         }}
-        
+
         .commit-number {{
             flex-shrink: 0;
             width: 40px;
@@ -266,12 +266,12 @@ async def generate_index_html(
             font-weight: bold;
             margin-right: 15px;
         }}
-        
+
         .commit-details {{
             flex-grow: 1;
             min-width: 0;
         }}
-        
+
         .commit-message {{
             font-weight: 500;
             color: #0366d6;
@@ -282,16 +282,16 @@ async def generate_index_html(
             overflow: hidden;
             text-overflow: ellipsis;
         }}
-        
+
         .commit-message:hover {{
             text-decoration: underline;
         }}
-        
+
         .commit-meta {{
             font-size: 14px;
             color: #586069;
         }}
-        
+
         .commit-hash {{
             font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
             background-color: #f3f4f6;
@@ -299,13 +299,13 @@ async def generate_index_html(
             border-radius: 3px;
             font-size: 12px;
         }}
-        
+
         .stats {{
             margin: 20px 0;
             display: flex;
             gap: 20px;
         }}
-        
+
         .stat {{
             background-color: white;
             padding: 15px 20px;
@@ -313,19 +313,19 @@ async def generate_index_html(
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             text-align: center;
         }}
-        
+
         .stat-value {{
             font-size: 24px;
             font-weight: bold;
             color: #0366d6;
         }}
-        
+
         .stat-label {{
             font-size: 14px;
             color: #586069;
             margin-top: 5px;
         }}
-        
+
         .branch-info {{
             background-color: #f3f4f6;
             padding: 8px 12px;
@@ -334,17 +334,17 @@ async def generate_index_html(
             font-family: monospace;
             font-size: 14px;
         }}
-        
+
         @media (max-width: 768px) {{
             .commit {{
                 flex-direction: column;
                 align-items: flex-start;
             }}
-            
+
             .commit-number {{
                 margin-bottom: 10px;
             }}
-            
+
             .stats {{
                 flex-direction: column;
             }}
@@ -353,13 +353,13 @@ async def generate_index_html(
 </head>
 <body>
     <h1>Commit Diff Index</h1>
-    
+
     <div class="info">
         <strong>Branch:</strong> <span class="branch-info">{branch_display}</span> → <span class="branch-info">{base_branch}</span><br>
         <strong>Generated:</strong> {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}<br>
         <strong>Total Commits:</strong> {len(commits)}
     </div>
-    
+
     <div class="stats">
         <div class="stat">
             <div class="stat-value">{len(commits)}</div>
@@ -374,17 +374,17 @@ async def generate_index_html(
             <div class="stat-label">Date Range</div>
         </div>
     </div>
-    
+
     <div class="commit-list">
         <!-- Commits will be inserted here -->
     </div>
-    
+
     <script>
         // Commit data
         const commits = [
             {commit_data}
         ];
-        
+
         // Populate commit list
         const commitList = document.querySelector('.commit-list');
         commits.forEach(commit => {{
