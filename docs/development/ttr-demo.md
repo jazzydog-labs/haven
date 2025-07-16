@@ -11,17 +11,16 @@ just db-up
 # 2. Run migrations to create TTR tables
 just db-migrate
 
-# 3. Start the API server
-just run
+# 3. Run the TTR demo (two options)
 
-# 4. In another terminal, test the TTR features
-cd apps/api
-source .venv/bin/activate
-python -c "
-import asyncio
-from haven.demo.ttr_demo import demo_ttr_system
-asyncio.run(demo_ttr_system())
-"
+# Option A: Using main Justfile
+just demo-ttr
+
+# Option B: Using demo Justfile directly
+just -f justfile.demos demo-ttr
+
+# 4. Optional: Start API server for interactive testing
+just run
 ```
 
 ## Implemented Features
@@ -44,6 +43,28 @@ asyncio.run(demo_ttr_system())
 - Comment system (planned)
 - Review workflow (planned)
 - Frontend interface (planned)
+
+## Running Demo Commands Independently
+
+You can run demo commands directly from the demo justfile:
+
+```bash
+# View all available demo commands
+just -f justfile.demos demo
+
+# Run specific demos
+just -f justfile.demos demo-ttr           # TTR system demo
+just -f justfile.demos demo-health        # Health check endpoints
+just -f justfile.demos demo-api           # REST API operations
+just -f justfile.demos demo-graphql       # GraphQL operations
+just -f justfile.demos demo-all           # All demos in sequence
+```
+
+This is useful when you want to:
+- Run demos without importing the full justfile
+- Test specific features quickly
+- Integrate demos into CI/CD pipelines
+- Debug demo-specific issues
 
 ## Testing the Implementation
 

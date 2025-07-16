@@ -1,6 +1,12 @@
 # Demo commands for showcasing features
 # This file is imported by the main Justfile
 
+# Variables for standalone execution
+api_dir := "apps/api"
+web_dir := "apps/web"
+python := ".venv/bin/python"
+pip := ".venv/bin/pip"
+
 # Demo command placeholder
 demo:
     @echo "🎯 Available demo commands:"
