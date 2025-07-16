@@ -211,7 +211,8 @@ logs:
 
 # Clean up generated files
 clean: clean-python clean-web
-    rm -rf diff-out*/ diff-demo*/
+    rm -rf .tmp/
+    rm -rf apps/api/diff-out*/ apps/api/diff-demo*/
     rm -f server.log
     @echo "✅ All cleaned!"
 
