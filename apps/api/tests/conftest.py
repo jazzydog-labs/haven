@@ -1,7 +1,7 @@
 """Pytest configuration and fixtures."""
 
 import asyncio
-from typing import AsyncGenerator, Generator
+from collections.abc import AsyncGenerator, Generator
 
 import pytest
 import pytest_asyncio
@@ -29,13 +29,13 @@ async def test_engine() -> AsyncGenerator[AsyncEngine, None]:
         poolclass=NullPool,
         echo=False,
     )
-    
+
     # Create tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    
+
     yield engine
-    
+
     # Cleanup
     await engine.dispose()
 
@@ -44,7 +44,7 @@ async def test_engine() -> AsyncGenerator[AsyncEngine, None]:
 async def test_session(test_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, None]:
     """Create test database session."""
     async_session = create_session_factory(test_engine)
-    
+
     async with async_session() as session:
         yield session
         await session.rollback()

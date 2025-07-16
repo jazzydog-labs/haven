@@ -9,7 +9,7 @@ from haven.interface.api.app import create_app
 def main() -> None:
     """Run the Haven application."""
     settings = get_settings()
-    
+
     # Use import string when reload is enabled
     if settings.server.reload:
         app_str = "haven.interface.api.app:create_app"
@@ -17,7 +17,7 @@ def main() -> None:
     else:
         app_str = create_app()
         factory = False
-    
+
     uvicorn.run(
         app_str,
         host=settings.server.host,

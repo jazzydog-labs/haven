@@ -22,17 +22,17 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 
 ---
 
-## 📋 Backlog (Next 4 Weeks)
+## 📋 Backlog
 
-### Week 1-2: Core Infrastructure
+### Core Infrastructure
 - [ ] Repository pattern implementation
 - [ ] Application services layer
 - [ ] REST API with FastAPI
 - [ ] GraphQL schema with Strawberry
 
-### Week 3-4: Quality & Operations
+### Quality & Operations
 - [ ] Comprehensive test suite (70% coverage)
-- [ ] CI/CD pipeline setup
+~~- [ ] CI/CD pipeline setup~~ (no ci/cd for now)
 - [ ] Docker containerization
 - [ ] Production hardening
 
@@ -57,17 +57,17 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 
 ---
 
-## 🔮 Future Enhancements (3+ Months)
+## 🔮 Future Enhancements
 
-### Q2 2025
+### Infrastructure & Scaling
 - [ ] Multi-tenancy support
 - [ ] Event sourcing for audit trail
 - [ ] Webhook system for integrations
-- [ ] Advanced GraphQL features (subscriptions, dataloaders)
-
-### Q3 2025
 - [ ] Horizontal scaling strategy
 - [ ] Service mesh integration
+
+### Features & Performance
+- [ ] Advanced GraphQL features (subscriptions, dataloaders)
 - [ ] Advanced monitoring dashboards
 - [ ] Performance optimization pass
 
@@ -122,25 +122,13 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 
 ---
 
-## 📅 Milestone Timeline
-
-```
-2025-07-16: Project initialized
-2025-07-20: Core infrastructure complete (target)
-2025-07-27: API layer functional (target)
-2025-08-03: Testing and quality complete (target)
-2025-08-10: Production ready v0.1.0 (target)
-```
-
----
-
 ## 🔄 Maintenance Notes
 
 ### Regular Tasks
-- **Weekly**: Update this roadmap with progress
-- **Bi-weekly**: Review and prioritize technical debt
-- **Monthly**: Dependency updates and security patches
-- **Quarterly**: Architecture review and optimization
+- Update this roadmap with progress
+- Review and prioritize technical debt
+- Dependency updates and security patches
+- Architecture review and optimization
 
 ### When Resuming Work
 1. Check this roadmap for context

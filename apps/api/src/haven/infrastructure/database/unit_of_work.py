@@ -1,7 +1,6 @@
 """SQLAlchemy implementation of Unit of Work pattern."""
 
 from types import TracebackType
-from typing import Optional, Type
 
 from sqlalchemy.ext.asyncio import AsyncSession, AsyncSessionTransaction
 
@@ -15,12 +14,12 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
     def __init__(self, session: AsyncSession) -> None:
         """
         Initialize unit of work with database session.
-        
+
         Args:
             session: AsyncSession for database operations
         """
         self._session = session
-        self._transaction: Optional[AsyncSessionTransaction] = None
+        self._transaction: AsyncSessionTransaction | None = None
 
     async def __aenter__(self) -> "SQLAlchemyUnitOfWork":
         """Enter the unit of work context."""
@@ -30,9 +29,9 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Exit the unit of work context."""
         if exc_type:

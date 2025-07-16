@@ -1,6 +1,6 @@
 """Unit tests for repository pattern implementation."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
@@ -38,14 +38,14 @@ class TestSQLAlchemyRecordRepository:
         mock_model.data = {"test": "data"}
         mock_model.created_at = MagicMock()
         mock_model.updated_at = MagicMock()
-        
+
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = mock_model
         mock_session.execute.return_value = mock_result
-        
+
         # Act
         result = await repository.get(test_id)
-        
+
         # Assert
         assert result is not None
         assert result.id == test_id
@@ -60,10 +60,10 @@ class TestSQLAlchemyRecordRepository:
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = None
         mock_session.execute.return_value = mock_result
-        
+
         # Act
         result = await repository.get(uuid4())
-        
+
         # Assert
         assert result is None
 
@@ -76,10 +76,10 @@ class TestSQLAlchemyRecordRepository:
         # Arrange
         record = Record(data={"test": "data"})
         mock_session.get.return_value = None  # Record doesn't exist
-        
+
         # Act
         await repository.save(record)
-        
+
         # Assert
         mock_session.add.assert_called_once()
         mock_session.flush.assert_called_once()
@@ -103,10 +103,10 @@ class TestSQLAlchemyRecordRepository:
         mock_existing.created_at = record.created_at
         mock_existing.updated_at = record.updated_at
         mock_session.get.return_value = mock_existing
-        
+
         # Act
         result = await repository.save(record)
-        
+
         # Assert
         assert mock_existing.data == {"updated": "data"}
         mock_session.flush.assert_called_once()
@@ -122,10 +122,10 @@ class TestSQLAlchemyRecordRepository:
         mock_result = MagicMock()
         mock_result.rowcount = 1
         mock_session.execute.return_value = mock_result
-        
+
         # Act
         result = await repository.delete(uuid4())
-        
+
         # Assert
         assert result is True
 
@@ -138,10 +138,10 @@ class TestSQLAlchemyRecordRepository:
         mock_result = MagicMock()
         mock_result.rowcount = 0
         mock_session.execute.return_value = mock_result
-        
+
         # Act
         result = await repository.delete(uuid4())
-        
+
         # Assert
         assert result is False
 
@@ -154,10 +154,10 @@ class TestSQLAlchemyRecordRepository:
         mock_result = MagicMock()
         mock_result.scalar.return_value = 1
         mock_session.execute.return_value = mock_result
-        
+
         # Act
         result = await repository.exists(uuid4())
-        
+
         # Assert
         assert result is True
 
@@ -170,9 +170,9 @@ class TestSQLAlchemyRecordRepository:
         mock_result = MagicMock()
         mock_result.scalar.return_value = 42
         mock_session.execute.return_value = mock_result
-        
+
         # Act
         result = await repository.count()
-        
+
         # Assert
         assert result == 42

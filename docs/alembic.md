@@ -184,11 +184,13 @@ All commands respect `DATABASE_URL` from your `.env` or Hydra config.
 
 ---
 
-## 10  CI / CD Hooks
+~~## 10  CI / CD Hooks~~
 
-* **PR checks** run `just db-migrate-offline` to verify migrations generate valid SQL without touching DB.
-* **Integration tests** spin up a fresh Postgres, apply migrations, and exercise repositories.
-* **Production deploy** runs migrations in a separate job before rolling out new app version.
+~~* **PR checks** run `just db-migrate-offline` to verify migrations generate valid SQL without touching DB.~~
+~~* **Integration tests** spin up a fresh Postgres, apply migrations, and exercise repositories.~~
+~~* **Production deploy** runs migrations in a separate job before rolling out new app version.~~
+
+We are not doing CI/CD for now.
 
 ---
 

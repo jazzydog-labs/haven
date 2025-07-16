@@ -1,7 +1,7 @@
 """Application settings using Pydantic and Hydra."""
 
 from functools import lru_cache
-from typing import Any, Optional
+from typing import Any
 
 from hydra import compose, initialize_config_dir
 from hydra.core.global_hydra import GlobalHydra
@@ -117,7 +117,7 @@ class AppSettings(BaseSettings):
         return v
 
 
-@lru_cache()
+@lru_cache
 def get_settings() -> AppSettings:
     """Get cached application settings from Hydra configuration."""
     # Clear any existing Hydra instance
@@ -125,7 +125,10 @@ def get_settings() -> AppSettings:
         GlobalHydra.instance().clear()
 
     # Initialize Hydra with config directory
-    initialize_config_dir(config_dir="/Users/paul/dev/jazzydog-labs/haven/conf", version_base="1.3")
+    import os
+    # From src/haven/config/settings.py -> apps/api/conf
+    config_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "conf")
+    initialize_config_dir(config_dir=config_dir, version_base="1.3")
 
     # Compose configuration
     cfg = compose(config_name="config")
@@ -133,12 +136,12 @@ def get_settings() -> AppSettings:
     # Convert to dictionary and create settings
     # Handle nested structure from Hydra
     from omegaconf import OmegaConf
-    
+
     # Resolve all interpolations
     cfg = OmegaConf.to_container(cfg, resolve=True)
-    
+
     env_cfg = cfg.get("environment", {})
-    
+
     settings_dict = {
         "app": env_cfg.get("app", {}),
         "server": env_cfg.get("server", {}),

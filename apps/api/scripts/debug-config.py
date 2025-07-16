@@ -2,16 +2,17 @@
 """Debug configuration loading."""
 
 import os
+
 from hydra import compose, initialize_config_dir
 from hydra.core.global_hydra import GlobalHydra
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import OmegaConf
 
 # Set env vars
-os.environ['DB_HOST'] = 'localhost'
-os.environ['DB_PORT'] = '5432'
-os.environ['DB_NAME'] = 'haven'
-os.environ['DB_USER'] = 'haven'
-os.environ['DB_PASSWORD'] = 'haven'
+os.environ["DB_HOST"] = "localhost"
+os.environ["DB_PORT"] = "5432"
+os.environ["DB_NAME"] = "haven"
+os.environ["DB_USER"] = "haven"
+os.environ["DB_PASSWORD"] = "haven"
 
 # Clear any existing Hydra instance
 if GlobalHydra.instance().is_initialized():
@@ -29,7 +30,7 @@ print(OmegaConf.to_yaml(cfg))
 
 # Check what's in database section
 print("\nDatabase section:")
-if 'database' in cfg:
+if "database" in cfg:
     print(OmegaConf.to_yaml(cfg.database))
 else:
     print("No database section found!")

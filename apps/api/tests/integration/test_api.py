@@ -29,7 +29,7 @@ class TestRecordsAPI:
         """Test creating a new record."""
         test_data = {"name": "Test Record", "value": 42}
         response = client.post("/api/v1/records", json={"data": test_data})
-        
+
         assert response.status_code == 201
         data = response.json()
         assert "id" in data
@@ -43,7 +43,7 @@ class TestRecordsAPI:
         test_data = {"name": "Test Record"}
         create_response = client.post("/api/v1/records", json={"data": test_data})
         record_id = create_response.json()["id"]
-        
+
         # Then get it
         response = client.get(f"/api/v1/records/{record_id}")
         assert response.status_code == 200
@@ -62,7 +62,7 @@ class TestRecordsAPI:
         # Create a few records
         for i in range(5):
             client.post("/api/v1/records", json={"data": {"index": i}})
-        
+
         # List with pagination
         response = client.get("/api/v1/records?limit=3&offset=0")
         assert response.status_code == 200
@@ -75,16 +75,12 @@ class TestRecordsAPI:
     def test_update_record(self, client: TestClient) -> None:
         """Test updating a record."""
         # Create a record
-        create_response = client.post(
-            "/api/v1/records", json={"data": {"old": "data"}}
-        )
+        create_response = client.post("/api/v1/records", json={"data": {"old": "data"}})
         record_id = create_response.json()["id"]
-        
+
         # Update it
         new_data = {"new": "data"}
-        response = client.put(
-            f"/api/v1/records/{record_id}", json={"data": new_data}
-        )
+        response = client.put(f"/api/v1/records/{record_id}", json={"data": new_data})
         assert response.status_code == 200
         data = response.json()
         assert data["data"] == new_data
@@ -93,11 +89,9 @@ class TestRecordsAPI:
         """Test partially updating a record."""
         # Create a record
         original_data = {"field1": "value1", "field2": "value2"}
-        create_response = client.post(
-            "/api/v1/records", json={"data": original_data}
-        )
+        create_response = client.post("/api/v1/records", json={"data": original_data})
         record_id = create_response.json()["id"]
-        
+
         # Partially update it
         partial_data = {"field2": "updated"}
         response = client.patch(f"/api/v1/records/{record_id}", json=partial_data)
@@ -111,11 +105,11 @@ class TestRecordsAPI:
         # Create a record
         create_response = client.post("/api/v1/records", json={"data": {}})
         record_id = create_response.json()["id"]
-        
+
         # Delete it
         response = client.delete(f"/api/v1/records/{record_id}")
         assert response.status_code == 204
-        
+
         # Verify it's gone
         get_response = client.get(f"/api/v1/records/{record_id}")
         assert get_response.status_code == 404
@@ -125,11 +119,11 @@ class TestRecordsAPI:
         # Create a record
         create_response = client.post("/api/v1/records", json={"data": {}})
         record_id = create_response.json()["id"]
-        
+
         # Check it exists
         response = client.head(f"/api/v1/records/{record_id}")
         assert response.status_code == 200
-        
+
         # Check nonexistent
         fake_id = uuid4()
         response = client.head(f"/api/v1/records/{fake_id}")

@@ -1,7 +1,7 @@
 """Database session management."""
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -16,7 +16,7 @@ from haven.config import get_settings
 def create_engine() -> AsyncEngine:
     """Create async SQLAlchemy engine."""
     settings = get_settings()
-    
+
     return create_async_engine(
         settings.database.dsn,
         echo=settings.app.debug,
@@ -43,7 +43,7 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     """Get database session context manager."""
     engine = create_engine()
     async_session = create_session_factory(engine)
-    
+
     async with async_session() as session:
         try:
             yield session
@@ -53,5 +53,5 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
             raise
         finally:
             await session.close()
-    
+
     await engine.dispose()

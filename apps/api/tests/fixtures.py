@@ -1,6 +1,6 @@
 """Test fixtures for Haven."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
@@ -34,8 +34,8 @@ def sample_record(sample_record_data: dict[str, Any]) -> Record:
     return Record(
         id=uuid4(),
         data=sample_record_data,
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
     )
 
 
@@ -50,8 +50,8 @@ def sample_records(sample_record_data: dict[str, Any]) -> list[Record]:
             Record(
                 id=uuid4(),
                 data=data,
-                created_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
             )
         )
     return records

@@ -1,6 +1,5 @@
 """SQLAlchemy implementation of RecordRepository."""
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import delete, func, select
@@ -17,41 +16,36 @@ class SQLAlchemyRecordRepository(RecordRepository):
     def __init__(self, session: AsyncSession) -> None:
         """
         Initialize repository with database session.
-        
+
         Args:
             session: AsyncSession for database operations
         """
         self._session = session
 
-    async def get(self, record_id: UUID) -> Optional[Record]:
+    async def get(self, record_id: UUID) -> Record | None:
         """Get a record by ID."""
-        result = await self._session.execute(
-            select(RecordModel).where(RecordModel.id == record_id)
-        )
+        result = await self._session.execute(select(RecordModel).where(RecordModel.id == record_id))
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             return None
-            
+
         return self._model_to_entity(model)
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[Record]:
         """Get all records with pagination."""
         result = await self._session.execute(
-            select(RecordModel)
-            .order_by(RecordModel.created_at.desc())
-            .limit(limit)
-            .offset(offset)
+            select(RecordModel).order_by(RecordModel.created_at.desc()).limit(limit).offset(offset)
         )
         models = result.scalars().all()
-        
+
         return [self._model_to_entity(model) for model in models]
 
     async def save(self, record: Record) -> Record:
         """Save a record (create or update)."""
         # Check if record exists
         existing = await self._session.get(RecordModel, record.id)
-        
+
         if existing:
             # Update existing record
             existing.data = record.data
@@ -61,15 +55,13 @@ class SQLAlchemyRecordRepository(RecordRepository):
             # Create new record
             model = self._entity_to_model(record)
             self._session.add(model)
-        
+
         await self._session.flush()
         return self._model_to_entity(model)
 
     async def delete(self, record_id: UUID) -> bool:
         """Delete a record by ID."""
-        result = await self._session.execute(
-            delete(RecordModel).where(RecordModel.id == record_id)
-        )
+        result = await self._session.execute(delete(RecordModel).where(RecordModel.id == record_id))
         return result.rowcount > 0
 
     async def exists(self, record_id: UUID) -> bool:
@@ -82,9 +74,7 @@ class SQLAlchemyRecordRepository(RecordRepository):
 
     async def count(self) -> int:
         """Count total number of records."""
-        result = await self._session.execute(
-            select(func.count()).select_from(RecordModel)
-        )
+        result = await self._session.execute(select(func.count()).select_from(RecordModel))
         return result.scalar() or 0
 
     @staticmethod

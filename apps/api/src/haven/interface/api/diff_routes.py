@@ -1,13 +1,11 @@
 """API routes for git diff generation."""
 
 import asyncio
-import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel
 
@@ -16,6 +14,7 @@ router = APIRouter(tags=["Diffs"])
 
 class DiffRequest(BaseModel):
     """Request model for diff generation."""
+
     branch: str = "HEAD"
     base_branch: str = "main"
     max_commits: int = 50
@@ -23,6 +22,7 @@ class DiffRequest(BaseModel):
 
 class CommitInfo(BaseModel):
     """Information about a single commit."""
+
     number: int
     hash: str
     message: str
@@ -33,23 +33,22 @@ class CommitInfo(BaseModel):
 
 class DiffGenerationStatus(BaseModel):
     """Status of diff generation task."""
+
     task_id: str
     status: str  # "pending", "processing", "completed", "failed"
-    message: Optional[str] = None
-    output_dir: Optional[str] = None
-    commit_count: Optional[int] = None
+    message: str | None = None
+    output_dir: str | None = None
+    commit_count: int | None = None
 
 
 # Store for background tasks status
 diff_tasks = {}
 
 
-async def run_command(cmd: List[str]) -> tuple[str, str, int]:
+async def run_command(cmd: list[str]) -> tuple[str, str, int]:
     """Run a shell command asynchronously."""
     process = await asyncio.create_subprocess_exec(
-        *cmd,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await process.communicate()
     return stdout.decode(), stderr.decode(), process.returncode
@@ -58,7 +57,8 @@ async def run_command(cmd: List[str]) -> tuple[str, str, int]:
 def sanitize_filename(text: str, max_length: int = 50) -> str:
     """Sanitize text for use in filenames."""
     import re
-    sanitized = re.sub(r'[^a-zA-Z0-9]', '-', text)
+
+    sanitized = re.sub(r"[^a-zA-Z0-9]", "-", text)
     return sanitized[:max_length]
 
 
@@ -76,91 +76,107 @@ async def generate_diffs_task(task_id: str, branch: str, base_branch: str, max_c
     """Background task to generate diffs."""
     try:
         diff_tasks[task_id]["status"] = "processing"
-        
+
         # Create output directory
         output_dir = Path(f"diff-out-{task_id}")
         output_dir.mkdir(exist_ok=True)
         diff_tasks[task_id]["output_dir"] = str(output_dir)
-        
+
         # Check diff2html
         await check_diff2html()
-        
+
         # Get list of commits
-        cmd = ["git", "rev-list", "--reverse", f"--max-count={max_commits}", f"{base_branch}..{branch}"]
+        cmd = [
+            "git",
+            "rev-list",
+            "--reverse",
+            f"--max-count={max_commits}",
+            f"{base_branch}..{branch}",
+        ]
         stdout, stderr, returncode = await run_command(cmd)
         if returncode != 0:
             raise RuntimeError(f"Failed to get commits: {stderr}")
-        
-        commits = stdout.strip().split('\n') if stdout.strip() else []
+
+        commits = stdout.strip().split("\n") if stdout.strip() else []
         if not commits:
             diff_tasks[task_id]["status"] = "completed"
             diff_tasks[task_id]["message"] = "No commits to diff"
             diff_tasks[task_id]["commit_count"] = 0
             return
-        
+
         # Arrays to store commit info
         commit_infos = []
-        
+
         # Generate diff for each commit
         for i, commit in enumerate(commits, 1):
             # Get commit info
             hash_cmd = ["git", "rev-parse", "--short", commit]
             hash_stdout, _, _ = await run_command(hash_cmd)
             commit_hash = hash_stdout.strip()
-            
+
             msg_cmd = ["git", "log", "-1", "--pretty=format:%s", commit]
             msg_stdout, _, _ = await run_command(msg_cmd)
             message = msg_stdout.strip()
-            
+
             author_cmd = ["git", "log", "-1", "--pretty=format:%an", commit]
             author_stdout, _, _ = await run_command(author_cmd)
             author = author_stdout.strip()
-            
+
             date_cmd = ["git", "log", "-1", "--pretty=format:%ad", "--date=short", commit]
             date_stdout, _, _ = await run_command(date_cmd)
             date = date_stdout.strip()
-            
+
             # Generate filename
             filename = f"{i}-{commit_hash}-{sanitize_filename(message)}.html"
-            
-            commit_infos.append(CommitInfo(
-                number=i,
-                hash=commit_hash,
-                message=message,
-                author=author,
-                date=date,
-                filename=filename
-            ))
-            
+
+            commit_infos.append(
+                CommitInfo(
+                    number=i,
+                    hash=commit_hash,
+                    message=message,
+                    author=author,
+                    date=date,
+                    filename=filename,
+                )
+            )
+
             # Generate diff HTML
             diff_cmd = [
                 "diff2html",
-                "-s", "side",
-                "-f", "html",
-                "-F", str(output_dir / filename),
-                "-t", f"{commit_hash}: {message}",
-                "--summary", "open",
+                "-s",
+                "side",
+                "-f",
+                "html",
+                "-F",
+                str(output_dir / filename),
+                "-t",
+                f"{commit_hash}: {message}",
+                "--summary",
+                "open",
                 "--highlightCode",
-                "--", f"{commit}^..{commit}"
+                "--",
+                f"{commit}^..{commit}",
             ]
-            
+
             _, stderr, returncode = await run_command(diff_cmd)
             if returncode != 0:
                 print(f"Warning: Could not generate diff for {commit_hash}: {stderr}")
-        
+
         # Generate index.html
         await generate_index_html(output_dir, commit_infos, branch, base_branch)
-        
+
         diff_tasks[task_id]["status"] = "completed"
         diff_tasks[task_id]["commit_count"] = len(commit_infos)
         diff_tasks[task_id]["message"] = f"Generated {len(commit_infos)} diff files"
-        
+
     except Exception as e:
         diff_tasks[task_id]["status"] = "failed"
         diff_tasks[task_id]["message"] = str(e)
 
 
-async def generate_index_html(output_dir: Path, commits: List[CommitInfo], branch: str, base_branch: str):
+async def generate_index_html(
+    output_dir: Path, commits: list[CommitInfo], branch: str, base_branch: str
+):
     """Generate the index.html file."""
     # Get current branch name if HEAD
     if branch == "HEAD":
@@ -168,14 +184,14 @@ async def generate_index_html(output_dir: Path, commits: List[CommitInfo], branc
         branch_display = stdout.strip()
     else:
         branch_display = branch
-    
+
     # Calculate stats
     unique_authors = len(set(c.author for c in commits))
     if commits:
         date_range = f"{commits[0].date} - {commits[-1].date}"
     else:
         date_range = "No commits"
-    
+
     # Generate JavaScript array
     commit_data_lines = []
     for commit in commits:
@@ -186,7 +202,7 @@ async def generate_index_html(output_dir: Path, commits: List[CommitInfo], branc
             f"date: '{commit.date}', file: '{commit.filename}'}}"
         )
     commit_data = ",\n            ".join(commit_data_lines)
-    
+
     # HTML template
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -343,7 +359,7 @@ async def generate_index_html(output_dir: Path, commits: List[CommitInfo], branc
     
     <div class="info">
         <strong>Branch:</strong> <span class="branch-info">{branch_display}</span> → <span class="branch-info">{base_branch}</span><br>
-        <strong>Generated:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
+        <strong>Generated:</strong> {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}<br>
         <strong>Total Commits:</strong> {len(commits)}
     </div>
     
@@ -393,7 +409,7 @@ async def generate_index_html(output_dir: Path, commits: List[CommitInfo], branc
     </script>
 </body>
 </html>"""
-    
+
     # Write the file
     with open(output_dir / "index.html", "w") as f:
         f.write(html_content)
@@ -401,33 +417,26 @@ async def generate_index_html(output_dir: Path, commits: List[CommitInfo], branc
 
 @router.post("/diffs/generate", response_model=DiffGenerationStatus)
 async def generate_diffs(
-    request: DiffRequest,
-    background_tasks: BackgroundTasks
+    request: DiffRequest, background_tasks: BackgroundTasks
 ) -> DiffGenerationStatus:
     """Generate diff files for commits in a branch."""
     task_id = str(uuid4())
-    
+
     # Initialize task status
     diff_tasks[task_id] = {
         "status": "pending",
         "message": "Task queued",
         "output_dir": None,
-        "commit_count": None
+        "commit_count": None,
     }
-    
+
     # Queue the background task
     background_tasks.add_task(
-        generate_diffs_task,
-        task_id,
-        request.branch,
-        request.base_branch,
-        request.max_commits
+        generate_diffs_task, task_id, request.branch, request.base_branch, request.max_commits
     )
-    
+
     return DiffGenerationStatus(
-        task_id=task_id,
-        status="pending",
-        message="Diff generation started"
+        task_id=task_id, status="pending", message="Diff generation started"
     )
 
 
@@ -436,14 +445,14 @@ async def get_diff_status(task_id: str) -> DiffGenerationStatus:
     """Get the status of a diff generation task."""
     if task_id not in diff_tasks:
         raise HTTPException(status_code=404, detail="Task not found")
-    
+
     task = diff_tasks[task_id]
     return DiffGenerationStatus(
         task_id=task_id,
         status=task["status"],
         message=task["message"],
         output_dir=task["output_dir"],
-        commit_count=task["commit_count"]
+        commit_count=task["commit_count"],
     )
 
 
@@ -452,17 +461,17 @@ async def get_diff_index(task_id: str):
     """Get the generated index.html file."""
     if task_id not in diff_tasks:
         raise HTTPException(status_code=404, detail="Task not found")
-    
+
     task = diff_tasks[task_id]
     if task["status"] != "completed":
         raise HTTPException(status_code=400, detail=f"Task is {task['status']}")
-    
+
     output_dir = Path(task["output_dir"])
     index_file = output_dir / "index.html"
-    
+
     if not index_file.exists():
         raise HTTPException(status_code=404, detail="Index file not found")
-    
+
     return FileResponse(index_file, media_type="text/html")
 
 
@@ -471,17 +480,17 @@ async def get_diff_file(task_id: str, filename: str):
     """Get a specific diff HTML file."""
     if task_id not in diff_tasks:
         raise HTTPException(status_code=404, detail="Task not found")
-    
+
     task = diff_tasks[task_id]
     if task["status"] != "completed":
         raise HTTPException(status_code=400, detail=f"Task is {task['status']}")
-    
+
     output_dir = Path(task["output_dir"])
     diff_file = output_dir / filename
-    
+
     if not diff_file.exists() or not diff_file.is_file():
         raise HTTPException(status_code=404, detail="Diff file not found")
-    
+
     return FileResponse(diff_file, media_type="text/html")
 
 
@@ -490,17 +499,18 @@ async def cleanup_diff_task(task_id: str):
     """Clean up generated diff files and task data."""
     if task_id not in diff_tasks:
         raise HTTPException(status_code=404, detail="Task not found")
-    
+
     task = diff_tasks[task_id]
-    
+
     # Clean up files if they exist
     if task["output_dir"]:
         output_dir = Path(task["output_dir"])
         if output_dir.exists():
             import shutil
+
             shutil.rmtree(output_dir)
-    
+
     # Remove from tasks
     del diff_tasks[task_id]
-    
+
     return {"message": "Task cleaned up successfully"}

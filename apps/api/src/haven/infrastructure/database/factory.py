@@ -1,6 +1,6 @@
 """Factory functions for database components."""
 
-from typing import AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
@@ -14,9 +14,9 @@ class DatabaseFactory:
 
     def __init__(self) -> None:
         """Initialize database factory."""
-        self._engine: Optional[AsyncEngine] = None
-        self._session_factory: Optional[async_sessionmaker] = None
-    
+        self._engine: AsyncEngine | None = None
+        self._session_factory: async_sessionmaker | None = None
+
     def _ensure_initialized(self) -> None:
         """Ensure the factory is initialized."""
         if self._engine is None:
@@ -26,7 +26,7 @@ class DatabaseFactory:
     async def get_unit_of_work(self) -> AsyncGenerator[UnitOfWork, None]:
         """
         Get unit of work instance.
-        
+
         Yields:
             UnitOfWork instance for the current request
         """

@@ -1,8 +1,5 @@
 """Integration tests for GraphQL API."""
 
-import json
-from uuid import uuid4
-
 import pytest
 from fastapi.testclient import TestClient
 
@@ -18,7 +15,7 @@ class TestGraphQLAPI:
         app = create_app()
         return TestClient(app)
 
-    def graphql_request(self, client: TestClient, query: str, variables: dict = None):
+    def graphql_request(self, client: TestClient, query: str, variables: dict | None = None):
         """Helper to make GraphQL requests."""
         response = client.post(
             "/graphql",
@@ -39,14 +36,14 @@ class TestGraphQLAPI:
         }
         """
         variables = {"input": {"data": {"name": "GraphQL Record", "value": 123}}}
-        
+
         response = self.graphql_request(client, mutation, variables)
         assert response.status_code == 200
-        
+
         data = response.json()
         assert "data" in data
         assert "createRecord" in data["data"]
-        
+
         record = data["data"]["createRecord"]
         assert "id" in record
         assert record["data"] == {"name": "GraphQL Record", "value": 123}
@@ -65,7 +62,7 @@ class TestGraphQLAPI:
             client, create_mutation, {"input": {"data": {"test": "data"}}}
         )
         record_id = create_response.json()["data"]["createRecord"]["id"]
-        
+
         # Then query it
         query = """
         query GetRecord($id: UUID!) {
@@ -79,7 +76,7 @@ class TestGraphQLAPI:
         """
         response = self.graphql_request(client, query, {"id": record_id})
         assert response.status_code == 200
-        
+
         data = response.json()
         record = data["data"]["record"]
         assert record["id"] == record_id
@@ -96,10 +93,8 @@ class TestGraphQLAPI:
         }
         """
         for i in range(5):
-            self.graphql_request(
-                client, create_mutation, {"input": {"data": {"index": i}}}
-            )
-        
+            self.graphql_request(client, create_mutation, {"input": {"data": {"index": i}}})
+
         # Query with pagination
         query = """
         query ListRecords($first: Int!, $after: String) {
@@ -120,7 +115,7 @@ class TestGraphQLAPI:
         """
         response = self.graphql_request(client, query, {"first": 3})
         assert response.status_code == 200
-        
+
         data = response.json()
         connection = data["data"]["records"]
         assert len(connection["edges"]) <= 3
@@ -141,7 +136,7 @@ class TestGraphQLAPI:
             client, create_mutation, {"input": {"data": {"old": "data"}}}
         )
         record_id = create_response.json()["data"]["createRecord"]["id"]
-        
+
         # Update it
         update_mutation = """
         mutation UpdateRecord($id: UUID!, $input: RecordInput!) {
@@ -157,7 +152,7 @@ class TestGraphQLAPI:
         }
         response = self.graphql_request(client, update_mutation, variables)
         assert response.status_code == 200
-        
+
         data = response.json()
         record = data["data"]["updateRecord"]
         assert record["id"] == record_id
@@ -173,11 +168,9 @@ class TestGraphQLAPI:
             }
         }
         """
-        create_response = self.graphql_request(
-            client, create_mutation, {"input": {"data": {}}}
-        )
+        create_response = self.graphql_request(client, create_mutation, {"input": {"data": {}}})
         record_id = create_response.json()["data"]["createRecord"]["id"]
-        
+
         # Delete it
         delete_mutation = """
         mutation DeleteRecord($id: UUID!) {
@@ -186,10 +179,10 @@ class TestGraphQLAPI:
         """
         response = self.graphql_request(client, delete_mutation, {"id": record_id})
         assert response.status_code == 200
-        
+
         data = response.json()
         assert data["data"]["deleteRecord"] is True
-        
+
         # Verify it's gone
         query = """
         query GetRecord($id: UUID!) {
@@ -214,7 +207,7 @@ class TestGraphQLAPI:
         """
         response = self.graphql_request(client, query)
         assert response.status_code == 200
-        
+
         data = response.json()
         type_names = [t["name"] for t in data["data"]["__schema"]["types"]]
         assert "RecordType" in type_names

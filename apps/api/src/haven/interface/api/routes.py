@@ -67,7 +67,7 @@ async def list_records(
 ) -> RecordListResponseDTO:
     """List records with pagination."""
     records, total = await service.list_records(limit=limit, offset=offset)
-    
+
     return RecordListResponseDTO(
         items=[record_to_response(r) for r in records],
         total=total,

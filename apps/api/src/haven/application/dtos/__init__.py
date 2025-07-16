@@ -6,4 +6,4 @@ from haven.application.dtos.record_dtos import (
     RecordUpdateDTO,
 )
 
-__all__ = ["RecordCreateDTO", "RecordUpdateDTO", "RecordResponseDTO"]
+__all__ = ["RecordCreateDTO", "RecordResponseDTO", "RecordUpdateDTO"]

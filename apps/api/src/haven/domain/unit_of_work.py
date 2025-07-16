@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from types import TracebackType
-from typing import Optional, Type
 
 from haven.domain.repositories import RecordRepository
 
@@ -20,9 +19,9 @@ class UnitOfWork(ABC):
     @abstractmethod
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Exit the unit of work context."""
         ...

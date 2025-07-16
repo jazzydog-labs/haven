@@ -1,6 +1,6 @@
 """Unit tests for Unit of Work implementation."""
 
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -28,20 +28,18 @@ class TestSQLAlchemyUnitOfWork:
         async with uow:
             assert hasattr(uow, "records")
             assert uow._transaction is not None
-        
+
         # Verify commit was called
         assert uow._transaction is None
 
     @pytest.mark.asyncio
-    async def test_context_manager_with_exception(
-        self, uow: SQLAlchemyUnitOfWork
-    ) -> None:
+    async def test_context_manager_with_exception(self, uow: SQLAlchemyUnitOfWork) -> None:
         """Test unit of work context manager with exception."""
         with pytest.raises(ValueError):
             async with uow:
                 assert hasattr(uow, "records")
                 raise ValueError("Test exception")
-        
+
         # Verify rollback was called
         assert uow._transaction is None
 

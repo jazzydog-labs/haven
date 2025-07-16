@@ -1,7 +1,6 @@
 """GraphQL schema definition."""
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 import strawberry
@@ -10,7 +9,6 @@ from strawberry.types import Info
 
 from haven.application.services import RecordService
 from haven.domain.entities import Record
-from haven.domain.unit_of_work import UnitOfWork
 from haven.infrastructure.database.factory import db_factory
 
 
@@ -55,7 +53,7 @@ class PageInfo:
     """Page information for pagination."""
 
     has_next_page: bool
-    end_cursor: Optional[str]
+    end_cursor: str | None
 
 
 @strawberry.input
@@ -77,7 +75,7 @@ class Query:
     """Root query type."""
 
     @strawberry.field
-    async def record(self, info: Info, id: UUID) -> Optional[RecordType]:
+    async def record(self, info: Info, id: UUID) -> RecordType | None:
         """Get a single record by ID."""
         service = await get_service(info)
         try:
@@ -91,11 +89,11 @@ class Query:
         self,
         info: Info,
         first: int = 25,
-        after: Optional[str] = None,
+        after: str | None = None,
     ) -> RecordConnection:
         """List records with cursor-based pagination."""
         service = await get_service(info)
-        
+
         # Decode cursor to offset
         offset = 0
         if after:
@@ -103,15 +101,15 @@ class Query:
                 offset = int(after)
             except ValueError:
                 offset = 0
-        
+
         # Get records
         records, total = await service.list_records(limit=first + 1, offset=offset)
-        
+
         # Check if there are more records
         has_next = len(records) > first
         if has_next:
             records = records[:first]
-        
+
         # Create edges
         edges = []
         for i, record in enumerate(records):
@@ -122,14 +120,14 @@ class Query:
                     node=RecordType.from_entity(record),
                 )
             )
-        
+
         # Create page info
         end_cursor = edges[-1].cursor if edges else None
         page_info = PageInfo(
             has_next_page=has_next,
             end_cursor=end_cursor,
         )
-        
+
         return RecordConnection(edges=edges, page_info=page_info)
 
 
@@ -145,9 +143,7 @@ class Mutation:
         return RecordType.from_entity(record)
 
     @strawberry.mutation
-    async def update_record(
-        self, info: Info, id: UUID, input: RecordInput
-    ) -> RecordType:
+    async def update_record(self, info: Info, id: UUID, input: RecordInput) -> RecordType:
         """Update an existing record."""
         service = await get_service(info)
         record = await service.update_record(id, input.data)
