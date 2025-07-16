@@ -9,21 +9,15 @@ from haven.interface.api.app import create_app
 class TestGraphQLAPI:
     """Test cases for GraphQL API."""
 
-    @pytest.fixture
-    def client(self) -> TestClient:
-        """Create test client."""
-        app = create_app()
-        return TestClient(app)
-
-    def graphql_request(self, client: TestClient, query: str, variables: dict | None = None):
+    def graphql_request(self, test_test_client: TestClient, query: str, variables: dict | None = None):
         """Helper to make GraphQL requests."""
-        response = client.post(
+        response = test_client.post(
             "/graphql",
             json={"query": query, "variables": variables or {}},
         )
         return response
 
-    def test_create_record_mutation(self, client: TestClient) -> None:
+    def test_create_record_mutation(self, test_client: TestClient) -> None:
         """Test creating a record via GraphQL."""
         mutation = """
         mutation CreateRecord($input: RecordInput!) {
@@ -37,7 +31,7 @@ class TestGraphQLAPI:
         """
         variables = {"input": {"data": {"name": "GraphQL Record", "value": 123}}}
 
-        response = self.graphql_request(client, mutation, variables)
+        response = self.graphql_request(test_client, mutation, variables)
         assert response.status_code == 200
 
         data = response.json()
@@ -48,7 +42,7 @@ class TestGraphQLAPI:
         assert "id" in record
         assert record["data"] == {"name": "GraphQL Record", "value": 123}
 
-    def test_get_record_query(self, client: TestClient) -> None:
+    def test_get_record_query(self, test_client: TestClient) -> None:
         """Test getting a record via GraphQL."""
         # First create a record
         create_mutation = """
@@ -59,7 +53,7 @@ class TestGraphQLAPI:
         }
         """
         create_response = self.graphql_request(
-            client, create_mutation, {"input": {"data": {"test": "data"}}}
+            test_client, create_mutation, {"input": {"data": {"test": "data"}}}
         )
         record_id = create_response.json()["data"]["createRecord"]["id"]
 
@@ -74,7 +68,7 @@ class TestGraphQLAPI:
             }
         }
         """
-        response = self.graphql_request(client, query, {"id": record_id})
+        response = self.graphql_request(test_client, query, {"id": record_id})
         assert response.status_code == 200
 
         data = response.json()
@@ -82,7 +76,7 @@ class TestGraphQLAPI:
         assert record["id"] == record_id
         assert record["data"] == {"test": "data"}
 
-    def test_list_records_query(self, client: TestClient) -> None:
+    def test_list_records_query(self, test_client: TestClient) -> None:
         """Test listing records with pagination via GraphQL."""
         # Create some records
         create_mutation = """
@@ -93,7 +87,7 @@ class TestGraphQLAPI:
         }
         """
         for i in range(5):
-            self.graphql_request(client, create_mutation, {"input": {"data": {"index": i}}})
+            self.graphql_request(test_client, create_mutation, {"input": {"data": {"index": i}}})
 
         # Query with pagination
         query = """
@@ -113,7 +107,7 @@ class TestGraphQLAPI:
             }
         }
         """
-        response = self.graphql_request(client, query, {"first": 3})
+        response = self.graphql_request(test_client, query, {"first": 3})
         assert response.status_code == 200
 
         data = response.json()
@@ -122,7 +116,7 @@ class TestGraphQLAPI:
         assert "pageInfo" in connection
         assert isinstance(connection["pageInfo"]["hasNextPage"], bool)
 
-    def test_update_record_mutation(self, client: TestClient) -> None:
+    def test_update_record_mutation(self, test_client: TestClient) -> None:
         """Test updating a record via GraphQL."""
         # Create a record
         create_mutation = """
@@ -133,7 +127,7 @@ class TestGraphQLAPI:
         }
         """
         create_response = self.graphql_request(
-            client, create_mutation, {"input": {"data": {"old": "data"}}}
+            test_client, create_mutation, {"input": {"data": {"old": "data"}}}
         )
         record_id = create_response.json()["data"]["createRecord"]["id"]
 
@@ -150,7 +144,7 @@ class TestGraphQLAPI:
             "id": record_id,
             "input": {"data": {"new": "data"}},
         }
-        response = self.graphql_request(client, update_mutation, variables)
+        response = self.graphql_request(test_client, update_mutation, variables)
         assert response.status_code == 200
 
         data = response.json()
@@ -158,7 +152,7 @@ class TestGraphQLAPI:
         assert record["id"] == record_id
         assert record["data"] == {"new": "data"}
 
-    def test_delete_record_mutation(self, client: TestClient) -> None:
+    def test_delete_record_mutation(self, test_client: TestClient) -> None:
         """Test deleting a record via GraphQL."""
         # Create a record
         create_mutation = """
@@ -168,7 +162,7 @@ class TestGraphQLAPI:
             }
         }
         """
-        create_response = self.graphql_request(client, create_mutation, {"input": {"data": {}}})
+        create_response = self.graphql_request(test_client, create_mutation, {"input": {"data": {}}})
         record_id = create_response.json()["data"]["createRecord"]["id"]
 
         # Delete it
@@ -177,7 +171,7 @@ class TestGraphQLAPI:
             deleteRecord(id: $id)
         }
         """
-        response = self.graphql_request(client, delete_mutation, {"id": record_id})
+        response = self.graphql_request(test_client, delete_mutation, {"id": record_id})
         assert response.status_code == 200
 
         data = response.json()
@@ -191,10 +185,10 @@ class TestGraphQLAPI:
             }
         }
         """
-        verify_response = self.graphql_request(client, query, {"id": record_id})
+        verify_response = self.graphql_request(test_client, query, {"id": record_id})
         assert verify_response.json()["data"]["record"] is None
 
-    def test_graphql_introspection(self, client: TestClient) -> None:
+    def test_graphql_introspection(self, test_client: TestClient) -> None:
         """Test GraphQL introspection query."""
         query = """
         {
@@ -205,7 +199,7 @@ class TestGraphQLAPI:
             }
         }
         """
-        response = self.graphql_request(client, query)
+        response = self.graphql_request(test_client, query)
         assert response.status_code == 200
 
         data = response.json()

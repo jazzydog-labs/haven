@@ -189,13 +189,13 @@ test-file file:
 
 # Documentation
 docs:
-    cd {{ api_dir }} && mkdocs build
+    cd {{ api_dir }} && {{ python }} -m mkdocs build --config-file ../../mkdocs.yml --site-dir ../../site
 
 docs-serve:
-    cd {{ api_dir }} && mkdocs serve --dev-addr localhost:8001
+    cd {{ api_dir }} && {{ python }} -m mkdocs serve --config-file ../../mkdocs.yml --dev-addr localhost:8001
 
 docs-deploy:
-    cd {{ api_dir }} && mkdocs gh-deploy --force
+    cd {{ api_dir }} && {{ python }} -m mkdocs gh-deploy --config-file ../../mkdocs.yml --force
 
 # Development utilities
 shell:

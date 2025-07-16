@@ -23,7 +23,9 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
 
     async def __aenter__(self) -> "SQLAlchemyUnitOfWork":
         """Enter the unit of work context."""
-        self._transaction = await self._session.begin()
+        # Check if a transaction is already active
+        if not self._session.in_transaction():
+            self._transaction = await self._session.begin()
         self.records = SQLAlchemyRecordRepository(self._session)
         return self
 

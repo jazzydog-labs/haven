@@ -64,3 +64,36 @@ def anyio_backend() -> str:
 def sample_record() -> Record:
     """Create a sample record for testing."""
     return Record(data={"test": "data", "value": 42})
+
+
+@pytest.fixture
+def test_client() -> Generator:
+    """Create test client with in-memory test database."""
+    import os
+    from fastapi.testclient import TestClient
+    from haven.interface.api.app import create_app
+    
+    # Set test database URL - async sqlite URL that works with string IDs
+    os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///./test.db"
+    
+    # Create app
+    app = create_app()
+    
+    # Create test client
+    with TestClient(app) as client:
+        # Initialize database with tables
+        import asyncio
+        from sqlalchemy import create_engine
+        from haven.infrastructure.database.models import Base
+        
+        # Create tables using sync engine for simplicity
+        engine = create_engine("sqlite:///./test.db")
+        Base.metadata.create_all(engine)
+        engine.dispose()
+        
+        yield client
+        
+        # Cleanup
+        import os
+        if os.path.exists("test.db"):
+            os.remove("test.db")

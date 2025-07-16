@@ -10,13 +10,7 @@ from haven.interface.api.app import create_app
 class TestFullFlow:
     """Test complete user flows through the application."""
 
-    @pytest.fixture
-    def client(self) -> TestClient:
-        """Create test client."""
-        app = create_app()
-        return TestClient(app)
-
-    def test_complete_crud_flow_rest(self, client: TestClient) -> None:
+    def test_complete_crud_flow_rest(self, test_test_client: TestClient) -> None:
         """Test complete CRUD flow via REST API."""
         # 1. Create a record
         create_data = {
@@ -24,12 +18,12 @@ class TestFullFlow:
             "description": "Testing full flow",
             "metadata": {"tags": ["e2e", "test"]},
         }
-        create_response = client.post("/api/v1/records", json={"data": create_data})
+        create_response = test_client.post("/api/v1/records", json={"data": create_data})
         assert create_response.status_code == 201
         record_id = create_response.json()["id"]
 
         # 2. Read the record
-        get_response = client.get(f"/api/v1/records/{record_id}")
+        get_response = test_client.get(f"/api/v1/records/{record_id}")
         assert get_response.status_code == 200
         assert get_response.json()["data"] == create_data
 
@@ -39,25 +33,25 @@ class TestFullFlow:
             "description": "Updated description",
             "metadata": {"tags": ["e2e", "updated"]},
         }
-        update_response = client.put(f"/api/v1/records/{record_id}", json={"data": update_data})
+        update_response = test_client.put(f"/api/v1/records/{record_id}", json={"data": update_data})
         assert update_response.status_code == 200
         assert update_response.json()["data"] == update_data
 
         # 4. List records
-        list_response = client.get("/api/v1/records")
+        list_response = test_client.get("/api/v1/records")
         assert list_response.status_code == 200
         records = list_response.json()["items"]
         assert any(r["id"] == record_id for r in records)
 
         # 5. Delete the record
-        delete_response = client.delete(f"/api/v1/records/{record_id}")
+        delete_response = test_client.delete(f"/api/v1/records/{record_id}")
         assert delete_response.status_code == 204
 
         # 6. Verify deletion
-        verify_response = client.get(f"/api/v1/records/{record_id}")
+        verify_response = test_client.get(f"/api/v1/records/{record_id}")
         assert verify_response.status_code == 404
 
-    def test_complete_crud_flow_graphql(self, client: TestClient) -> None:
+    def test_complete_crud_flow_graphql(self, test_client: TestClient) -> None:
         """Test complete CRUD flow via GraphQL API."""
         # 1. Create a record
         create_mutation = """
@@ -77,7 +71,7 @@ class TestFullFlow:
                 }
             }
         }
-        create_response = client.post(
+        create_response = test_client.post(
             "/graphql",
             json={"query": create_mutation, "variables": create_variables},
         )
@@ -95,7 +89,7 @@ class TestFullFlow:
             }
         }
         """
-        get_response = client.post(
+        get_response = test_client.post(
             "/graphql",
             json={"query": get_query, "variables": {"id": record_id}},
         )
@@ -117,7 +111,7 @@ class TestFullFlow:
             "id": record_id,
             "input": {"data": {"name": "Updated GraphQL Record", "type": "updated"}},
         }
-        update_response = client.post(
+        update_response = test_client.post(
             "/graphql",
             json={"query": update_mutation, "variables": update_variables},
         )
@@ -139,7 +133,7 @@ class TestFullFlow:
             }
         }
         """
-        list_response = client.post("/graphql", json={"query": list_query})
+        list_response = test_client.post("/graphql", json={"query": list_query})
         assert list_response.status_code == 200
 
         # 5. Delete the record
@@ -148,7 +142,7 @@ class TestFullFlow:
             deleteRecord(id: $id)
         }
         """
-        delete_response = client.post(
+        delete_response = test_client.post(
             "/graphql",
             json={"query": delete_mutation, "variables": {"id": record_id}},
         )
@@ -156,12 +150,12 @@ class TestFullFlow:
         assert delete_response.json()["data"]["deleteRecord"] is True
 
     @pytest.mark.slow
-    def test_concurrent_operations(self, client: TestClient) -> None:
+    def test_concurrent_operations(self, test_client: TestClient) -> None:
         """Test concurrent operations don't interfere."""
         import concurrent.futures
 
         def create_record(index: int) -> str:
-            response = client.post(
+            response = test_client.post(
                 "/api/v1/records",
                 json={"data": {"index": index, "type": "concurrent"}},
             )
@@ -178,4 +172,4 @@ class TestFullFlow:
 
         # Clean up
         for record_id in record_ids:
-            client.delete(f"/api/v1/records/{record_id}")
+            test_client.delete(f"/api/v1/records/{record_id}")

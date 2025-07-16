@@ -24,7 +24,7 @@ class SQLAlchemyRecordRepository(RecordRepository):
 
     async def get(self, record_id: UUID) -> Record | None:
         """Get a record by ID."""
-        result = await self._session.execute(select(RecordModel).where(RecordModel.id == record_id))
+        result = await self._session.execute(select(RecordModel).where(RecordModel.id == str(record_id)))
         model = result.scalar_one_or_none()
 
         if model is None:
@@ -44,7 +44,7 @@ class SQLAlchemyRecordRepository(RecordRepository):
     async def save(self, record: Record) -> Record:
         """Save a record (create or update)."""
         # Check if record exists
-        existing = await self._session.get(RecordModel, record.id)
+        existing = await self._session.get(RecordModel, str(record.id))
 
         if existing:
             # Update existing record
@@ -61,13 +61,13 @@ class SQLAlchemyRecordRepository(RecordRepository):
 
     async def delete(self, record_id: UUID) -> bool:
         """Delete a record by ID."""
-        result = await self._session.execute(delete(RecordModel).where(RecordModel.id == record_id))
+        result = await self._session.execute(delete(RecordModel).where(RecordModel.id == str(record_id)))
         return result.rowcount > 0
 
     async def exists(self, record_id: UUID) -> bool:
         """Check if a record exists."""
         result = await self._session.execute(
-            select(func.count()).select_from(RecordModel).where(RecordModel.id == record_id)
+            select(func.count()).select_from(RecordModel).where(RecordModel.id == str(record_id))
         )
         count = result.scalar() or 0
         return count > 0
@@ -81,7 +81,7 @@ class SQLAlchemyRecordRepository(RecordRepository):
     def _model_to_entity(model: RecordModel) -> Record:
         """Convert SQLAlchemy model to domain entity."""
         return Record(
-            id=model.id,
+            id=UUID(model.id) if isinstance(model.id, str) else model.id,
             data=model.data,
             created_at=model.created_at,
             updated_at=model.updated_at,
@@ -91,7 +91,7 @@ class SQLAlchemyRecordRepository(RecordRepository):
     def _entity_to_model(entity: Record) -> RecordModel:
         """Convert domain entity to SQLAlchemy model."""
         return RecordModel(
-            id=entity.id,
+            id=str(entity.id),
             data=entity.data,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
