@@ -264,17 +264,17 @@ demo-diff-generation:
     ./scripts/demo-diff-generation.sh {{ api_dir }} {{ python }}
 
 # CLI Tools
-# List commits that would be included in diff generation
+# List commits from current branch
 cli-list-commits:
-    cd {{ api_dir }} && {{ python }} -m haven.cli list-commits --repo-path ../..
+    cd {{ api_dir }} && {{ python }} -m haven.cli list-commits --repo-path ../.. --base-branch HEAD
 
-# Generate diff files using CLI tool
+# Generate diff files for all commits on current branch
 cli-generate:
-    cd {{ api_dir }} && {{ python }} -m haven.cli generate --repo-path ../.. --verbose
+    cd {{ api_dir }} && {{ python }} -m haven.cli generate --repo-path ../.. --base-branch HEAD --verbose
 
 # Generate diff files to specific output directory
 cli-generate-to output_dir:
-    cd {{ api_dir }} && {{ python }} -m haven.cli generate --repo-path ../.. --output-dir {{ output_dir }} --verbose
+    cd {{ api_dir }} && {{ python }} -m haven.cli generate --repo-path ../.. --base-branch HEAD --output-dir {{ output_dir }} --verbose
 
 # Add a new entity (scaffolding helper)
 add-entity name:

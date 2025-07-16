@@ -59,23 +59,26 @@ async def get_git_commits(repo_path: Path, base_branch: str = "main") -> list[Gi
     if returncode != 0:
         raise RuntimeError(f"Not a git repository: {repo_path}")
 
-    # Get current branch
-    stdout, stderr, returncode = await run_command(
-        ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_path
-    )
-    if returncode != 0:
-        raise RuntimeError(f"Failed to get current branch: {stderr}")
+    # Get commits from the specified branch (or current branch if base_branch is HEAD)
+    if base_branch == "HEAD":
+        # Use current branch
+        stdout, stderr, returncode = await run_command(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_path
+        )
+        if returncode != 0:
+            raise RuntimeError(f"Failed to get current branch: {stderr}")
+        target_branch = stdout.strip()
+    else:
+        target_branch = base_branch
 
-    current_branch = stdout.strip()
-
-    # Get commits
+    # Get all commits on the target branch in reverse chronological order (oldest first)
     cmd = [
         "git",
         "log",
         "--reverse",
         "--pretty=format:%H|%s|%an|%ad",
         "--date=short",
-        f"{base_branch}..{current_branch}",
+        target_branch,
     ]
 
     stdout, stderr, returncode = await run_command(cmd, cwd=repo_path)
@@ -108,7 +111,7 @@ async def generate_diff_for_commit(
     safe_message = sanitize_filename(commit.message)
     filename = f"{commit_number:02d}-{commit.hash[:8]}-{safe_message}.html"
 
-    # Generate diff HTML using diff2html
+    # Generate diff HTML using diff2html (commit vs its parent)
     diff_cmd = [
         "diff2html",
         "-s", "side",
@@ -147,7 +150,7 @@ def cli():
     "--base-branch",
     "-b",
     default="main",
-    help="Base branch for comparison (default: main)",
+    help="Branch to generate diffs from (default: main)",
 )
 @click.option(
     "--output-dir",
@@ -168,7 +171,7 @@ def generate(
     output_dir: Path,
     verbose: bool,
 ):
-    """Generate diff files for all commits in the repository."""
+    """Generate diff files for all commits from the specified branch (each commit vs its parent)."""
     if verbose:
         console.print(f"[blue]Repository:[/blue] {repo_path}")
         console.print(f"[blue]Base branch:[/blue] {base_branch}")
@@ -211,6 +214,13 @@ async def _generate_diffs_async(
 
     if not commits:
         console.print("[yellow]⚠️ No commits found[/yellow]")
+        console.print(f"[dim]Tip: Branch '{base_branch}' may not exist or have no commits. Try:[/dim]")
+        console.print("[dim]  haven-cli generate --base-branch HEAD  # Use current branch[/dim]")
+        console.print("[dim]  haven-cli list-commits --base-branch HEAD  # List commits on current branch[/dim]")
+        # Still create an index file for empty state
+        create_index_file(output_dir, [], [])
+        index_path = output_dir / "index.html"
+        console.print(f"[blue]📄 Empty index created: file://{index_path.absolute()}[/blue]")
         return
 
     if verbose:
@@ -248,6 +258,10 @@ async def _generate_diffs_async(
     # Create index file
     create_index_file(output_dir, commits, generated_files)
 
+    # Output clickable link to index
+    index_path = output_dir / "index.html"
+    console.print(f"[blue]📄 View results: file://{index_path.absolute()}[/blue]")
+
 
 def create_index_file(output_dir: Path, commits: list[GitCommit], diff_files: list[str]):
     """Create an index.html file listing all commits and diffs."""
@@ -255,7 +269,7 @@ def create_index_file(output_dir: Path, commits: list[GitCommit], diff_files: li
 
     # Calculate stats
     unique_authors = len({c.author for c in commits})
-    date_range = f"{commits[0].date} - {commits[-1].date}" if commits else "No commits"
+    date_range = f"{commits[0].date} - {commits[-1].date}" if commits else "No date range"
 
     # Generate JavaScript array
     commit_data_lines: list[str] = []
@@ -415,22 +429,40 @@ def create_index_file(output_dir: Path, commits: list[GitCommit], diff_files: li
 
         // Populate commit list
         const commitList = document.querySelector('.commit-list');
-        commits.forEach(commit => {{
-            const commitDiv = document.createElement('div');
-            commitDiv.className = 'commit';
-            commitDiv.innerHTML = `
-                <div class="commit-number">${{commit.number}}</div>
-                <div class="commit-details">
-                    <a href="${{commit.file}}" class="commit-message" title="${{commit.message}}">${{commit.message}}</a>
-                    <div class="commit-meta">
-                        <span class="commit-hash">${{commit.hash}}</span>
-                        by <strong>${{commit.author}}</strong>
-                        on ${{commit.date}}
-                    </div>
+
+        if (commits.length === 0) {{
+            // Show helpful message when no commits found
+            const emptyDiv = document.createElement('div');
+            emptyDiv.style.cssText = 'padding: 40px 20px; text-align: center; color: #586069;';
+            emptyDiv.innerHTML = `
+                <h3 style="margin-bottom: 10px;">No commits found</h3>
+                <p style="margin-bottom: 20px;">The specified branch may not exist or have no commits.</p>
+                <div style="background: #f6f8fa; padding: 15px; border-radius: 6px; text-align: left; max-width: 500px; margin: 0 auto;">
+                    <strong>Try these commands:</strong><br>
+                    <code style="display: block; margin: 5px 0;">haven-cli generate --base-branch HEAD</code>
+                    <code style="display: block; margin: 5px 0;">haven-cli list-commits --base-branch HEAD</code>
+                    <code style="display: block; margin: 5px 0;">haven-cli list-commits --base-branch main</code>
                 </div>
             `;
-            commitList.appendChild(commitDiv);
-        }});
+            commitList.appendChild(emptyDiv);
+        }} else {{
+            commits.forEach(commit => {{
+                const commitDiv = document.createElement('div');
+                commitDiv.className = 'commit';
+                commitDiv.innerHTML = `
+                    <div class="commit-number">${{commit.number}}</div>
+                    <div class="commit-details">
+                        <a href="${{commit.file}}" class="commit-message" title="${{commit.message}}">${{commit.message}}</a>
+                        <div class="commit-meta">
+                            <span class="commit-hash">${{commit.hash}}</span>
+                            by <strong>${{commit.author}}</strong>
+                            on ${{commit.date}}
+                        </div>
+                    </div>
+                `;
+                commitList.appendChild(commitDiv);
+            }});
+        }}
     </script>
 </body>
 </html>"""
@@ -452,10 +484,10 @@ def create_index_file(output_dir: Path, commits: list[GitCommit], diff_files: li
     "--base-branch",
     "-b",
     default="main",
-    help="Base branch for comparison (default: main)",
+    help="Branch to show commits from (default: main)",
 )
 def list_commits(repo_path: Path, base_branch: str):
-    """List commits that would be included in diff generation."""
+    """List all commits from the specified branch."""
     try:
         commits = asyncio.run(get_git_commits(repo_path, base_branch))
 
@@ -463,7 +495,7 @@ def list_commits(repo_path: Path, base_branch: str):
             console.print("[yellow]No commits found[/yellow]")
             return
 
-        table = Table(title=f"Commits in {repo_path} (vs {base_branch})")
+        table = Table(title=f"Commits in {repo_path} (from {base_branch})")
         table.add_column("Number", style="cyan", width=8)
         table.add_column("Hash", style="yellow", width=10)
         table.add_column("Date", style="green", width=12)
