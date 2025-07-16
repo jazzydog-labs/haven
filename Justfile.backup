@@ -1,17 +1,17 @@
-# Haven Development Justfile
+# Haven Development Justfile - Main Orchestrator
 # Run `just --list` to see all available commands
+
+# Import common variables and settings
+import 'justfile.common'
+
+# Import module-specific justfiles
+import 'justfile.database'
+import 'justfile.docker'
+import 'justfile.demos'
 
 # Default recipe shows available commands
 default:
     @just --list
-
-# Directory configuration
-api_dir := "apps/api"
-web_dir := "apps/web"
-
-# Python environment (relative to api_dir when used with cd)
-python := ".venv/bin/python"
-pip := ".venv/bin/pip"
 
 # Bootstrap entire monorepo
 bootstrap: bootstrap-python bootstrap-web
@@ -54,57 +54,112 @@ update-python:
 update-web:
     cd {{ web_dir }} && npm update
 
-# Run both API and Web in development mode
-run: run-api
-    @echo "🚀 Use 'just run-web' in another terminal to start the web client"
+# Run everything in development mode with hot-reload
+run: run-all
 
-# Run API server
+# Run all services (recommended)
+run-all:
+    @echo "🚀 Starting Haven Development Environment..."
+    @echo "==========================================="
+    @echo ""
+    
+    # Start backend services in background
+    @just run-docker-d > /dev/null 2>&1
+    
+    # Wait for backend to be ready
+    @echo "⏳ Waiting for backend services to start..."
+    @while ! curl -s http://localhost:8080/health > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    
+    @echo "✅ Backend services ready!"
+    @echo ""
+    
+    # Start frontend in background
+    @echo "🎨 Starting frontend development server..."
+    @cd {{ web_dir }} && npm run dev > /tmp/haven-frontend.log 2>&1 & echo $$! > /tmp/haven-frontend.pid
+    
+    # Wait for frontend
+    @echo "⏳ Waiting for frontend to start..."
+    @while ! curl -s http://localhost:3000 > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    
+    @echo "✅ Frontend ready!"
+    @echo ""
+    @echo "======================================"
+    @echo "🎉 Haven is running!"
+    @echo "======================================"
+    @echo ""
+    @echo "📱 Access your application at:"
+    @echo ""
+    @echo "  🌐 Frontend:    http://localhost:3000"
+    @echo "  📊 Records:     http://localhost:3000  (Records section)"
+    @echo "  📚 API Docs:    http://localhost:8080/docs"
+    @echo "  🔮 GraphQL:     http://localhost:8080/graphql"
+    @echo "  ❤️  Health:     http://localhost:8080/health"
+    @echo ""
+    @echo "🌐 Or use local domains (run 'just setup-hosts' first):"
+    @echo "  🌐 Frontend:    http://web.haven.local:3000"
+    @echo "  📚 API:         http://api.haven.local:8080"
+    @echo "  🎉 Better:      Run 'just run-proxy' for clean URLs"
+    @echo ""
+    @echo "🔥 Hot-reload enabled for both frontend and backend!"
+    @echo ""
+    @echo "📝 Logs:"
+    @echo "  Backend:  just logs-docker api"
+    @echo "  Frontend: tail -f /tmp/haven-frontend.log"
+    @echo ""
+    @echo "🛑 To stop everything: just stop-all"
+    @echo ""
+    @echo "Press Ctrl+C to exit (services will continue running)"
+    @echo ""
+    
+    # Keep running to show the info
+    @while true; do sleep 60; done
+
+# Stop all services
+stop-all:
+    @echo "🛑 Stopping all Haven services..."
+    
+    # Stop frontend if running
+    @if [ -f /tmp/haven-frontend.pid ]; then \
+        PID=`cat /tmp/haven-frontend.pid`; \
+        kill $$PID 2>/dev/null || true; \
+        rm -f /tmp/haven-frontend.pid; \
+        echo "✅ Frontend stopped"; \
+    fi
+    
+    # Stop backend
+    @just stop-docker > /dev/null 2>&1
+    @echo "✅ Backend stopped"
+    
+    # Clean up
+    @rm -f /tmp/haven-frontend.log
+    
+    @echo "🏁 All services stopped"
+
+# Run API server (standalone)
 run-api:
-    cd {{ api_dir }} && {{ python }} -m haven.main
+    cd {{ api_dir }} && just run
 
-# Run Web development server
+# Run Web development server (standalone)
 run-web:
-    cd {{ web_dir }} && npm run dev
+    cd {{ web_dir }} && just run
+
+# Quick start (alias)
+start: run-all
+
+# Quick stop (alias)
+stop: stop-all
 
 # Run with specific environment
 run-env env="local":
-    cd {{ api_dir }} && {{ python }} -m haven.main +environment={{ env }}
-
-# Database commands
-db-up:
-    docker compose up -d postgres
-    @echo "⏳ Waiting for PostgreSQL to be ready..."
-    @sleep 3
-    @echo "✅ PostgreSQL is running"
-
-db-down:
-    docker compose down
-
-db-reset:
-    docker compose down -v
-    docker compose up -d postgres
-    @sleep 3
-    @echo "✅ Database reset complete"
-
-# Run migrations
-db-migrate:
-    cd {{ api_dir }} && {{ python }} -m alembic upgrade head
-
-# Create a new migration
-db-make message:
-    cd {{ api_dir }} && {{ python }} -m alembic revision --autogenerate -m "{{ message }}"
-
-# Show migration history
-db-history:
-    cd {{ api_dir }} && {{ python }} -m alembic history --verbose
-
-# Show current migration
-db-current:
-    cd {{ api_dir }} && {{ python }} -m alembic current
-
-# Downgrade database
-db-downgrade steps="1":
-    cd {{ api_dir }} && {{ python }} -m alembic downgrade -{{ steps }}
+    cd {{ api_dir }} && just run-env {{ env }}
 
 # Quality checks for all code
 lint: lint-python lint-web
@@ -112,51 +167,76 @@ lint: lint-python lint-web
 
 # Python linting
 lint-python:
-    cd {{ api_dir }} && {{ python }} -m ruff check .
+    cd {{ api_dir }} && just lint
 
 # Web linting
 lint-web:
-    cd {{ web_dir }} && npm run lint
+    cd {{ web_dir }} && just lint
 
 # Fix linting issues
 lint-fix: lint-fix-python lint-fix-web
     @echo "✅ All linting issues fixed!"
 
 lint-fix-python:
-    cd {{ api_dir }} && {{ python }} -m ruff check --fix .
-    cd {{ api_dir }} && {{ python }} -m ruff format .
+    cd {{ api_dir }} && just lint-fix
 
 lint-fix-web:
-    cd {{ web_dir }} && npm run format
+    cd {{ web_dir }} && just lint-fix
 
 # Format all code
 format: format-python format-web
     @echo "✅ All code formatted!"
 
 format-python:
-    cd {{ api_dir }} && {{ python }} -m ruff format .
+    cd {{ api_dir }} && just format
 
 format-web:
-    cd {{ web_dir }} && npm run format
+    cd {{ web_dir }} && just format
 
 # Type checking
 type: type-python type-web
     @echo "✅ All type checking passed!"
 
 type-python:
-    cd {{ api_dir }} && {{ python }} -m pyright
+    cd {{ api_dir }} && just type
 
 type-web:
-    cd {{ web_dir }} && npm run type-check
+    cd {{ web_dir }} && just type
+
+# Sync frontend types with backend API
+sync-types:
+    @echo "🔄 Syncing frontend types with backend..."
+    ./scripts/sync-frontend-backend.sh
+
+# Check for API breaking changes
+check-api-compat:
+    @echo "🔍 Checking API compatibility..."
+    @if [ -f {{ web_dir }}/src/types/openapi.prev.json ]; then \
+        diff -u {{ web_dir }}/src/types/openapi.prev.json {{ web_dir }}/src/types/openapi.json || echo "⚠️  API changes detected"; \
+    else \
+        echo "No previous API spec found for comparison"; \
+    fi
+
+# Generate CRUD components for a model
+generate-frontend-crud model:
+    @echo "🏗️  Generating CRUD components for {{ model }}..."
+    @echo "TODO: Implement CRUD component generation"
+    @echo "- Create components/{{ model }}/{{ model }}List.tsx"
+    @echo "- Create components/{{ model }}/{{ model }}Form.tsx"
+    @echo "- Create components/{{ model }}/{{ model }}Detail.tsx"
+    @echo "- Create hooks/use{{ model }}.ts"
+    @echo "- Create services/api/{{ model }}.ts"
 
 # Run all quality checks
 check: lint type test-fast
 
 # Run Python quality checks only
-check-python: lint-python type-python test-fast-python
+check-python:
+    cd {{ api_dir }} && just check
 
 # Run Web quality checks only  
-check-web: lint-web type-web test-web
+check-web:
+    cd {{ web_dir }} && just check
 
 # Run all tests
 test: test-python test-web
@@ -164,34 +244,34 @@ test: test-python test-web
 
 # Python testing
 test-python:
-    cd {{ api_dir }} && {{ python }} -m pytest
+    cd {{ api_dir }} && just test
 
-# Web testing (placeholder for now)
+# Web testing
 test-web:
-    @echo "📝 Web tests not implemented yet"
+    cd {{ web_dir }} && just test
 
 test-fast: test-fast-python
     @echo "✅ Fast tests passed!"
 
 test-fast-python:
-    cd {{ api_dir }} && {{ python }} -m pytest -m "not slow"
+    cd {{ api_dir }} && just test-fast
 
 # Coverage testing
 test-cov: test-cov-python
     @echo "✅ Coverage report generated!"
 
 test-cov-python:
-    cd {{ api_dir }} && {{ python }} -m pytest --cov=haven --cov-report=html
+    cd {{ api_dir }} && just test-cov
 
 # Watch mode testing
 test-watch: test-watch-python
 
 test-watch-python:
-    cd {{ api_dir }} && {{ python }} -m pytest-watch
+    cd {{ api_dir }} && just test-watch
 
 # Run specific test file
 test-file file:
-    cd {{ api_dir }} && {{ python }} -m pytest {{ file }}
+    cd {{ api_dir }} && just test-file {{ file }}
 
 # Documentation
 docs:
@@ -205,11 +285,7 @@ docs-deploy:
 
 # Development utilities
 shell:
-    cd {{ api_dir }} && {{ python }} -m asyncio
-
-# Database console
-db-console:
-    docker compose exec postgres psql -U haven -d haven
+    cd {{ api_dir }} && just shell
 
 # Show logs
 logs:
@@ -223,162 +299,10 @@ clean: clean-python clean-web
     @echo "✅ All cleaned!"
 
 clean-python:
-    cd {{ api_dir }} && rm -rf build/ dist/ *.egg-info/
-    find {{ api_dir }} -type d -name __pycache__ -exec rm -rf {} +
-    find {{ api_dir }} -type f -name "*.pyc" -delete
-    cd {{ api_dir }} && rm -rf .coverage htmlcov/ .pytest_cache/
-    cd {{ api_dir }} && rm -rf .ruff_cache/ .mypy_cache/ .pyright/
-    cd {{ api_dir }} && rm -rf site/
+    cd {{ api_dir }} && just clean
 
 clean-web:
-    cd {{ web_dir }} && rm -rf dist/ node_modules/.cache/
-    cd {{ web_dir }} && rm -rf .eslintcache
-
-# Docker commands - Legacy single-image commands
-docker-build tag="latest":
-    ./scripts/build-docker.sh --tag {{ tag }}
-
-docker-build-multi:
-    ./scripts/build-docker.sh --multi-arch
-
-docker-push registry tag="latest":
-    ./scripts/build-docker.sh --push --registry {{ registry }} --tag {{ tag }}
-
-docker-size:
-    @docker images haven --format "table {{ '{{' }}.Repository{{ '}}' }}\t{{ '{{' }}.Tag{{ '}}' }}\t{{ '{{' }}.Size{{ '}}' }}"
-
-# Docker Compose Development Commands
-# Run entire stack in containers
-run-docker:
-    docker compose up
-
-# Run in detached mode
-run-docker-d:
-    docker compose up -d
-
-# Run only API in container (with hot-reload)
-run-api-docker:
-    docker compose up api
-
-# Stop all containers
-stop-docker:
-    docker compose down
-
-# Alias for stop-docker (compatibility)
-down: stop-docker
-
-# Database Operations in Docker
-# Run migrations in container (requires running API container)
-db-migrate-docker:
-    docker compose exec api alembic upgrade head
-
-# Run migrations with one-shot container (doesn't require running API)
-db-migrate-run:
-    docker compose run --rm api alembic upgrade head
-
-# Run migrations with dedicated service
-db-migrate-service:
-    docker compose run --rm migrate
-
-# Create migration from container
-db-make-docker message:
-    docker compose exec api alembic revision --autogenerate -m "{{ message }}"
-
-# Show migration history in container
-db-history-docker:
-    docker compose exec api alembic history --verbose
-
-# Show current migration in container
-db-current-docker:
-    docker compose exec api alembic current
-
-# Downgrade database in container
-db-downgrade-docker steps="1":
-    docker compose exec api alembic downgrade -{{ steps }}
-
-# Database console via container
-db-console-docker:
-    docker compose exec postgres psql -U haven -d haven
-
-# Reset database in container
-db-reset-docker:
-    docker compose exec api alembic downgrade base
-    docker compose exec api alembic upgrade head
-
-# Testing & Quality in Docker
-# Run tests in container
-test-docker:
-    docker compose run --rm api pytest tests/ --no-cov
-
-# Run tests with coverage in container
-test-cov-docker:
-    docker compose run --rm api pytest tests/ --cov=haven --cov-report=html
-
-# Run specific test file in container
-test-file-docker file:
-    docker compose run --rm api pytest tests/{{ file }}
-
-# Run linting in container
-lint-docker:
-    docker compose run --rm api ruff check .
-
-# Fix linting in container
-lint-fix-docker:
-    docker compose run --rm api ruff check --fix .
-    docker compose run --rm api ruff format .
-
-# Run type checking in container
-type-docker:
-    docker compose run --rm api pyright
-
-# Run all quality checks in container
-check-docker:
-    docker compose run --rm api ruff check .
-    docker compose run --rm api pyright
-    docker compose run --rm api pytest -m "not slow"
-
-# Docker Utilities
-# Shell into API container
-shell-docker:
-    docker compose exec api /bin/bash
-
-# Python REPL in container
-shell-python-docker:
-    docker compose exec api python -m asyncio
-
-# View container logs
-logs-docker service="":
-    docker compose logs -f {{ service }}
-
-# Show running containers
-ps-docker:
-    docker compose ps
-
-# Rebuild containers
-rebuild-docker:
-    docker compose build --no-cache
-
-# Development Helpers for Docker
-# Full reset (containers + volumes)
-reset-docker:
-    docker compose down -v
-    docker compose up -d
-
-# Update dependencies in container
-update-docker:
-    docker compose exec api pip install -e ".[dev]"
-
-# Clean Docker resources
-clean-docker:
-    docker compose down
-    docker system prune -f
-
-# Run demo commands in container
-demo-commits-docker:
-    docker compose exec api python -m haven.cli demo-commits
-
-demo-diff-generation-docker:
-    docker compose exec api python -m haven.cli demo-diff-generation
+    cd {{ web_dir }} && just clean
 
 # Pre-commit setup
 pre-commit-install:
@@ -386,19 +310,6 @@ pre-commit-install:
 
 pre-commit-run:
     pre-commit run --all-files
-
-# Demo command (placeholder for future implementation)
-demo:
-    @echo "🎯 Demo functionality will be implemented per feature"
-    @echo "Run specific demos with: just demo-<feature>"
-
-# Demo: View all commits and diffs in browser (single command)
-demo-commits:
-    ./scripts/demo-commits.sh {{ api_dir }} {{ python }}
-
-# Demo: Diff Generation API (legacy - requires manual server start)
-demo-diff-generation:
-    ./scripts/demo-diff-generation.sh {{ api_dir }} {{ python }}
 
 # CLI Tools
 # List commits from current branch
@@ -425,17 +336,21 @@ add-entity name:
 
 # Show current environment info
 info:
-    @echo "Python: $(cd {{ api_dir }} && {{ python }} --version)"
-    @echo "Environment: {{ api_dir }}/.venv"
+    @echo "=== Monorepo Info ==="
     @echo "Working directory: $(pwd)"
-    @cd {{ api_dir }} && {{ python }} -m pip list | grep -E "(fastapi|sqlalchemy|strawberry|pydantic)"
+    @echo ""
+    @echo "=== API Info ==="
+    @cd {{ api_dir }} && just info
+    @echo ""
+    @echo "=== Web Info ==="
+    @cd {{ web_dir }} && just info
 
 # Full CI simulation
 ci: clean bootstrap check docs
     @echo "✅ All CI checks passed!"
 
 # Run CI for Python only
-ci-python: clean bootstrap-python check docs
+ci-python: clean bootstrap-python check-python docs
     @echo "✅ Python CI checks passed!"
 
 # Build all applications
@@ -449,5 +364,134 @@ build-api:
 
 # Build Web application
 build-web:
-    cd {{ web_dir }} && npm run build
-    @echo "✅ Web application built to {{ web_dir }}/dist"
+    cd {{ web_dir }} && just build
+
+# Setup local HTTPS development
+setup-https:
+    @echo "🔐 Setting up local HTTPS..."
+    ./scripts/setup-https.sh
+
+# Run with HTTPS using Caddy
+run-https:
+    docker compose -f docker-compose.yml -f docker-compose.https.yml up
+
+# Run with HTTPS in background
+run-https-d:
+    docker compose -f docker-compose.yml -f docker-compose.https.yml up -d
+    @echo "🔒 HTTPS services running:"
+    @echo "  - https://haven.local (web app)"
+    @echo "  - https://api.haven.local (API)"
+    @echo "  - https://api.haven.local/docs (Swagger)"
+
+# Stop HTTPS services
+stop-https:
+    docker compose -f docker-compose.yml -f docker-compose.https.yml down
+
+# Setup local hosts entries
+setup-hosts:
+    @echo "🌐 Setting up local domain mappings"
+    @sudo ./scripts/setup-hosts.sh
+
+# Remove local hosts entries
+remove-hosts:
+    @echo "🧹 Removing Haven domain mappings"
+    @sudo ./scripts/setup-hosts.sh --remove
+
+# Run with local reverse proxy (includes hosts setup)
+run-proxy: setup-hosts
+    @echo "🚀 Starting Haven with reverse proxy..."
+    @echo "==========================================="
+    @echo ""
+    
+    # Start backend services in background
+    @just run-docker-d > /dev/null 2>&1
+    
+    # Wait for backend to be ready
+    @echo "⏳ Waiting for backend services to start..."
+    @while ! curl -s http://localhost:8080/health > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    @echo "✅ Backend services ready!"
+    @echo ""
+    
+    # Start frontend in background
+    @echo "🎨 Starting frontend development server..."
+    @cd {{ web_dir }} && npm run dev > /tmp/haven-frontend.log 2>&1 & echo $$! > /tmp/haven-frontend.pid
+    
+    # Wait for frontend
+    @echo "⏳ Waiting for frontend to start..."
+    @while ! curl -s http://localhost:3000 > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    @echo "✅ Frontend ready!"
+    @echo ""
+    
+    # Start Caddy proxy
+    @echo "🔐 Starting Caddy reverse proxy..."
+    @caddy run --config ./Caddyfile --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
+    
+    # Wait for Caddy
+    @sleep 2
+    
+    @echo ""
+    @echo "======================================"
+    @echo "🎉 Haven is running with reverse proxy!"
+    @echo "======================================"
+    @echo ""
+    @echo "📱 Access your application at:"
+    @echo ""
+    @echo "  🌐 Main:        http://haven.local"
+    @echo "  🌐 Frontend:    http://web.haven.local"
+    @echo "  📚 API:         http://api.haven.local"
+    @echo "  📊 Swagger:     http://api.haven.local/docs"
+    @echo "  🔮 GraphQL:     http://api.haven.local/graphql"
+    @echo "  ❤️  Health:     http://api.haven.local/health"
+    @echo ""
+    @echo "🔥 Hot-reload enabled for both frontend and backend!"
+    @echo "🔒 HTTPS available at https://haven.local (if certificates are set up)"
+    @echo ""
+    @echo "📝 Logs:"
+    @echo "  Backend:  just logs-docker api"
+    @echo "  Frontend: tail -f /tmp/haven-frontend.log"
+    @echo "  Proxy:    tail -f /tmp/haven-caddy.log"
+    @echo ""
+    @echo "🛑 To stop everything: just stop-proxy"
+    @echo ""
+    @echo "Press Ctrl+C to exit (services will continue running)"
+    @echo ""
+    
+    # Keep running to show the info
+    @while true; do sleep 60; done
+
+# Stop proxy and all services
+stop-proxy:
+    @echo "🛑 Stopping all Haven services..."
+    
+    # Stop Caddy if running
+    @if [ -f /tmp/haven-caddy.pid ]; then \
+        PID=`cat /tmp/haven-caddy.pid`; \
+        kill $$PID 2>/dev/null || true; \
+        rm -f /tmp/haven-caddy.pid; \
+        echo "✅ Caddy proxy stopped"; \
+    fi
+    
+    # Stop frontend if running
+    @if [ -f /tmp/haven-frontend.pid ]; then \
+        PID=`cat /tmp/haven-frontend.pid`; \
+        kill $$PID 2>/dev/null || true; \
+        rm -f /tmp/haven-frontend.pid; \
+        echo "✅ Frontend stopped"; \
+    fi
+    
+    # Stop backend
+    @just stop-docker > /dev/null 2>&1
+    @echo "✅ Backend stopped"
+    
+    # Clean up
+    @rm -f /tmp/haven-frontend.log /tmp/haven-caddy.log
+    
+    @echo "🏁 All services stopped"

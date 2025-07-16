@@ -35,11 +35,11 @@ just setup-https && just run-https
 
 ### Daily Commands
 ```bash
-just run          # Start service with hot-reload
-just db-up        # Start PostgreSQL
-just test-fast    # Run unit tests only (quick feedback)
-just lint         # Quick syntax check
-just check        # Full quality gates (lint + type + test)
+just run              # Start service with hot-reload
+just database::up     # Start PostgreSQL
+just testing::fast    # Run unit tests only (quick feedback)
+just lint             # Quick syntax check
+just check            # Full quality gates (lint + type + test)
 ```
 
 ### Development Cycle
@@ -64,7 +64,7 @@ Each task should result in at least one atomic commit and synchronized documenta
 just add-entity User
 
 # Generate and apply migration
-just db-make "add_users_table" && just db-migrate
+just database::make "add_users_table" && just database::migrate
 
 # Run specific test file
 just test tests/test_api.py::test_create_record
@@ -151,7 +151,7 @@ just db-migrate
 just logs
 
 # Database console
-just db-console
+just database::console
 
 # Python REPL with app context
 just shell
@@ -201,25 +201,25 @@ See `docs/quality.md` for linting/typing details and `docs/definition-of-done.md
 ### Common Docker Commands
 ```bash
 # Development
-just run-docker-d      # Start all services in background
-just stop-docker       # Stop all services
-just logs-docker api   # View API logs
-just shell-docker      # Shell into API container
+just docker::up-d      # Start all services in background
+just docker::down      # Stop all services
+just docker::logs api  # View API logs
+just docker::shell     # Shell into API container
 
 # Database
-just db-migrate-docker                    # Run migrations
-just db-make-docker "add_users_table"     # Create migration
-just db-console-docker                    # Database console
+just database::migrate-docker             # Run migrations in Docker
+just database::make-docker "add_users"   # Create migration in Docker
+just database::console-docker             # Database console via Docker
 
 # Testing & Quality
-just test-docker       # Run tests in container
-just lint-docker       # Run linting
-just check-docker      # Full quality checks
+just docker::test      # Run tests in container
+just docker::lint      # Run linting in container
+just docker::type-check # Type checking in container
 
 # Utilities
-just ps-docker         # Show running containers
-just rebuild-docker    # Rebuild containers
-just reset-docker      # Full reset (data loss!)
+just docker::ps        # Show running containers
+just docker::rebuild   # Rebuild containers
+just docker::reset     # Full reset (data loss!)
 ```
 
 ### Docker vs Local Commands
@@ -240,7 +240,7 @@ just reset-docker      # Full reset (data loss!)
 
 ```bash
 # Reset everything
-just clean && just db-reset
+just clean && just database::reset
 
 # Stop all services
 just down
@@ -251,14 +251,14 @@ just --list
 
 ## Justfile Architecture
 
-The project uses a modular Justfile structure:
-- **Main Justfile**: Orchestrates all commands
-- **justfile.common**: Shared variables
-- **justfile.database**: Database operations
-- **justfile.docker**: Container commands
-- **justfile.demos**: Demo commands
-- **apps/api/justfile**: Python-specific
-- **apps/web/justfile**: Web-specific
+The project uses a hierarchical Justfile structure:
+- **Main Justfile**: Entry point with command routing
+- **.just/**: Utilities and common functions
+- **tools/**: Domain-specific modules (docker, database, testing, demos)
+- **apps/api/justfile**: Python-specific commands
+- **apps/web/justfile**: Web-specific commands
+
+Access module commands with `::` syntax: `just docker::up`, `just database::migrate`
 
 All existing commands work unchanged. See [`docs/development/justfile-architecture.md`](docs/development/justfile-architecture.md) for details.
 
