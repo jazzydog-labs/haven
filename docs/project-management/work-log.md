@@ -664,6 +664,44 @@ Key features:
 - Command validation script (needs fixing)
 - All existing functionality preserved
 
+## 2025-07-16.0017 - Comprehensive Documentation Audit
+**Added**: Documentation consistency scanner and audit workflow
+**See**: 
+- Scanner script: `scripts/scan-docs.py`
+- Audit report: `docs/documentation-audit-report.md`
+- Fix plan: `docs/documentation-fix-plan.md`
+- Workflow: `docs/workflow/normalize-docs.md`
+**Test**: 
+```bash
+# Run documentation scanner
+python scripts/scan-docs.py
+
+# Generate full report
+python scripts/scan-docs.py --output report.md
+```
+**Demo**: 
+```bash
+# See current issues
+python scripts/scan-docs.py | head -30
+
+# Found issues:
+# - 188 invalid Just commands (need module syntax)
+# - 79 localhost URLs (should use domains)
+# - 33 broken internal links
+# - 646 path issues (mostly false positives)
+
+# Fix plan ready for approval
+cat docs/documentation-fix-plan.md
+```
+
+Key features:
+- Automated scanner finds documentation inconsistencies
+- Identifies invalid commands, broken links, outdated URLs
+- Categorizes issues by type and severity
+- Created fix plan with automated scripts
+- Workflow for ongoing maintenance
+- Ready to execute fixes pending approval
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*

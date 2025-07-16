@@ -2,303 +2,226 @@
 
 ## Overview
 
-This workflow ensures all documentation remains consistent with the current project structure, code functionality, and inter-document relationships. It should be run regularly and especially after major changes.
+This workflow ensures all documentation remains accurate and consistent with the current project state. It should be run periodically or after major changes.
 
-## When to Run This Workflow
+## When to Use
 
-### Mandatory (Must Run)
-- After major refactoring or restructuring
-- Before releases or major deployments
-- When onboarding new team members
-- After API changes or additions
+- After significant code refactoring
+- When adding new features or modules
+- Before major releases
+- When documentation feels out of sync
+- Monthly as routine maintenance
 
-### Recommended (Should Run)
-- Weekly during active development
-- After adding new features
-- When documentation inconsistencies are reported
-- Before writing new documentation that references existing docs
+## Prerequisites
 
-## Workflow Steps
+- Python 3.8+ installed
+- Access to project root directory
+- Just command available
+- Understanding of project structure
 
-### Step 1: Prepare Environment
+## Steps
+
+### 1. Run Documentation Scanner
+
 ```bash
-# Ensure project is up to date
-git pull origin main
+# Generate audit report
+python scripts/scan-docs.py --output docs/documentation-audit-report.md
 
-# Start services for testing
-just bootstrap
-just run-docker-d
-
-# Install documentation tools
-pip install -r requirements-docs.txt
+# View summary in terminal
+python scripts/scan-docs.py --format markdown | head -50
 ```
 
-### Step 2: Run Automated Scans
-```bash
-# Scan all documentation files
-python scripts/scan-docs.py --output scan-results.json
+### 2. Review Audit Report
 
-# Generate consistency report
-python scripts/generate-consistency-report.py scan-results.json \
-  --output consistency-report.md
+Open `docs/documentation-audit-report.md` and review:
+- Summary statistics
+- Issues by type
+- Files with most issues
+- Severity of problems
 
-# Run documentation tests
-pytest tests/test_documentation.py -v
-```
+### 3. Categorize Issues
 
-### Step 3: Manual Review Process
+Group issues into categories:
 
-#### 3.1 Review Scan Results
-Open `consistency-report.md` and examine:
-- **Critical Issues**: Broken commands, missing files, invalid links
-- **Warning Issues**: Outdated examples, version mismatches
-- **Info Issues**: Style inconsistencies, minor improvements
+#### Quick Fixes (< 5 minutes each)
+- Updated command syntax (e.g., `just db-up` → `just database::up`)
+- Localhost URLs → domain names
+- Simple path corrections
 
-#### 3.2 Test Key Workflows
-Manually test documented workflows:
-```bash
-# Test setup procedures
-just clean && just bootstrap
+#### Medium Fixes (5-30 minutes each)
+- Broken internal links
+- Outdated code examples
+- Missing documentation references
 
-# Test core workflows
-just run
-just test
-just check
+#### Major Updates (> 30 minutes)
+- Architectural changes
+- Complete section rewrites
+- New feature documentation
 
-# Test docker workflows
-just run-docker-d
-just test-docker
-```
+### 4. Create Fix Plan
 
-#### 3.3 Verify External Dependencies
-Check that external references are still valid:
-- Package versions in requirements
-- API endpoint references
-- Tool installation instructions
-- System requirements
-
-### Step 4: Create Re-integration Plan
-
-For each inconsistency found:
-
-#### 4.1 Categorize Issues
 ```markdown
-## Critical Issues (Fix Immediately)
-- [ ] Broken command in setup guide
-- [ ] Missing file referenced in architecture docs
+# Documentation Fix Plan - [DATE]
 
-## Important Issues (Fix This Sprint)
-- [ ] Outdated API examples in REST docs
-- [ ] Wrong directory structure in README
+## Priority 1: Breaking Issues
+- [ ] Fix invalid commands preventing user progress
+- [ ] Update critical path documentation
 
-## Minor Issues (Fix When Convenient)
-- [ ] Inconsistent formatting in code blocks
-- [ ] Outdated package versions mentioned
+## Priority 2: User Experience
+- [ ] Update all localhost URLs to domains
+- [ ] Fix broken internal links
+- [ ] Correct code examples
+
+## Priority 3: Consistency
+- [ ] Align terminology across docs
+- [ ] Update file paths
+- [ ] Standardize formatting
 ```
 
-#### 4.2 Group Related Fixes
-```markdown
-## Fix Groups
+### 5. Execute Fixes
 
-### Group 1: Project Structure Updates
-- Update all path references from old structure
-- Fix import statements in examples
-- Correct directory navigation instructions
+#### Automated Fixes
 
-### Group 2: API Documentation Updates
-- Update endpoint examples
-- Fix request/response samples
-- Correct GraphQL schema references
+For common patterns, use sed or similar tools:
 
-### Group 3: Command Updates
-- Fix Just command examples
-- Update Docker commands
-- Correct CLI usage examples
-```
-
-#### 4.3 Estimate Effort
-```markdown
-## Effort Estimates
-
-### Quick Fixes (< 1 hour)
-- Path corrections
-- Command updates
-- Link fixes
-
-### Medium Fixes (1-4 hours)
-- API example updates
-- Code example rewrites
-- Section reorganization
-
-### Large Fixes (> 4 hours)
-- Complete workflow rewrites
-- New documentation sections
-- Complex restructuring
-```
-
-### Step 5: User Review and Approval
-
-#### 5.1 Present Findings
-Create a summary document with:
-- Total issues found
-- Breakdown by category
-- Proposed re-integration plan
-- Estimated timeline
-
-#### 5.2 Get User Input
-Present to user for approval:
-```markdown
-## Documentation Audit Results
-
-### Summary
-- **Total Issues**: 23
-- **Critical**: 3
-- **Important**: 12
-- **Minor**: 8
-
-### Proposed Plan
-1. **Phase 1** (Critical): Fix broken commands and missing files
-2. **Phase 2** (Important): Update API docs and examples
-3. **Phase 3** (Minor): Style and formatting improvements
-
-### Timeline
-- Phase 1: 2 hours
-- Phase 2: 6 hours
-- Phase 3: 3 hours
-
-**Total Estimated Time**: 11 hours
-
-### Questions for User
-1. Are there any issues that should be deprioritized?
-2. Are there additional consistency requirements?
-3. Should any fixes be handled differently?
-```
-
-### Step 6: Execute Approved Changes
-
-#### 6.1 Work in Priority Order
-Start with critical issues first:
 ```bash
-# Fix critical issues
-git checkout -b fix/critical-docs-issues
-# Make fixes...
-git commit -m "fix: resolve critical documentation issues"
+# Update old Just commands to new module syntax
+find docs -name "*.md" -exec sed -i.bak 's/just db-up/just database::up/g' {} \;
+find docs -name "*.md" -exec sed -i.bak 's/just run-docker/just docker::up/g' {} \;
 
-# Fix important issues
-git checkout -b fix/important-docs-updates
-# Make fixes...
-git commit -m "docs: update API examples and project structure"
-
-# Fix minor issues
-git checkout -b fix/minor-docs-cleanup
-# Make fixes...
-git commit -m "docs: cleanup formatting and minor inconsistencies"
+# Update localhost URLs
+find docs -name "*.md" -exec sed -i.bak 's|http://localhost:3000|http://web.haven.local|g' {} \;
+find docs -name "*.md" -exec sed -i.bak 's|http://localhost:8080|http://api.haven.local|g' {} \;
 ```
 
-#### 6.2 Test Each Fix
-After each group of fixes:
+#### Manual Fixes
+
+1. Open each file with issues
+2. Search for flagged line numbers
+3. Apply appropriate fix
+4. Verify fix is correct
+
+### 6. Validate Fixes
+
 ```bash
-# Re-run scans
-python scripts/scan-docs.py --output scan-results-updated.json
+# Re-run scanner
+python scripts/scan-docs.py --output docs/documentation-audit-report-fixed.md
 
-# Test affected workflows
-just clean && just bootstrap
-# Test specific workflows that were updated
+# Compare before/after
+diff docs/documentation-audit-report.md docs/documentation-audit-report-fixed.md
 ```
 
-#### 6.3 Update Tracking Documents
-After fixes are complete:
+### 7. Test Documentation
+
+For critical documentation:
+
+1. **Setup guides**: Follow steps on clean system
+2. **API examples**: Run actual commands
+3. **Code snippets**: Verify they compile/run
+4. **Links**: Click through navigation paths
+
+### 8. Update Tracking
+
 ```bash
-# Update work log
-# Add entry to docs/project-management/work-log.md
-
-# Update todo list
-# Mark documentation audit as complete
-
-# Update roadmap if needed
-# Note any follow-up work required
+# Add work log entry
+echo "## $(date +%Y-%m-%d).NNNN - Documentation normalization
+**Updated**: Fixed N documentation inconsistencies
+**See**: docs/documentation-audit-report.md for details
+**Test**: python scripts/scan-docs.py
+**Demo**: All commands now use new module syntax" >> docs/project-management/work-log.md
 ```
 
-### Step 7: Validation and Monitoring
+## Common Fixes Reference
 
-#### 7.1 Final Validation
-```bash
-# Run full test suite
-pytest tests/test_documentation.py
+### Command Updates
 
-# Generate final report
-python scripts/generate-consistency-report.py scan-results-final.json \
-  --output final-consistency-report.md
-
-# Manual spot checks
-# Review 5-10 random documentation files
+Old → New mappings:
+```
+just db-up           → just database::up
+just db-migrate      → just database::migrate
+just db-console      → just database::console
+just run-docker      → just docker::up
+just stop-docker     → just docker::down
+just test-python     → just testing::python
+just test-web        → just testing::web
 ```
 
-#### 7.2 Set Up Monitoring
-```bash
-# Add to CI/CD pipeline
-# .github/workflows/docs-check.yml
+### URL Updates
 
-# Set up periodic checks
-# Add to weekly/monthly maintenance tasks
+Development URLs:
 ```
+http://localhost:3000      → http://web.haven.local
+http://localhost:8080      → http://api.haven.local
+http://localhost:8080/docs → http://api.haven.local/docs
+```
+
+### Path Updates
+
+Project structure:
+```
+src/haven/         → apps/api/src/haven/
+tests/             → apps/api/tests/
+frontend/          → apps/web/
+```
+
+## Automation Ideas
+
+### Pre-commit Hook
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: check-docs
+        name: Check documentation consistency
+        entry: python scripts/scan-docs.py
+        language: system
+        files: '\.md$'
+```
+
+### CI Integration
+
+```yaml
+# .github/workflows/docs.yml
+name: Documentation Check
+on: [pull_request]
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run documentation scanner
+        run: |
+          python scripts/scan-docs.py --output report.md
+          if grep -q "Total Issues: 0" report.md; then
+            echo "✅ Documentation is consistent"
+          else
+            echo "❌ Documentation issues found"
+            cat report.md
+            exit 1
+          fi
+```
+
+## Maintenance Schedule
+
+- **Weekly**: Quick scan for broken commands
+- **Bi-weekly**: Fix localhost URLs and paths
+- **Monthly**: Full audit and normalization
+- **Quarterly**: Architecture documentation review
 
 ## Tools and Scripts
 
-### Required Tools
-- `scripts/scan-docs.py` - Automated scanner
-- `scripts/generate-consistency-report.py` - Report generator
-- `tests/test_documentation.py` - Automated tests
-- `requirements-docs.txt` - Documentation tools
+- `scripts/scan-docs.py` - Main scanning tool
+- `scripts/fix-common-docs.sh` - Automated fixes (to be created)
+- `tests/test_documentation.py` - Documentation tests (to be created)
 
-### Optional Enhancements
-- `scripts/fix-common-issues.py` - Auto-fix common problems
-- `scripts/validate-examples.py` - Test code examples
-- `scripts/check-external-links.py` - Validate external references
+## Definition of Done
 
-## Best Practices
-
-### For Maintainers
-1. **Always test examples before documenting them**
-2. **Use relative paths in documentation**
-3. **Keep command examples up to date**
-4. **Cross-reference related sections**
-5. **Update docs immediately after code changes**
-
-### For Contributors
-1. **Run documentation tests before submitting PRs**
-2. **Update relevant docs when changing code**
-3. **Follow existing documentation patterns**
-4. **Test all documented procedures**
-
-## Success Metrics
-
-### Immediate Success
-- All documented commands work
-- All file paths are valid
-- All code examples compile/run
-- All internal links resolve
-
-### Long-term Success
-- New team members can follow setup guides
-- Documentation stays current with code
-- Fewer support questions about setup
-- Increased developer productivity
-
-## Troubleshooting
-
-### Common Issues
-1. **Scan script fails**: Check Python dependencies
-2. **Commands don't work**: Verify environment setup
-3. **Links broken**: Check file movements/renames
-4. **Examples fail**: Verify import paths and API changes
-
-### Getting Help
-- Review existing documentation tests
-- Check work log for similar issues
-- Consult with team members
-- Update this workflow if needed
-
----
-
-*This workflow should be updated when new documentation patterns emerge or when the project structure changes significantly.*
+- [ ] Scanner reports 0 critical issues
+- [ ] All commands are valid and tested
+- [ ] All internal links work
+- [ ] Code examples compile/run
+- [ ] URLs use proper domain names
+- [ ] Work log updated
+- [ ] Commit with clear message
