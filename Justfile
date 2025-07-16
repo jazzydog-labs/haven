@@ -54,17 +54,102 @@ update-python:
 update-web:
     cd {{ web_dir }} && npm update
 
-# Run both API and Web in development mode
-run: run-api
-    @echo "🚀 Use 'just run-web' in another terminal to start the web client"
+# Run everything in development mode with hot-reload
+run: run-all
 
-# Run API server
+# Run all services (recommended)
+run-all:
+    @echo "🚀 Starting Haven Development Environment..."
+    @echo "==========================================="
+    @echo ""
+    
+    # Start backend services in background
+    @just run-docker-d > /dev/null 2>&1
+    
+    # Wait for backend to be ready
+    @echo "⏳ Waiting for backend services to start..."
+    @sleep 5
+    @while ! curl -s http://localhost:8080/health > /dev/null 2>&1; do \
+        echo "   Still waiting for API..."; \
+        sleep 2; \
+    done
+    
+    @echo "✅ Backend services ready!"
+    @echo ""
+    
+    # Start frontend in background
+    @echo "🎨 Starting frontend development server..."
+    @cd {{ web_dir }} && npm run dev > /tmp/haven-frontend.log 2>&1 &
+    @echo $$! > /tmp/haven-frontend.pid
+    
+    # Wait for frontend
+    @sleep 3
+    @while ! curl -s http://localhost:3000 > /dev/null 2>&1; do \
+        echo "   Still waiting for frontend..."; \
+        sleep 2; \
+    done
+    
+    @echo "✅ Frontend ready!"
+    @echo ""
+    @echo "======================================"
+    @echo "🎉 Haven is running!"
+    @echo "======================================"
+    @echo ""
+    @echo "📱 Access your application at:"
+    @echo ""
+    @echo "  🌐 Frontend:    http://localhost:3000"
+    @echo "  📊 Records:     http://localhost:3000  (Records section)"
+    @echo "  📚 API Docs:    http://localhost:8080/docs"
+    @echo "  🔮 GraphQL:     http://localhost:8080/graphql"
+    @echo "  ❤️  Health:     http://localhost:8080/health"
+    @echo ""
+    @echo "🔥 Hot-reload enabled for both frontend and backend!"
+    @echo ""
+    @echo "📝 Logs:"
+    @echo "  Backend:  just logs-docker api"
+    @echo "  Frontend: tail -f /tmp/haven-frontend.log"
+    @echo ""
+    @echo "🛑 To stop everything: just stop-all"
+    @echo ""
+    @echo "Press Ctrl+C to exit (services will continue running)"
+    @echo ""
+    
+    # Keep running to show the info
+    @while true; do sleep 60; done
+
+# Stop all services
+stop-all:
+    @echo "🛑 Stopping all Haven services..."
+    
+    # Stop frontend if running
+    @if [ -f /tmp/haven-frontend.pid ]; then \
+        kill $$(cat /tmp/haven-frontend.pid) 2>/dev/null || true; \
+        rm -f /tmp/haven-frontend.pid; \
+        echo "✅ Frontend stopped"; \
+    fi
+    
+    # Stop backend
+    @just stop-docker > /dev/null 2>&1
+    @echo "✅ Backend stopped"
+    
+    # Clean up
+    @rm -f /tmp/haven-frontend.log
+    
+    @echo "🏁 All services stopped"
+
+# Run API server (standalone)
 run-api:
     cd {{ api_dir }} && just run
 
-# Run Web development server
+# Run Web development server (standalone)
 run-web:
     cd {{ web_dir }} && just run
+
+# Quick start (alias)
+start: run-all
+
+# Quick stop (alias)
+stop: stop-all
 
 # Run with specific environment
 run-env env="local":

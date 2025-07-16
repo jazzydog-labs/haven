@@ -2,24 +2,30 @@
 
 ## Quick Start
 
-### Option 1: Docker (Recommended)
+### 🚀 ONE COMMAND TO RUN EVERYTHING
 ```bash
-# Start everything with Docker Compose
-just run-docker-d
+# Start EVERYTHING (backend + frontend with hot-reload)
+just run
 
-# Service is now running at http://localhost:8080
-# GraphiQL: http://localhost:8080/graphql
-# Swagger: http://localhost:8080/docs
+# Access your app:
+# 🌐 Frontend:    http://localhost:3000
+# 📚 API Docs:    http://localhost:8080/docs
+# 🔮 GraphQL:     http://localhost:8080/graphql
+
+# Stop everything:
+just stop-all
 ```
 
-### Option 2: Local Development
+### Alternative Methods
 ```bash
-# Bootstrap everything in one go
-just bootstrap && just db-up && just run
+# Backend only
+just run-docker-d
 
-# Service is now running at http://localhost:8080
-# GraphiQL: http://localhost:8080/graphql
-# Swagger: http://localhost:8080/docs
+# Frontend only  
+cd apps/web && npm run dev
+
+# HTTPS mode
+just setup-https && just run-https
 ```
 
 ## Fast Development Workflow
