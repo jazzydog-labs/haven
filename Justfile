@@ -138,8 +138,18 @@ remove-hosts:
     @echo "🧹 Removing Haven domain mappings"
     @sudo ./scripts/setup-hosts.sh --remove
 
+# Check if hosts are configured, set up if needed
+[private]
+_check-hosts:
+    @if ! grep -q "haven.local" /etc/hosts; then \
+        echo "🌐 Setting up local domain mappings..."; \
+        just setup-hosts; \
+    else \
+        echo "✅ Local domain mappings already configured"; \
+    fi
+
 # Run with local reverse proxy (includes hosts setup)
-run-proxy: setup-hosts
+run-proxy: _check-hosts
     @echo "🚀 Starting Haven with reverse proxy..."
     @echo "==========================================="
     @echo ""
@@ -173,7 +183,7 @@ run-proxy: setup-hosts
     
     # Start Caddy proxy (HTTP version for testing)
     @echo "🔐 Starting Caddy reverse proxy..."
-    @cd {{ ROOT_DIR }} && caddy run --config ./Caddyfile.http --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
+    @cd {{ PROJECT_ROOT }} && caddy run --config ./Caddyfile.http --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
     
     # Wait for Caddy
     @sleep 2
