@@ -1,8 +1,10 @@
 # Haven – Alembic Migration Workflow
 
-*Last updated: 2025-07-15*
+*Last updated: 2025-07-16*
 
 This guide explains how Haven manages schema evolution with **Alembic 1.13**: naming conventions, branching strategy, squash policy, and the Justfile helpers that tie it all together.
+
+> **Note:** For containerized migration strategies, see [Migration Strategies Guide](migration-strategies.md).
 
 ---
 

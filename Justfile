@@ -268,13 +268,33 @@ stop-docker:
 down: stop-docker
 
 # Database Operations in Docker
-# Run migrations in container
+# Run migrations in container (requires running API container)
 db-migrate-docker:
     docker compose exec api alembic upgrade head
+
+# Run migrations with one-shot container (doesn't require running API)
+db-migrate-run:
+    docker compose run --rm api alembic upgrade head
+
+# Run migrations with dedicated service
+db-migrate-service:
+    docker compose run --rm migrate
 
 # Create migration from container
 db-make-docker message:
     docker compose exec api alembic revision --autogenerate -m "{{ message }}"
+
+# Show migration history in container
+db-history-docker:
+    docker compose exec api alembic history --verbose
+
+# Show current migration in container
+db-current-docker:
+    docker compose exec api alembic current
+
+# Downgrade database in container
+db-downgrade-docker steps="1":
+    docker compose exec api alembic downgrade -{{ steps }}
 
 # Database console via container
 db-console-docker:
