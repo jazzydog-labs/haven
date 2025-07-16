@@ -50,7 +50,7 @@ async def check_diff2html() -> None:
             raise RuntimeError(f"Failed to install diff2html: {stderr}")
 
 
-async def get_git_commits(repo_path: Path, base_branch: str = "main") -> list[GitCommit]:
+async def get_git_commits(repo_path: Path, base_branch: str = "main", max_commits: int = 50) -> list[GitCommit]:
     """Get list of commits from git repository."""
     # Check if we're in a git repository
     stdout, stderr, returncode = await run_command(
@@ -71,11 +71,12 @@ async def get_git_commits(repo_path: Path, base_branch: str = "main") -> list[Gi
     else:
         target_branch = base_branch
 
-    # Get all commits on the target branch in reverse chronological order (oldest first)
+    # Get recent commits on the target branch in reverse chronological order (oldest first)
     cmd = [
         "git",
         "log",
         "--reverse",
+        f"--max-count={max_commits}",
         "--pretty=format:%H|%s|%an|%ad",
         "--date=short",
         target_branch,
@@ -110,6 +111,9 @@ async def generate_diff_for_commit(
     # Generate filename
     safe_message = sanitize_filename(commit.message)
     filename = f"{commit_number:02d}-{commit.hash[:8]}-{safe_message}.html"
+
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate diff HTML using diff2html (commit vs its parent)
     diff_cmd = [
@@ -165,11 +169,18 @@ def cli():
     is_flag=True,
     help="Verbose output",
 )
+@click.option(
+    "--max-commits",
+    "-n",
+    default=50,
+    help="Maximum number of commits to process (default: 50)",
+)
 def generate(
     repo_path: Path,
     base_branch: str,
     output_dir: Path,
     verbose: bool,
+    max_commits: int,
 ):
     """Generate diff files for all commits from the specified branch (each commit vs its parent)."""
     if verbose:
@@ -178,8 +189,8 @@ def generate(
         console.print(f"[blue]Output directory:[/blue] {output_dir}")
 
     try:
-        # Ensure output directory exists
-        output_dir.mkdir(exist_ok=True)
+        # Ensure output directory exists with parents
+        output_dir.mkdir(parents=True, exist_ok=True)
 
         # Run the async diff generation
         asyncio.run(
@@ -188,6 +199,7 @@ def generate(
                 base_branch=base_branch,
                 output_dir=output_dir,
                 verbose=verbose,
+                max_commits=max_commits,
             )
         )
 
@@ -204,13 +216,18 @@ async def _generate_diffs_async(
     base_branch: str,
     output_dir: Path,
     verbose: bool,
+    max_commits: int = 50,
 ):
     """Async helper for diff generation."""
+    # Ensure we have absolute paths
+    repo_path = repo_path.resolve()
+    output_dir = output_dir.resolve()
+
     # Get commits
     if verbose:
         console.print("\n[yellow]📋 Getting commit list...[/yellow]")
 
-    commits = await get_git_commits(repo_path, base_branch)
+    commits = await get_git_commits(repo_path, base_branch, max_commits=max_commits)
 
     if not commits:
         console.print("[yellow]⚠️ No commits found[/yellow]")
@@ -467,6 +484,9 @@ def create_index_file(output_dir: Path, commits: list[GitCommit], diff_files: li
 </body>
 </html>"""
 
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     # Write the file
     index_file = output_dir / "index.html"
     index_file.write_text(html_content)
@@ -489,7 +509,7 @@ def create_index_file(output_dir: Path, commits: list[GitCommit], diff_files: li
 def list_commits(repo_path: Path, base_branch: str):
     """List all commits from the specified branch."""
     try:
-        commits = asyncio.run(get_git_commits(repo_path, base_branch))
+        commits = asyncio.run(get_git_commits(repo_path, base_branch, max_commits=50))
 
         if not commits:
             console.print("[yellow]No commits found[/yellow]")
@@ -500,7 +520,7 @@ def list_commits(repo_path: Path, base_branch: str):
         table.add_column("Hash", style="yellow", width=10)
         table.add_column("Date", style="green", width=12)
         table.add_column("Author", style="blue", width=15)
-        table.add_column("Message", style="white")
+        table.add_column("Message", style="black")
 
         for i, commit in enumerate(commits, 1):
             table.add_row(
