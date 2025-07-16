@@ -93,3 +93,12 @@ server.log
 
 # Docker
 docker-compose.override.yml
+
+# HTTPS certificates
+certs/
+*.pem
+*.key
+*.crt
+Caddyfile
+docker-compose.https.yml
+nginx/

@@ -508,6 +508,44 @@ Key features:
 - Fixed API container startup issues
 - Added test scripts for API and UI verification
 
+## 2025-07-16.0013 - Frontend-Backend Sync Workflow Implementation
+**Added**: Automated TypeScript type generation from backend OpenAPI specification
+**See**: 
+- Sync script: `scripts/sync-frontend-backend.sh`
+- Documentation: `docs/workflow/frontend-backend-sync.md`
+- Just commands: `sync-types`, `check-api-compat`
+**Test**: 
+```bash
+# Run the sync
+just sync-types
+
+# Run the demo
+just demo-sync
+```
+**Demo**: 
+```bash
+# Ensure backend is running
+just run-docker-d
+
+# Sync types
+just sync-types
+
+# Check generated types
+cat apps/web/src/types/api-generated.ts | head -100
+
+# Check for API changes
+just check-api-compat
+```
+
+Key features:
+- Automatic TypeScript type generation from OpenAPI spec
+- Breaking change detection with spec comparison
+- Integration with development workflow via Just commands
+- Comprehensive documentation and demo script
+- Fixed TypeScript naming conflicts (Record -> RecordItem)
+- Added vite-env.d.ts for proper TypeScript support
+- Generated files are gitignored to prevent conflicts
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*

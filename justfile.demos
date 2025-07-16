@@ -13,6 +13,7 @@ demo:
     @echo "  just demo-diff-generation - Generate repository diffs"
     @echo "  just demo-ttr           - Demonstrate TTR system features"
     @echo "  just demo-sync          - Frontend-Backend sync workflow"
+    @echo "  just demo-https         - HTTPS setup and testing"
 
 # Demo: Health check endpoints
 demo-health:
@@ -151,3 +152,8 @@ demo-ttr:
 demo-sync:
     @echo "🔄 Demonstrating Frontend-Backend Sync Workflow..."
     ./scripts/demo-sync-workflow.sh
+
+# Demo: HTTPS Setup
+demo-https:
+    @echo "🔒 Demonstrating HTTPS Setup..."
+    ./scripts/demo-https.sh

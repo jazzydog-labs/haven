@@ -274,3 +274,24 @@ build-api:
 # Build Web application
 build-web:
     cd {{ web_dir }} && just build
+
+# Setup local HTTPS development
+setup-https:
+    @echo "🔐 Setting up local HTTPS..."
+    ./scripts/setup-https.sh
+
+# Run with HTTPS using Caddy
+run-https:
+    docker compose -f docker-compose.yml -f docker-compose.https.yml up
+
+# Run with HTTPS in background
+run-https-d:
+    docker compose -f docker-compose.yml -f docker-compose.https.yml up -d
+    @echo "🔒 HTTPS services running:"
+    @echo "  - https://haven.local (web app)"
+    @echo "  - https://api.haven.local (API)"
+    @echo "  - https://api.haven.local/docs (Swagger)"
+
+# Stop HTTPS services
+stop-https:
+    docker compose -f docker-compose.yml -f docker-compose.https.yml down
