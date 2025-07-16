@@ -10,18 +10,18 @@ This file tracks immediate tasks and notes. For completed work, see `work-log.md
 
 ### 🚀 WHAT TO WORK ON NEXT (Priority Order)
 
-1. **Foundation Tasks** (Do these first - they affect everything else):
-   - [ ] Reorganize project structure (`tasks/open/reorganize-project-structure.md`)
-   - [ ] Test all Just commands after monorepo restructure (list below)
-   - [ ] Complete documentation sync (this task is in progress)
+1. **Foundation Tasks** ✅ (COMPLETED):
+   - [x] Reorganize project structure (`tasks/closed/reorganize-project-structure.md`)
+   - [x] Test all Just commands after monorepo restructure
+   - [x] Complete documentation sync
 
-2. **Containerization Phase 2** (After foundation tasks):
-   - [ ] Create docker-compose.override.yml (`tasks/open/create-dev-overrides.md`)
-   - [ ] Implement migration strategies (`tasks/open/implement-migration-strategy.md`)
-   - [ ] Create troubleshooting guide (`tasks/open/container-troubleshooting-guide.md`)
+2. **Containerization Phase 2** ✅ (COMPLETED):
+   - [x] Create docker-compose.override.yml (`tasks/closed/create-dev-overrides.md`)
+   - [x] Implement migration strategies (`tasks/closed/implement-migration-strategy.md`)
+   - [x] Create troubleshooting guide (`tasks/closed/container-troubleshooting-guide.md`)
 
-3. **Development Infrastructure** (Can be done in parallel):
-   - [ ] Modularize Justfiles (`tasks/open/modular-justfiles.md`)
+3. **Development Infrastructure** (Partially Complete):
+   - [x] Modularize Justfiles (`tasks/closed/modular-justfiles.md`)
    - [ ] Add demo commands for all worklog entries (`tasks/open/worklog-demo-commands.md`)
 
 ### Documentation Updates (In Progress)
@@ -69,14 +69,14 @@ All commands need verification after monorepo restructure:
 
 ## 📋 Immediate Next Steps
 
-### Priority 1: Foundation & Organization (Prerequisites)
+### Priority 1: Foundation & Organization ✅ (COMPLETED)
 1. ✅ **Single Command Commit Viewer** - `just demo-commits` now handles server startup automatically
-2. **Reorganize Project Structure** - Clean up docs and configs (see `tasks/open/reorganize-project-structure.md`)
-3. **Complete Documentation Updates** - Update all planning docs to reflect current state
-4. **Test All Commands** - Systematically verify every just command works
+2. ✅ **Reorganize Project Structure** - Cleaned up docs and configs
+3. ✅ **Complete Documentation Updates** - All planning docs reflect current state
+4. ✅ **Test All Commands** - Fixed missing commands (down, check-python, check-web)
 
-### Priority 2: Development Infrastructure  
-4. **Modularize Justfiles** - Break down justfile into package-specific modules (see `tasks/open/modular-justfiles.md`)
+### Priority 2: Development Infrastructure ✅ (MOSTLY COMPLETE)  
+4. ✅ **Modularize Justfiles** - Split into package-specific modules with full backward compatibility
 5. **Add Demo Commands** - Ensure all worklog entries have demo commands (see `tasks/open/worklog-demo-commands.md`)
 
 ### Priority 2.5: ✅ Containerization - Phase 1 (COMPLETED)
@@ -87,11 +87,11 @@ All commands need verification after monorepo restructure:
 - [x] Resolve developer experience issues (see `tasks/closed/container-dev-experience.md`)
 - [x] Update containerization docs (see `tasks/closed/update-containerization-docs.md`)
 
-### Priority 2.6: Containerization - Phase 2 (Next Up)
-**Ready to implement:**
-- [ ] Create docker-compose.override.yml (see `tasks/open/create-dev-overrides.md`)
-- [ ] Implement migration strategies (see `tasks/open/implement-migration-strategy.md`)
-- [ ] Create troubleshooting guide (see `tasks/open/container-troubleshooting-guide.md`)
+### Priority 2.6: ✅ Containerization - Phase 2 (COMPLETED)
+**Completed tasks:**
+- [x] Create docker-compose.override.yml (see `tasks/closed/create-dev-overrides.md`)
+- [x] Implement migration strategies (see `tasks/closed/implement-migration-strategy.md`)
+- [x] Create troubleshooting guide (see `tasks/closed/container-troubleshooting-guide.md`)
 
 ### Priority 2.7: Containerization - Phase 3 (Enhancements)
 **Optional improvements (can be done in parallel):**
@@ -109,15 +109,8 @@ All commands need verification after monorepo restructure:
 
 ### Active Tasks in `tasks/open/` (By Priority)
 
-**Foundation Tasks (Do First):**
-- `reorganize-project-structure.md` - **HIGH PRIORITY** - Foundation for all other work
-- `modular-justfiles.md` - Depends on project structure being clean
-- `worklog-demo-commands.md` - Can be done in parallel with structure work
-
-**Containerization Phase 2 (Ready to Implement):**
-- `create-dev-overrides.md` - Development environment config for hot-reload
-- `implement-migration-strategy.md` - Multiple migration approaches
-- `container-troubleshooting-guide.md` - Troubleshooting documentation
+**Development Infrastructure (One Task Remaining):**
+- `worklog-demo-commands.md` - Add demo commands for all worklog entries
 
 **Containerization Phase 3 (Enhancements):**
 - `local-cors-and-domains.md` - CORS and custom domain configuration

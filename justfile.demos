@@ -3,8 +3,77 @@
 
 # Demo command placeholder
 demo:
-    @echo "🎯 Demo functionality will be implemented per feature"
-    @echo "Run specific demos with: just demo-<feature>"
+    @echo "🎯 Available demo commands:"
+    @echo "  just demo-health        - Test health endpoints"
+    @echo "  just demo-api           - Show REST API CRUD operations"
+    @echo "  just demo-graphql       - Demonstrate GraphQL queries"
+    @echo "  just demo-docker        - Test containerized services"
+    @echo "  just demo-migrations    - Show migration strategies"
+    @echo "  just demo-commits       - View all commits and diffs"
+    @echo "  just demo-diff-generation - Generate repository diffs"
+
+# Demo: Health check endpoints
+demo-health:
+    @echo "🏥 Testing health endpoints..."
+    @echo "REST Health:"
+    curl -s http://localhost:8080/health | jq '.' || echo "❌ API not running - start with: just run"
+    @echo ""
+    @echo "GraphQL Health:"
+    curl -s -X POST http://localhost:8080/graphql \
+        -H "Content-Type: application/json" \
+        -d '{"query": "{ health { status message timestamp } }"}' | jq '.' || echo "❌ GraphQL not available"
+
+# Demo: REST API CRUD operations
+demo-api:
+    @echo "🔌 Testing REST API endpoints..."
+    @echo "1. Create a record:"
+    curl -s -X POST http://localhost:8080/api/v1/records \
+        -H "Content-Type: application/json" \
+        -d '{"name": "Demo Record", "description": "Created by demo"}' | jq '.' || echo "❌ API not running"
+    @echo ""
+    @echo "2. List all records:"
+    curl -s http://localhost:8080/api/v1/records | jq '.' || echo "❌ API not running"
+    @echo ""
+    @echo "📚 Full API docs at: http://localhost:8080/docs"
+
+# Demo: GraphQL operations
+demo-graphql:
+    @echo "🔮 Testing GraphQL operations..."
+    @echo "1. Query all records:"
+    curl -s -X POST http://localhost:8080/graphql \
+        -H "Content-Type: application/json" \
+        -d '{"query": "{ records { id name description createdAt } }"}' | jq '.' || echo "❌ GraphQL not available"
+    @echo ""
+    @echo "2. Create via mutation:"
+    curl -s -X POST http://localhost:8080/graphql \
+        -H "Content-Type: application/json" \
+        -d '{"query": "mutation { createRecord(input: {name: \"GraphQL Demo\", description: \"Created via GraphQL\"}) { id name } }"}' | jq '.' || echo "❌ GraphQL not available"
+    @echo ""
+    @echo "🎮 Interactive GraphQL at: http://localhost:8080/graphql"
+
+# Demo: Docker containerization
+demo-docker:
+    @echo "🐳 Testing Docker setup..."
+    @echo "Container status:"
+    docker compose ps
+    @echo ""
+    @echo "Testing containerized API:"
+    docker compose exec api curl -s http://localhost:8080/health | jq '.' || echo "❌ Container not running"
+    @echo ""
+    @echo "Database connection:"
+    docker compose exec postgres pg_isready || echo "❌ PostgreSQL not ready"
+
+# Demo: Migration strategies
+demo-migrations:
+    @echo "🗄️ Demonstrating migration strategies..."
+    @echo "Current migration status:"
+    just db-current-docker || echo "❌ Database not running"
+    @echo ""
+    @echo "Available migration methods:"
+    @echo "1. Host-based:     just db-migrate"
+    @echo "2. Exec method:    just db-migrate-docker"
+    @echo "3. One-shot:       just db-migrate-run"
+    @echo "4. Service:        docker compose --profile migration run migrate"
 
 # Demo: View all commits and diffs in browser (single command)
 demo-commits:
@@ -20,3 +89,19 @@ demo-commits-docker:
 
 demo-diff-generation-docker:
     docker compose exec api python -m haven.cli demo-diff-generation
+
+# Demo: All features in sequence
+demo-all:
+    @echo "🎪 Running all demos..."
+    @echo "=" | head -c 60 && echo
+    just demo-health
+    @echo "=" | head -c 60 && echo
+    just demo-api
+    @echo "=" | head -c 60 && echo
+    just demo-graphql
+    @echo "=" | head -c 60 && echo
+    just demo-docker
+    @echo "=" | head -c 60 && echo
+    just demo-migrations
+    @echo "=" | head -c 60 && echo
+    @echo "✅ All demos complete!"

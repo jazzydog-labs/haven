@@ -58,17 +58,15 @@ Key fixes:
 **Test**: `just test-docker` - runs all tests in container (66 passed, 1 skipped)
 **Demo**: 
 ```bash
+# Quick Docker demo
+just demo-docker
+
+# Or manually:
 # Start services
 just run-docker-d
 
 # Check health
-curl http://localhost:8080/health
-
-# Access Swagger docs
-open http://localhost:8080/docs
-
-# Access GraphQL playground  
-open http://localhost:8080/graphql
+just demo-health
 
 # Run tests
 just test-docker
@@ -89,7 +87,18 @@ Key features:
 **Added**: Comprehensive test fixes and coverage improvements
 **See**: All test files in `apps/api/tests/` directory now passing
 **Test**: `cd apps/api && python -m pytest` - 66 passed, 1 skipped  
-**Demo**: Coverage report shows 92.37% (exceeding 70% requirement)
+**Demo**: 
+```bash
+# Run tests with coverage
+just test-cov
+
+# View coverage report
+open apps/api/htmlcov/index.html
+
+# Quick API test
+just demo-api
+just demo-graphql
+```
 
 Key fixes:
 - Fixed GraphQL tests by properly managing database sessions
@@ -138,6 +147,10 @@ Key features:
 **Test**: Run `just db-current-docker`, `just db-migrate-run`, or `docker compose --profile migration run migrate`
 **Demo**:
 ```bash
+# Quick demo of all migration strategies
+just demo-migrations
+
+# Or manually test each method:
 # Method 1: Exec into running container
 just db-current-docker
 

@@ -17,7 +17,9 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 
 ### In Progress
 - [x] **Script Organization** - Move complex logic from Justfile to dedicated shell scripts
-- [ ] **Documentation Cleanup** - Update all docs to reflect completed work
+- [x] **Documentation Cleanup** - Updated all docs to reflect completed work
+- [x] **Justfile Modularization** - Split into package-specific modules
+- [ ] **Demo Commands** - Add demo commands for all worklog entries
 - [ ] **Integration Test Fixes** - Resolve SQLAlchemy transaction management in tests
 
 ### Up Next
@@ -31,10 +33,10 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 - [x] **Dev Experience** - Fixed permissions, tool availability (diff2html)
 - [x] **Documentation** - Updated CLAUDE.md with Docker workflow
 
-**Phase 2: Developer Experience (Next Up)**
-- [ ] **Override Config** - Development-specific docker-compose.override.yml
-- [ ] **Migration Strategy** - Multiple approaches for database migrations
-- [ ] **Troubleshooting** - Comprehensive guide for common issues
+**Phase 2: Developer Experience (✅ COMPLETED)**
+- [x] **Override Config** - Development-specific docker-compose.override.yml
+- [x] **Migration Strategy** - Multiple approaches for database migrations
+- [x] **Troubleshooting** - Comprehensive guide for common issues
 
 **Phase 3: Production-Like Environment (Enhancements)**
 - [ ] **CORS/Domains** - Local domain setup to avoid CORS issues
@@ -83,9 +85,10 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 ## 🏗️ Technical Debt Tracker
 
 ### High Priority
-- [ ] **Command Testing**: Verify all just commands work after monorepo restructure  
-- [ ] **Documentation Sync**: Update all docs to reflect current architecture
-- [ ] **Containerization**: Complete all three phases for better dev experience
+- [x] **Command Testing**: Verified all just commands work after monorepo restructure  
+- [x] **Documentation Sync**: Updated all docs to reflect current architecture
+- [x] **Containerization Phase 1 & 2**: Completed basic and developer experience phases
+- [ ] **Containerization Phase 3**: Production-like environment with reverse proxy
 - [ ] **Error Handling**: Standardize error responses across REST/GraphQL
 - [ ] **API Documentation**: Auto-generate from OpenAPI/GraphQL schemas
 
