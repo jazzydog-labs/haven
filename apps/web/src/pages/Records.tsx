@@ -4,13 +4,13 @@ import RecordList from '../components/records/RecordList';
 import RecordForm from '../components/records/RecordForm';
 import RecordDetail from '../components/records/RecordDetail';
 import DeleteConfirm from '../components/records/DeleteConfirm';
-import { Record } from '../types/record';
+import { RecordItem } from '../types/record';
 
 const Records = () => {
   const [showForm, setShowForm] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
-  const [viewingRecord, setViewingRecord] = useState<Record | null>(null);
-  const [deletingRecord, setDeletingRecord] = useState<Record | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<RecordItem | null>(null);
+  const [viewingRecord, setViewingRecord] = useState<RecordItem | null>(null);
+  const [deletingRecord, setDeletingRecord] = useState<RecordItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const {
@@ -30,17 +30,17 @@ const Records = () => {
     setShowForm(true);
   };
 
-  const handleEdit = (record: Record) => {
+  const handleEdit = (record: RecordItem) => {
     setSelectedRecord(record);
     setShowForm(true);
     setViewingRecord(null);
   };
 
-  const handleView = (record: Record) => {
+  const handleView = (record: RecordItem) => {
     setViewingRecord(record);
   };
 
-  const handleDelete = (record: Record) => {
+  const handleDelete = (record: RecordItem) => {
     setDeletingRecord(record);
   };
 

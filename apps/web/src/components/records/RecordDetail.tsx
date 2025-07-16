@@ -1,7 +1,7 @@
-import { Record } from '../../types/record';
+import { RecordItem } from '../../types/record';
 
 interface RecordDetailProps {
-  record: Record;
+  record: RecordItem;
   onClose: () => void;
   onEdit: () => void;
 }

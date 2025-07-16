@@ -12,6 +12,7 @@ demo:
     @echo "  just demo-commits       - View all commits and diffs"
     @echo "  just demo-diff-generation - Generate repository diffs"
     @echo "  just demo-ttr           - Demonstrate TTR system features"
+    @echo "  just demo-sync          - Frontend-Backend sync workflow"
 
 # Demo: Health check endpoints
 demo-health:
@@ -129,6 +130,8 @@ demo-all:
     @echo "=" | head -c 60 && echo
     just demo-ttr
     @echo "=" | head -c 60 && echo
+    just demo-sync
+    @echo "=" | head -c 60 && echo
     @echo "✅ All demos complete!"
 
 # Demo: TTR (Task, Todo, Review) System
@@ -143,3 +146,8 @@ demo-ttr:
     cd {{ api_dir }} && {{ python }} -c "import asyncio; from haven.demo.ttr_demo import demo_ttr_system; asyncio.run(demo_ttr_system())"
     @echo ""
     @echo "📖 Full documentation: docs/development/ttr-demo.md"
+
+# Demo: Frontend-Backend Sync Workflow
+demo-sync:
+    @echo "🔄 Demonstrating Frontend-Backend Sync Workflow..."
+    ./scripts/demo-sync-workflow.sh

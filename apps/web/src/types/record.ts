@@ -1,4 +1,4 @@
-export interface Record {
+export interface RecordItem {
   id: string;
   data: Record<string, any>;
   created_at: string;
@@ -14,7 +14,7 @@ export interface RecordUpdateDTO {
 }
 
 export interface RecordListResponse {
-  items: Record[];
+  items: RecordItem[];
   total: number;
   limit: number;
   offset: number;

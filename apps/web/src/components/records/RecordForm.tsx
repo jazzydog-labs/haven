@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Record, RecordCreateDTO, RecordUpdateDTO } from '../../types/record';
+import { RecordItem, RecordCreateDTO, RecordUpdateDTO } from '../../types/record';
 
 interface RecordFormProps {
-  record?: Record | null;
+  record?: RecordItem | null;
   onSubmit: (data: RecordCreateDTO | RecordUpdateDTO) => Promise<void>;
   onCancel: () => void;
 }

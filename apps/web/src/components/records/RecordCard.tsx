@@ -1,10 +1,10 @@
-import { Record } from '../../types/record';
+import { RecordItem } from '../../types/record';
 
 interface RecordCardProps {
-  record: Record;
-  onEdit: (record: Record) => void;
-  onDelete: (record: Record) => void;
-  onView: (record: Record) => void;
+  record: RecordItem;
+  onEdit: (record: RecordItem) => void;
+  onDelete: (record: RecordItem) => void;
+  onView: (record: RecordItem) => void;
 }
 
 const RecordCard = ({ record, onEdit, onDelete, onView }: RecordCardProps) => {

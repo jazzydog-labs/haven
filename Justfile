@@ -112,6 +112,30 @@ type-python:
 type-web:
     cd {{ web_dir }} && just type
 
+# Sync frontend types with backend API
+sync-types:
+    @echo "🔄 Syncing frontend types with backend..."
+    ./scripts/sync-frontend-backend.sh
+
+# Check for API breaking changes
+check-api-compat:
+    @echo "🔍 Checking API compatibility..."
+    @if [ -f {{ web_dir }}/src/types/openapi.prev.json ]; then \
+        diff -u {{ web_dir }}/src/types/openapi.prev.json {{ web_dir }}/src/types/openapi.json || echo "⚠️  API changes detected"; \
+    else \
+        echo "No previous API spec found for comparison"; \
+    fi
+
+# Generate CRUD components for a model
+generate-frontend-crud model:
+    @echo "🏗️  Generating CRUD components for {{ model }}..."
+    @echo "TODO: Implement CRUD component generation"
+    @echo "- Create components/{{ model }}/{{ model }}List.tsx"
+    @echo "- Create components/{{ model }}/{{ model }}Form.tsx"
+    @echo "- Create components/{{ model }}/{{ model }}Detail.tsx"
+    @echo "- Create hooks/use{{ model }}.ts"
+    @echo "- Create services/api/{{ model }}.ts"
+
 # Run all quality checks
 check: lint type test-fast
 

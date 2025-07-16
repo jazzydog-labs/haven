@@ -1,7 +1,7 @@
-import { Record } from '../../types/record';
+import { RecordItem } from '../../types/record';
 
 interface DeleteConfirmProps {
-  record: Record;
+  record: RecordItem;
   onConfirm: () => void;
   onCancel: () => void;
   isDeleting: boolean;

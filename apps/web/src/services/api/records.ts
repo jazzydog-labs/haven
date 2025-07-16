@@ -1,4 +1,4 @@
-import { Record, RecordCreateDTO, RecordUpdateDTO, RecordListResponse } from '../../types/record';
+import { RecordItem, RecordCreateDTO, RecordUpdateDTO, RecordListResponse } from '../../types/record';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -17,7 +17,7 @@ export const recordsAPI = {
     return response.json();
   },
 
-  create: async (data: RecordCreateDTO): Promise<Record> => {
+  create: async (data: RecordCreateDTO): Promise<RecordItem> => {
     const response = await fetch(`${API_BASE_URL}/api/v1/records`, {
       method: 'POST',
       headers: {
@@ -33,7 +33,7 @@ export const recordsAPI = {
     return response.json();
   },
 
-  get: async (id: string): Promise<Record> => {
+  get: async (id: string): Promise<RecordItem> => {
     const response = await fetch(`${API_BASE_URL}/api/v1/records/${id}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export const recordsAPI = {
     return response.json();
   },
 
-  update: async (id: string, data: RecordUpdateDTO): Promise<Record> => {
+  update: async (id: string, data: RecordUpdateDTO): Promise<RecordItem> => {
     const response = await fetch(`${API_BASE_URL}/api/v1/records/${id}`, {
       method: 'PUT',
       headers: {
@@ -63,7 +63,7 @@ export const recordsAPI = {
     return response.json();
   },
 
-  partialUpdate: async (id: string, data: RecordUpdateDTO): Promise<Record> => {
+  partialUpdate: async (id: string, data: RecordUpdateDTO): Promise<RecordItem> => {
     const response = await fetch(`${API_BASE_URL}/api/v1/records/${id}`, {
       method: 'PATCH',
       headers: {

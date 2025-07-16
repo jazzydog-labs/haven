@@ -1,13 +1,13 @@
-import { Record } from '../../types/record';
+import { RecordItem } from '../../types/record';
 import RecordCard from './RecordCard';
 
 interface RecordListProps {
-  records: Record[];
+  records: RecordItem[];
   loading: boolean;
   error: string | null;
-  onEdit: (record: Record) => void;
-  onDelete: (record: Record) => void;
-  onView: (record: Record) => void;
+  onEdit: (record: RecordItem) => void;
+  onDelete: (record: RecordItem) => void;
+  onView: (record: RecordItem) => void;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;

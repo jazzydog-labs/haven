@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Record, RecordCreateDTO, RecordUpdateDTO } from '../types/record';
+import { RecordItem, RecordCreateDTO, RecordUpdateDTO } from '../types/record';
 import { recordsAPI } from '../services/api/records';
 
 export const useRecords = (limit: number = 10) => {
-  const [records, setRecords] = useState<Record[]>([]);
+  const [records, setRecords] = useState<RecordItem[]>([]);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
