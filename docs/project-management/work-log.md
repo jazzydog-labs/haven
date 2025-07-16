@@ -132,6 +132,32 @@ Key features:
 - Example file provided for team customization
 - Override file gitignored for local changes
 
+## 2025-07-16.0004 - Implemented comprehensive migration strategies
+**Added**: Multiple migration strategies for containerized environments with full documentation
+**See**: `docs/development/migration-strategies.md` for complete guide, updated `Justfile:270-297`
+**Test**: Run `just db-current-docker`, `just db-migrate-run`, or `docker compose --profile migration run migrate`
+**Demo**:
+```bash
+# Method 1: Exec into running container
+just db-current-docker
+
+# Method 2: One-shot container (for CI/CD)
+just db-migrate-run
+
+# Method 3: Dedicated service
+docker compose --profile migration run --rm migrate
+
+# View all migration commands
+just --list | grep db-.*-docker
+```
+
+Key features:
+- Four distinct migration methods for different use cases
+- All migration commands have Docker equivalents
+- Dedicated migration service with minimal dependencies
+- CI/CD example workflow for automated deployments
+- Comprehensive documentation with pros/cons for each method
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
