@@ -2,6 +2,7 @@
 """Demo script for the diff generation API."""
 
 import asyncio
+import os
 import sys
 from pathlib import Path
 
@@ -76,8 +77,10 @@ async def demo_diff_generation():
         response = await client.get(f"{base_url}/{task_id}/index.html")
 
         if response.status_code == 200:
-            # Save the index file
-            output_dir = Path(f"diff-demo-{task_id}")
+            # Save the index file in .tmp directory
+            tmp_base = Path("../../.tmp/diff-output")
+            tmp_base.mkdir(parents=True, exist_ok=True)
+            output_dir = tmp_base / f"diff-demo-{task_id}"
             output_dir.mkdir(exist_ok=True)
 
             index_path = output_dir / "index.html"
@@ -112,7 +115,9 @@ async def demo_diff_generation():
             print("\n5. Cleanup (optional)")
             print(f"   To clean up: DELETE {base_url}/{task_id}")
 
-            print(f"\n✨ Demo complete! Open {index_path} in your browser")
+            # Get absolute path for browser
+            abs_path = index_path.resolve()
+            print(f"\n✨ Demo complete! Open file://{abs_path} in your browser")
             print(f"   Or run: python -m http.server 8000 --directory {output_dir}")
 
         else:

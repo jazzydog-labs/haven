@@ -77,8 +77,10 @@ async def generate_diffs_task(task_id: str, branch: str, base_branch: str, max_c
     try:
         diff_tasks[task_id]["status"] = "processing"
 
-        # Create output directory
-        output_dir = Path(f"diff-out-{task_id}")
+        # Create output directory in .tmp
+        tmp_base = Path("../../.tmp/diff-output")
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        output_dir = tmp_base / f"diff-out-{task_id}"
         output_dir.mkdir(exist_ok=True)
         diff_tasks[task_id]["output_dir"] = str(output_dir)
 
