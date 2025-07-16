@@ -69,3 +69,8 @@ Thumbs.db
 *.temp
 .tmp/
 .temp/
+
+# Diff generation output
+diff-out*/
+diff-demo*/
+server.log

@@ -23,23 +23,28 @@ async def demo_diff_generation():
         
         # Check if we're on main branch
         import subprocess
-        current_branch = subprocess.check_output(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+        
+        # Get the first commit in the repo
+        first_commit = subprocess.check_output(
+            ["git", "rev-list", "--max-parents=0", "HEAD"],
             text=True
         ).strip()
         
-        if current_branch == "main":
-            print("   Note: Currently on main branch, diffing against HEAD~5")
-            base_branch = "HEAD~5"
-        else:
-            base_branch = "main"
+        # Count total commits
+        total_commits = int(subprocess.check_output(
+            ["git", "rev-list", "--count", "HEAD"],
+            text=True
+        ).strip())
+        
+        print(f"   Generating diffs for all {total_commits} commits in the repository")
+        print(f"   Base: {first_commit[:7]} (first commit)")
         
         response = await client.post(
             f"{base_url}/generate",
             json={
                 "branch": "HEAD",
-                "base_branch": base_branch,
-                "max_commits": 10
+                "base_branch": first_commit,
+                "max_commits": total_commits
             }
         )
         

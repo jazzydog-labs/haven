@@ -134,6 +134,8 @@ clean:
     rm -rf .coverage htmlcov/ .pytest_cache/
     rm -rf .ruff_cache/ .mypy_cache/ .pyright/
     rm -rf site/
+    rm -rf diff-out*/ diff-demo*/
+    rm -f server.log
 
 # Docker commands
 docker-build tag="latest":
@@ -162,6 +164,18 @@ pre-commit-run:
 demo:
     @echo "🎯 Demo functionality will be implemented per feature"
     @echo "Run specific demos with: just demo-<feature>"
+
+# Demo: Diff Generation API
+demo-diff-generation:
+    @echo "🔍 Diff Generation API Demo"
+    @echo "This demo shows how to use the FastAPI diff generation endpoints"
+    @echo ""
+    @if ! curl -s http://localhost:8080/health > /dev/null 2>&1; then \
+        echo "❌ Server is not running. Starting server..."; \
+        echo "   Run 'just run' in another terminal first"; \
+        exit 1; \
+    fi
+    @{{ python }} scripts/demo-diff-generation.py
 
 # Add a new entity (scaffolding helper)
 add-entity name:
