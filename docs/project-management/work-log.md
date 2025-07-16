@@ -186,6 +186,34 @@ Key features:
 - Diagnostic commands for each issue type
 - Prevention tips and best practices
 
+## 2025-07-16.0006 - Modularized Justfile architecture
+**Added**: Split monolithic Justfile into domain-specific modules for better maintainability
+**See**: New justfiles in root and package directories, `docs/development/justfile-architecture.md`
+**Test**: Run `just --list` to see all commands, test any command like `just test` or `just run-docker`
+**Demo**:
+```bash
+# All commands work as before
+just run
+just test
+just db-migrate
+
+# View modular structure
+ls justfile*
+ls apps/*/justfile
+
+# Commands delegate appropriately
+just lint        # Runs both Python and Web linting
+just info        # Shows info from all packages
+```
+
+Key features:
+- Main Justfile imports specialized modules
+- Package-specific justfiles in apps/api/ and apps/web/
+- Separated database, docker, and demo commands
+- Full backward compatibility maintained
+- Shared variables in justfile.common
+- Clear documentation of architecture
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
