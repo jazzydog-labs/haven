@@ -79,8 +79,7 @@ run-all:
     
     # Start frontend in background
     @echo "🎨 Starting frontend development server..."
-    @cd {{ web_dir }} && npm run dev > /tmp/haven-frontend.log 2>&1 &
-    @echo $$! > /tmp/haven-frontend.pid
+    @cd {{ web_dir }} && npm run dev > /tmp/haven-frontend.log 2>&1 & echo $$! > /tmp/haven-frontend.pid
     
     # Wait for frontend
     @sleep 3
@@ -123,7 +122,8 @@ stop-all:
     
     # Stop frontend if running
     @if [ -f /tmp/haven-frontend.pid ]; then \
-        kill $$(cat /tmp/haven-frontend.pid) 2>/dev/null || true; \
+        PID=`cat /tmp/haven-frontend.pid`; \
+        kill $$PID 2>/dev/null || true; \
         rm -f /tmp/haven-frontend.pid; \
         echo "✅ Frontend stopped"; \
     fi
