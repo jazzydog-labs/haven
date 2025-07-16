@@ -152,6 +152,12 @@ type-web:
 # Run all quality checks
 check: lint type test-fast
 
+# Run Python quality checks only
+check-python: lint-python type-python test-fast-python
+
+# Run Web quality checks only  
+check-web: lint-web type-web test-web
+
 # Run all tests
 test: test-python test-web
     @echo "✅ All tests passed!"
@@ -257,6 +263,9 @@ run-api-docker:
 # Stop all containers
 stop-docker:
     docker compose down
+
+# Alias for stop-docker (compatibility)
+down: stop-docker
 
 # Database Operations in Docker
 # Run migrations in container

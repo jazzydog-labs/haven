@@ -105,6 +105,33 @@ Key fixes:
 **Test**: `just demo-diff-generation` then check `.tmp/diff-output/` exists at monorepo root
 **Demo**: Run `just demo-diff-generation`, note the file:// URL output, then `just clean` to verify cleanup
 
+## 2025-07-16.0003 - Added docker-compose.override.yml for development
+**Added**: Docker Compose override configuration for development-specific settings
+**See**: `docker-compose.override.yml` and `docker-compose.override.yml.example` in project root
+**Test**: `docker compose config` to see merged configuration, `just run-docker` to verify hot-reload
+**Demo**: 
+```bash
+# Copy example to create your own override
+cp docker-compose.override.yml.example docker-compose.override.yml
+
+# Start services - override is automatically loaded
+just run-docker
+
+# Edit a file to test hot-reload
+echo "# test" >> apps/api/src/haven/main.py
+
+# Check logs to see automatic restart
+just logs-docker api | grep -i reload
+```
+
+Key features:
+- Automatic loading by docker-compose (no extra flags needed)
+- Development-specific volumes and environment variables
+- Hot-reload enabled with explicit reload command
+- PostgreSQL exposed on port 5432 for local tools
+- Example file provided for team customization
+- Override file gitignored for local changes
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
