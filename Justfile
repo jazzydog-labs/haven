@@ -257,22 +257,11 @@ demo:
 
 # Demo: View all commits and diffs in browser (single command)
 demo-commits:
-    @echo "🔍 Starting commit diff viewer in browser"
-    @echo "This will start the server and open all commits with diffs in your browser"
-    @echo ""
-    bash -c 'set -e; if ! curl -s http://localhost:8080/health > /dev/null 2>&1; then echo "🚀 Starting server in background..."; just run & SERVER_PID=$$!; echo "⏳ Waiting for server to be ready..."; sleep 5; for i in {1..30}; do if curl -s http://localhost:8080/health > /dev/null 2>&1; then echo "✅ Server is ready!"; break; fi; sleep 1; done; fi; cd {{ api_dir }} && {{ python }} scripts/demo-diff-generation.py; echo "🌐 Server running at http://localhost:8080"; echo "Press Ctrl+C to stop the server"; if [ ! -z "$$SERVER_PID" ]; then wait $$SERVER_PID; fi'
+    ./scripts/demo-commits.sh {{ api_dir }} {{ python }}
 
 # Demo: Diff Generation API (legacy - requires manual server start)
 demo-diff-generation:
-    @echo "🔍 Diff Generation API Demo"
-    @echo "This demo shows how to use the FastAPI diff generation endpoints"
-    @echo ""
-    @if ! curl -s http://localhost:8080/health > /dev/null 2>&1; then \
-        echo "❌ Server is not running. Starting server..."; \
-        echo "   Run 'just run' in another terminal first"; \
-        exit 1; \
-    fi
-    @cd {{ api_dir }} && {{ python }} scripts/demo-diff-generation.py
+    ./scripts/demo-diff-generation.sh {{ api_dir }} {{ python }}
 
 # Add a new entity (scaffolding helper)
 add-entity name:
