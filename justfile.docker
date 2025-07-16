@@ -127,6 +127,23 @@ clean-docker:
     docker compose down
     docker system prune -f
 
+# Proxy commands for CORS-free development
+# Run with reverse proxy (no CORS)
+run-proxy:
+    docker compose -f docker-compose.yml -f docker-compose.proxy.yml up
+
+# Run proxy in background
+run-proxy-d:
+    docker compose -f docker-compose.yml -f docker-compose.proxy.yml up -d
+
+# Stop proxy and services
+stop-proxy:
+    docker compose -f docker-compose.yml -f docker-compose.proxy.yml down
+
+# View proxy logs
+logs-proxy:
+    docker compose -f docker-compose.yml -f docker-compose.proxy.yml logs -f proxy
+
 # Legacy Docker commands
 # Docker build commands
 docker-build tag="latest":

@@ -90,6 +90,26 @@ demo-commits-docker:
 demo-diff-generation-docker:
     docker compose exec api python -m haven.cli demo-diff-generation
 
+# Demo: CORS configuration
+demo-cors:
+    @echo "🌐 Testing CORS configuration..."
+    @echo "Current CORS settings:"
+    @echo ""
+    @echo "Allowed origins:"
+    @grep -A 10 "cors:" apps/api/conf/environment/local.yaml | grep -E "^\s*-" || echo "No origins configured"
+    @echo ""
+    @echo "Testing cross-origin request:"
+    curl -s -X OPTIONS http://localhost:8080/api/v1/records \
+        -H "Origin: http://localhost:3000" \
+        -H "Access-Control-Request-Method: GET" \
+        -I | grep -i "access-control" || echo "❌ CORS headers not found"
+    @echo ""
+    @echo "Local domains setup:"
+    @grep "haven.local" /etc/hosts || echo "No local domains configured"
+    @echo ""
+    @echo "💡 To set up local domains: sudo ./scripts/setup-local-domains.sh"
+    @echo "💡 To run without CORS: just run-proxy"
+
 # Demo: All features in sequence
 demo-all:
     @echo "🎪 Running all demos..."
@@ -103,5 +123,7 @@ demo-all:
     just demo-docker
     @echo "=" | head -c 60 && echo
     just demo-migrations
+    @echo "=" | head -c 60 && echo
+    just demo-cors
     @echo "=" | head -c 60 && echo
     @echo "✅ All demos complete!"

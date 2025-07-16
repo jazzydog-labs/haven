@@ -1,0 +1,31 @@
+# Docker Compose configuration for reverse proxy setup
+# This eliminates CORS issues by serving frontend and backend from same domain
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.proxy.yml up
+
+services:
+  # Caddy reverse proxy
+  proxy:
+    image: caddy:2-alpine
+    container_name: haven-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+    networks:
+      - haven-network
+    restart: unless-stopped
+
+  # Override API to not expose port directly
+  api:
+    ports: []  # Remove direct port exposure
+
+volumes:
+  caddy-data:
+  caddy-config:
