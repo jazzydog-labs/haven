@@ -2,3 +2,4 @@ defaults:
   - environment: local
   - database: postgres
   - logging: default
+  - _self_

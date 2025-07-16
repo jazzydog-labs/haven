@@ -105,8 +105,8 @@ class AppSettings(BaseSettings):
     class Config:
         """Pydantic configuration."""
 
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+        # Don't load env file since we're using Hydra
+        env_file = None
         case_sensitive = False
 
     @validator("database", pre=True)
@@ -128,15 +128,23 @@ def get_settings() -> AppSettings:
     initialize_config_dir(config_dir="/Users/paul/dev/jazzydog-labs/haven/conf", version_base="1.3")
 
     # Compose configuration
-    cfg = compose(config_name="defaults")
+    cfg = compose(config_name="config")
 
     # Convert to dictionary and create settings
+    # Handle nested structure from Hydra
+    from omegaconf import OmegaConf
+    
+    # Resolve all interpolations
+    cfg = OmegaConf.to_container(cfg, resolve=True)
+    
+    env_cfg = cfg.get("environment", {})
+    
     settings_dict = {
-        "app": cfg.get("app", {}),
-        "server": cfg.get("server", {}),
-        "database": cfg.get("database", {}),
-        "logging": cfg.get("logging", {}),
-        "cors": cfg.get("cors", {}),
+        "app": env_cfg.get("app", {}),
+        "server": env_cfg.get("server", {}),
+        "database": cfg.get("database", {}).get("database", {}),
+        "logging": cfg.get("logging", {}).get("logging", {}),
+        "cors": env_cfg.get("cors", {}),
     }
 
     return AppSettings(**settings_dict)
