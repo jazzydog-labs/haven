@@ -20,7 +20,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
     libpq-dev \
     git \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
+
+# Install diff2html globally
+RUN npm install -g diff2html-cli
 
 # Create non-root user
 RUN groupadd -r haven && \

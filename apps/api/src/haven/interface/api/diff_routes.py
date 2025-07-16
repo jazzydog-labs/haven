@@ -45,10 +45,14 @@ class DiffGenerationStatus(BaseModel):
 diff_tasks = {}
 
 
-async def run_command(cmd: list[str]) -> tuple[str, str, int]:
+async def run_command(cmd: list[str], cwd: str | None = None) -> tuple[str, str, int]:
     """Run a shell command asynchronously."""
+    # In Docker, use /repo as working directory for git commands
+    if cwd is None and cmd[0] == "git" and Path("/repo").exists():
+        cwd = "/repo"
+    
     process = await asyncio.create_subprocess_exec(
-        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, cwd=cwd
     )
     stdout, stderr = await process.communicate()
     return stdout.decode(), stderr.decode(), process.returncode
@@ -78,7 +82,11 @@ async def generate_diffs_task(task_id: str, branch: str, base_branch: str, max_c
         diff_tasks[task_id]["status"] = "processing"
 
         # Create output directory in .tmp
-        tmp_base = Path("../../.tmp/diff-output")
+        # Use /app/.tmp in Docker, or ../../.tmp locally
+        if Path("/app/.tmp").exists():
+            tmp_base = Path("/app/.tmp/diff-output")
+        else:
+            tmp_base = Path("../../.tmp/diff-output")
         tmp_base.mkdir(parents=True, exist_ok=True)
         output_dir = tmp_base / f"diff-out-{task_id}"
         output_dir.mkdir(exist_ok=True)

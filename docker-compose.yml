@@ -48,6 +48,10 @@ services:
       - ./apps/api/pytest.ini:/app/pytest.ini:cached
       # Mount logs directory
       - ./apps/api/logs:/app/logs
+      # Mount .tmp directory for diff generation output
+      - ./.tmp:/app/.tmp
+      # Mount git repository for diff generation (read-only)
+      - ./:/repo:ro
     depends_on:
       postgres:
         condition: service_healthy

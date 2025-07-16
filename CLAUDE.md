@@ -38,11 +38,16 @@ just check        # Full quality gates (lint + type + test)
 2. Implement the feature
 3. Run `just check` to verify quality
 4. **Commit immediately** - don't batch changes
-5. **Update work log** - append entry to `work-log.md`
+5. **Update tracking files** - Keep everything in sync:
+   - Append entry to `work-log.md`
+   - Update `todo.md` to mark task complete
+   - Update `docs/roadmap.md` if milestone achieved
+   - Update `docs/commits-plan.md` if following plan
+   - Update `CLAUDE.md` if new workflow added
 6. Move task to `tasks/closed/` if complete
 7. Move to next task
 
-Each task should result in at least one atomic commit and work log entry!
+Each task should result in at least one atomic commit and synchronized documentation!
 
 ### Batch Operations
 ```bash
@@ -285,27 +290,57 @@ just --list
 
 **Remember**: Complete task → Run checks → Commit → Update work log → Next task. Never leave work uncommitted!
 
-## Work Log Management
+## Documentation Synchronization
 
-After each commit, append an entry to `work-log.md` with:
+After each commit, ensure all tracking files are synchronized:
+
+### 1. Work Log (`work-log.md`)
+Append an entry with:
 - **What was added/changed** - High-level description of the work done
 - **How to see it** - URLs, commands, or file paths to view the changes
 - **How to test it** - Commands to run tests or verify functionality
 - **How to demo it** - Steps to demonstrate the new feature/fix
 
-Example work log entries:
+Example format:
 ```markdown
 ## 2025-07-16.0001 - Added GraphQL health check endpoint
 **Added**: Basic GraphQL health check query returning service status
 **See**: Visit http://localhost:8080/graphql and run `{ health { status } }`
 **Test**: `just test tests/integration/test_graphql.py::test_health_query`
 **Demo**: Start service with `just run`, open GraphiQL, execute health query
-
-## 2025-07-16.0002 - Implemented user repository pattern
-**Added**: User repository with CRUD operations following clean architecture
-**See**: Code in `src/infrastructure/database/repositories/user_repository.py`
-**Test**: `just test tests/unit/infrastructure/test_user_repository.py`
-**Demo**: Run tests to see all CRUD operations working with in-memory database
 ```
 
 Use format `YYYY-MM-DD.NNNN` where NNNN is a zero-padded 4-digit sequence number starting from 0001 each day.
+
+### 2. Todo List (`todo.md`)
+- Mark completed tasks with [x]
+- Remove or strike through finished items
+- Add any new tasks discovered during implementation
+- Update priorities if needed
+
+### 3. Roadmap (`docs/roadmap.md`)
+- Mark milestones as completed
+- Move items from "In Progress" to "Completed"
+- Update sprint status if applicable
+- Add any new backlog items discovered
+
+### 4. Commits Plan (`docs/commits-plan.md`)
+- Mark commits as completed if following the plan
+- Note any deviations from the original plan
+- Update remaining commit estimates
+
+### 5. CLAUDE.md
+- Add new workflows or commands created
+- Update examples if APIs changed
+- Add any new developer tips discovered
+
+### Sync Checklist
+```bash
+# After each commit, verify:
+□ work-log.md has new entry
+□ todo.md reflects completed work
+□ roadmap.md shows progress
+□ commits-plan.md updated (if applicable)
+□ CLAUDE.md has new workflows (if created)
+□ Task moved to tasks/closed/ (if complete)
+```
