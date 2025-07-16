@@ -5,34 +5,70 @@
 default:
     @just --list
 
-# Python environment
-venv := ".venv"
-python := venv + "/bin/python"
-pip := venv + "/bin/pip"
+# Directory configuration
+api_dir := "apps/api"
+web_dir := "apps/web"
 
-# Create virtual environment
-bootstrap:
-    python3.12 -m venv {{ venv }}
-    {{ pip }} install --upgrade pip
-    {{ pip }} install -e ".[dev]"
-    @echo "✅ Environment ready! Run 'source {{ venv }}/bin/activate' to activate"
+# Python environment (relative to api_dir when used with cd)
+python := ".venv/bin/python"
+pip := ".venv/bin/pip"
+
+# Bootstrap entire monorepo
+bootstrap: bootstrap-python bootstrap-web
+    @echo "✅ Monorepo bootstrap complete!"
+
+# Create Python virtual environment
+bootstrap-python:
+    cd {{ api_dir }} && python3.12 -m venv .venv
+    cd {{ api_dir }} && .venv/bin/pip install --upgrade pip
+    cd {{ api_dir }} && .venv/bin/pip install -e ".[dev]"
+    @echo "✅ Python environment ready! Run 'source {{ api_dir }}/.venv/bin/activate' to activate"
+
+# Install Node.js dependencies
+bootstrap-web:
+    cd {{ web_dir }} && npm install
+    @echo "✅ Web environment ready!"
 
 # Install all dependencies
-install:
-    {{ pip }} install -e ".[dev,docs]"
+install: install-python install-web
+    @echo "✅ All dependencies installed!"
 
-# Update dependencies
-update:
-    {{ pip }} install --upgrade pip
-    {{ pip }} install --upgrade -e ".[dev,docs]"
+# Install Python dependencies
+install-python:
+    cd {{ api_dir }} && {{ pip }} install -e ".[dev,docs]"
 
-# Run the application in development mode
-run:
-    {{ python }} -m haven.main
+# Install Web dependencies
+install-web:
+    cd {{ web_dir }} && npm install
+
+# Update all dependencies
+update: update-python update-web
+    @echo "✅ All dependencies updated!"
+
+# Update Python dependencies
+update-python:
+    cd {{ api_dir }} && {{ pip }} install --upgrade pip
+    cd {{ api_dir }} && {{ pip }} install --upgrade -e ".[dev,docs]"
+
+# Update Web dependencies
+update-web:
+    cd {{ web_dir }} && npm update
+
+# Run both API and Web in development mode
+run: run-api
+    @echo "🚀 Use 'just run-web' in another terminal to start the web client"
+
+# Run API server
+run-api:
+    cd {{ api_dir }} && {{ python }} -m haven.main
+
+# Run Web development server
+run-web:
+    cd {{ web_dir }} && npm run dev
 
 # Run with specific environment
 run-env env="local":
-    {{ python }} -m haven.main +environment={{ env }}
+    cd {{ api_dir }} && {{ python }} -m haven.main +environment={{ env }}
 
 # Database commands
 db-up:
@@ -52,71 +88,118 @@ db-reset:
 
 # Run migrations
 db-migrate:
-    alembic upgrade head
+    cd {{ api_dir }} && {{ python }} -m alembic upgrade head
 
 # Create a new migration
 db-make message:
-    alembic revision --autogenerate -m "{{ message }}"
+    cd {{ api_dir }} && {{ python }} -m alembic revision --autogenerate -m "{{ message }}"
 
 # Show migration history
 db-history:
-    alembic history --verbose
+    cd {{ api_dir }} && {{ python }} -m alembic history --verbose
 
 # Show current migration
 db-current:
-    alembic current
+    cd {{ api_dir }} && {{ python }} -m alembic current
 
 # Downgrade database
 db-downgrade steps="1":
-    alembic downgrade -{{ steps }}
+    cd {{ api_dir }} && {{ python }} -m alembic downgrade -{{ steps }}
 
-# Quality checks
-lint:
-    {{ python }} -m ruff check .
+# Quality checks for all code
+lint: lint-python lint-web
+    @echo "✅ All linting passed!"
 
-lint-fix:
-    {{ python }} -m ruff check --fix .
-    {{ python }} -m ruff format .
+# Python linting
+lint-python:
+    cd {{ api_dir }} && {{ python }} -m ruff check .
 
-format:
-    {{ python }} -m ruff format .
+# Web linting
+lint-web:
+    cd {{ web_dir }} && npm run lint
 
-type:
-    {{ python }} -m pyright
+# Fix linting issues
+lint-fix: lint-fix-python lint-fix-web
+    @echo "✅ All linting issues fixed!"
+
+lint-fix-python:
+    cd {{ api_dir }} && {{ python }} -m ruff check --fix .
+    cd {{ api_dir }} && {{ python }} -m ruff format .
+
+lint-fix-web:
+    cd {{ web_dir }} && npm run format
+
+# Format all code
+format: format-python format-web
+    @echo "✅ All code formatted!"
+
+format-python:
+    cd {{ api_dir }} && {{ python }} -m ruff format .
+
+format-web:
+    cd {{ web_dir }} && npm run format
+
+# Type checking
+type: type-python type-web
+    @echo "✅ All type checking passed!"
+
+type-python:
+    cd {{ api_dir }} && {{ python }} -m pyright
+
+type-web:
+    cd {{ web_dir }} && npm run type-check
 
 # Run all quality checks
 check: lint type test-fast
 
-# Testing
-test:
-    {{ python }} -m pytest
+# Run all tests
+test: test-python test-web
+    @echo "✅ All tests passed!"
 
-test-fast:
-    {{ python }} -m pytest -m "not slow"
+# Python testing
+test-python:
+    cd {{ api_dir }} && {{ python }} -m pytest
 
-test-cov:
-    {{ python }} -m pytest --cov=haven --cov-report=html
+# Web testing (placeholder for now)
+test-web:
+    @echo "📝 Web tests not implemented yet"
 
-test-watch:
-    {{ python }} -m pytest-watch
+test-fast: test-fast-python
+    @echo "✅ Fast tests passed!"
+
+test-fast-python:
+    cd {{ api_dir }} && {{ python }} -m pytest -m "not slow"
+
+# Coverage testing
+test-cov: test-cov-python
+    @echo "✅ Coverage report generated!"
+
+test-cov-python:
+    cd {{ api_dir }} && {{ python }} -m pytest --cov=haven --cov-report=html
+
+# Watch mode testing
+test-watch: test-watch-python
+
+test-watch-python:
+    cd {{ api_dir }} && {{ python }} -m pytest-watch
 
 # Run specific test file
 test-file file:
-    {{ python }} -m pytest {{ file }}
+    cd {{ api_dir }} && {{ python }} -m pytest {{ file }}
 
 # Documentation
 docs:
-    mkdocs build
+    cd {{ api_dir }} && mkdocs build
 
 docs-serve:
-    mkdocs serve --dev-addr localhost:8001
+    cd {{ api_dir }} && mkdocs serve --dev-addr localhost:8001
 
 docs-deploy:
-    mkdocs gh-deploy --force
+    cd {{ api_dir }} && mkdocs gh-deploy --force
 
 # Development utilities
 shell:
-    {{ python }} -m asyncio
+    cd {{ api_dir }} && {{ python }} -m asyncio
 
 # Database console
 db-console:
@@ -127,15 +210,22 @@ logs:
     docker compose logs -f
 
 # Clean up generated files
-clean:
-    rm -rf build/ dist/ *.egg-info/
-    find . -type d -name __pycache__ -exec rm -rf {} +
-    find . -type f -name "*.pyc" -delete
-    rm -rf .coverage htmlcov/ .pytest_cache/
-    rm -rf .ruff_cache/ .mypy_cache/ .pyright/
-    rm -rf site/
+clean: clean-python clean-web
     rm -rf diff-out*/ diff-demo*/
     rm -f server.log
+    @echo "✅ All cleaned!"
+
+clean-python:
+    cd {{ api_dir }} && rm -rf build/ dist/ *.egg-info/
+    find {{ api_dir }} -type d -name __pycache__ -exec rm -rf {} +
+    find {{ api_dir }} -type f -name "*.pyc" -delete
+    cd {{ api_dir }} && rm -rf .coverage htmlcov/ .pytest_cache/
+    cd {{ api_dir }} && rm -rf .ruff_cache/ .mypy_cache/ .pyright/
+    cd {{ api_dir }} && rm -rf site/
+
+clean-web:
+    cd {{ web_dir }} && rm -rf dist/ node_modules/.cache/
+    cd {{ web_dir }} && rm -rf .eslintcache
 
 # Docker commands
 docker-build tag="latest":
@@ -175,7 +265,7 @@ demo-diff-generation:
         echo "   Run 'just run' in another terminal first"; \
         exit 1; \
     fi
-    @{{ python }} scripts/demo-diff-generation.py
+    @cd {{ api_dir }} && {{ python }} scripts/demo-diff-generation.py
 
 # Add a new entity (scaffolding helper)
 add-entity name:
@@ -189,11 +279,29 @@ add-entity name:
 
 # Show current environment info
 info:
-    @echo "Python: $({{ python }} --version)"
-    @echo "Environment: {{ venv }}"
+    @echo "Python: $(cd {{ api_dir }} && {{ python }} --version)"
+    @echo "Environment: {{ api_dir }}/.venv"
     @echo "Working directory: $(pwd)"
-    @{{ python }} -m pip list | grep -E "(fastapi|sqlalchemy|strawberry|pydantic)"
+    @cd {{ api_dir }} && {{ python }} -m pip list | grep -E "(fastapi|sqlalchemy|strawberry|pydantic)"
 
 # Full CI simulation
 ci: clean bootstrap check docs
     @echo "✅ All CI checks passed!"
+
+# Run CI for Python only
+ci-python: clean bootstrap-python check docs
+    @echo "✅ Python CI checks passed!"
+
+# Build all applications
+build: build-api build-web
+    @echo "✅ All applications built!"
+
+# Build API (placeholder)
+build-api:
+    @echo "📦 API build (Docker image)"
+    @echo "Run 'just docker-build' to build API Docker image"
+
+# Build Web application
+build-web:
+    cd {{ web_dir }} && npm run build
+    @echo "✅ Web application built to {{ web_dir }}/dist"

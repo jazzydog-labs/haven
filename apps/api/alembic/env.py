@@ -2,29 +2,38 @@
 
 import asyncio
 import os
+
+# Add src to Python path
+import sys
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from alembic import context
-
-# Add src to Python path
-import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 # Import models and settings
+from hydra import initialize_config_dir, compose
+from hydra.core.global_hydra import GlobalHydra
 from src.haven.infrastructure.database.models import Base
-from src.haven.config import get_settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-# Get database URL from settings
-settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.database.dsn)
+# Get database URL from environment variables or construct from parts
+database_url = os.getenv("DATABASE_URL")
+if not database_url:
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_port = os.getenv("DB_PORT", "5432")
+    db_name = os.getenv("DB_NAME", "haven")
+    db_user = os.getenv("DB_USER", "haven")
+    db_password = os.getenv("DB_PASSWORD", "haven")
+    database_url = f"postgresql+asyncpg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -75,8 +84,8 @@ def do_run_migrations(connection: Connection) -> None:
 async def run_async_migrations() -> None:
     """Run migrations in 'online' mode with async engine."""
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = settings.database.dsn
-    
+    configuration["sqlalchemy.url"] = database_url
+
     connectable = async_engine_from_config(
         configuration,
         prefix="sqlalchemy.",

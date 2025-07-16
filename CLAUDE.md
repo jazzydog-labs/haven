@@ -27,9 +27,10 @@ just check        # Full quality gates (lint + type + test)
 2. Implement the feature
 3. Run `just check` to verify quality
 4. **Commit immediately** - don't batch changes
-5. Move to next task
+5. **Update work log** - append entry to `work-log.md`
+6. Move to next task
 
-Each task should result in at least one atomic commit!
+Each task should result in at least one atomic commit and work log entry!
 
 ### Batch Operations
 ```bash
@@ -144,6 +145,7 @@ See `docs/quality.md` for linting/typing details and `docs/definition-of-done.md
 - `docs/commits-plan.md` - Detailed implementation phases
 - `docs/roadmap.md` - Features, tech debt, and long-term planning
 - `todo.md` - Immediate tasks and notes
+- `work-log.md` - Append-only log of completed work
 
 Currently on commit 0 of 11 planned commits.
 
@@ -205,4 +207,29 @@ just --list
 5. **Before committing?** → `docs/definition-of-done.md`
 6. **Lost or confused?** → `docs/overview.md` for the complete map
 
-**Remember**: Complete task → Run checks → Commit → Next task. Never leave work uncommitted!
+**Remember**: Complete task → Run checks → Commit → Update work log → Next task. Never leave work uncommitted!
+
+## Work Log Management
+
+After each commit, append an entry to `work-log.md` with:
+- **What was added/changed** - High-level description of the work done
+- **How to see it** - URLs, commands, or file paths to view the changes
+- **How to test it** - Commands to run tests or verify functionality
+- **How to demo it** - Steps to demonstrate the new feature/fix
+
+Example work log entries:
+```markdown
+## 2025-07-16.0001 - Added GraphQL health check endpoint
+**Added**: Basic GraphQL health check query returning service status
+**See**: Visit http://localhost:8080/graphql and run `{ health { status } }`
+**Test**: `just test tests/integration/test_graphql.py::test_health_query`
+**Demo**: Start service with `just run`, open GraphiQL, execute health query
+
+## 2025-07-16.0002 - Implemented user repository pattern
+**Added**: User repository with CRUD operations following clean architecture
+**See**: Code in `src/infrastructure/database/repositories/user_repository.py`
+**Test**: `just test tests/unit/infrastructure/test_user_repository.py`
+**Demo**: Run tests to see all CRUD operations working with in-memory database
+```
+
+Use format `YYYY-MM-DD.NNNN` where NNNN is a zero-padded 4-digit sequence number starting from 0001 each day.

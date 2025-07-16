@@ -7,7 +7,7 @@ database:
   password: ${oc.env:DB_PASSWORD,haven}
   
   # Constructed DSN
-  dsn: ${oc.env:DATABASE_URL,postgresql+asyncpg://${database.database.user}:${database.database.password}@${database.database.host}:${database.database.port}/${database.database.name}}
+  dsn: ${oc.env:DATABASE_URL,postgresql+asyncpg://${database.user}:${database.password}@${database.host}:${database.port}/${database.name}}
   
   # Connection pool settings
   pool:
