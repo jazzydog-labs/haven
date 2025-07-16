@@ -149,7 +149,7 @@ docker-push registry tag="latest":
     ./scripts/build-docker.sh --push --registry {{ registry }} --tag {{ tag }}
 
 docker-size:
-    @docker images haven --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+    @docker images haven --format "table {{ '{{' }}.Repository{{ '}}' }}\t{{ '{{' }}.Tag{{ '}}' }}\t{{ '{{' }}.Size{{ '}}' }}"
 
 # Pre-commit setup
 pre-commit-install:
