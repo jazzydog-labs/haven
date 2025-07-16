@@ -11,6 +11,7 @@ demo:
     @echo "  just demo-migrations    - Show migration strategies"
     @echo "  just demo-commits       - View all commits and diffs"
     @echo "  just demo-diff-generation - Generate repository diffs"
+    @echo "  just demo-ttr           - Demonstrate TTR system features"
 
 # Demo: Health check endpoints
 demo-health:
@@ -126,4 +127,19 @@ demo-all:
     @echo "=" | head -c 60 && echo
     just demo-cors
     @echo "=" | head -c 60 && echo
+    just demo-ttr
+    @echo "=" | head -c 60 && echo
     @echo "✅ All demos complete!"
+
+# Demo: TTR (Task, Todo, Review) System
+demo-ttr:
+    @echo "🔥 TTR (Task, Todo, Review) System Demo"
+    @echo "=" | head -c 60 && echo
+    @echo "Prerequisites:"
+    @echo "  - Database running: just db-up"
+    @echo "  - Migrations applied: just db-migrate"
+    @echo ""
+    @echo "Running TTR system demo..."
+    cd {{ api_dir }} && {{ python }} -c "import asyncio; from haven.demo.ttr_demo import demo_ttr_system; asyncio.run(demo_ttr_system())"
+    @echo ""
+    @echo "📖 Full documentation: docs/development/ttr-demo.md"

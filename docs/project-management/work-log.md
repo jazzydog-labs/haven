@@ -31,6 +31,61 @@ Key features:
 - Step-by-step normalization process with validation and monitoring
 - Elevated to critical priority due to recent project modularization
 
+## 2025-07-16.0005 - Implemented Repository Domain Entity for TTR System
+**Added**: Complete Repository entity with Clean Architecture patterns
+**See**: Domain entity at `src/haven/domain/entities/repository.py`, repository implementation at `src/haven/infrastructure/database/repositories/repository_repository.py`
+**Test**: `just test tests/unit/domain/test_repository.py tests/unit/infrastructure/test_repository_repository.py tests/unit/application/test_repository_service.py`
+**Demo**: 
+```bash
+# Run comprehensive TTR demo
+cd apps/api && source .venv/bin/activate
+python -c "
+import asyncio
+from haven.demo.ttr_demo import demo_ttr_system
+asyncio.run(demo_ttr_system())
+"
+
+# Or test individual components
+just test tests/unit/domain/test_repository.py -v
+just test tests/unit/infrastructure/test_repository_repository.py -v
+```
+
+Key features:
+- Repository domain entity with validation (name, URL, branch)
+- Support for both local and remote repositories  
+- Repository repository interface and SQLAlchemy implementation
+- Repository service for business logic operations
+- Database model with proper constraints and indexes
+- Alembic migration for repositories table
+- All 23 tests pass with 96% repository coverage and 88% service coverage
+
+## 2025-07-16.0004 - Implemented User Domain Entity for TTR System
+**Added**: Complete User entity with Clean Architecture patterns
+**See**: Domain entity at `src/haven/domain/entities/user.py`, repository implementation at `src/haven/infrastructure/database/repositories/user_repository.py`
+**Test**: `just test tests/unit/domain/test_user.py tests/unit/infrastructure/test_user_repository.py tests/unit/application/test_user_service.py`
+**Demo**: 
+```bash
+# Run comprehensive TTR demo
+cd apps/api && source .venv/bin/activate
+python -c "
+import asyncio
+from haven.demo.ttr_demo import demo_ttr_system
+asyncio.run(demo_ttr_system())
+"
+
+# Or test individual components
+just test tests/unit/domain/test_user.py -v
+just test tests/unit/infrastructure/test_user_repository.py -v
+```
+
+Key features:
+- User domain entity with validation (username, email, display_name)
+- User repository interface and SQLAlchemy implementation
+- User service for business logic operations
+- Database model with proper constraints and indexes
+- Alembic migration for users table
+- All 22 tests pass with 94% repository coverage and 88% service coverage
+
 ## 2025-07-16.0002 - Tested and Fixed All Just Commands
 **Added**: Comprehensive testing of all Just commands after monorepo restructure
 **See**: Fixed commands in `Justfile`, all commands now working properly
