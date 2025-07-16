@@ -53,10 +53,24 @@ All commands need verification after monorepo restructure:
 
 ## 📋 Immediate Next Steps
 
-1. **Complete Documentation Updates** - Update all planning docs to reflect current state
-2. **Test All Commands** - Systematically verify every just command works
-3. **Fix Any Issues** - Address command failures or configuration problems
-4. **Begin Next Development Phase** - Start implementing new features
+### Priority 1: Foundation & Organization (Prerequisites)
+1. ✅ **Single Command Commit Viewer** - `just demo-commits` now handles server startup automatically
+2. **Reorganize Project Structure** - Clean up docs and configs (see `tasks/open/reorganize-project-structure.md`)
+3. **Complete Documentation Updates** - Update all planning docs to reflect current state
+4. **Test All Commands** - Systematically verify every just command works
+
+### Priority 2: Development Infrastructure  
+4. **Modularize Justfiles** - Break down justfile into package-specific modules (see `tasks/open/modular-justfiles.md`)
+5. **Add Demo Commands** - Ensure all worklog entries have demo commands (see `tasks/open/worklog-demo-commands.md`)
+
+### Priority 3: Next Development Phase
+6. **Fix Any Issues** - Address command failures or configuration problems  
+7. **Begin Next Development Phase** - Start implementing new features
+
+### Active Tasks in `tasks/open/`
+- `reorganize-project-structure.md` - **HIGH PRIORITY** - Foundation for all other work
+- `modular-justfiles.md` - Depends on project structure being clean
+- `worklog-demo-commands.md` - Can be done in parallel with structure work
 
 ---
 
