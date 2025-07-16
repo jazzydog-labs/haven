@@ -35,6 +35,8 @@ dependencies = [
     "httpx>=0.26.0",
     "structlog>=24.1.0",
     "python-json-logger>=2.0.7",
+    "click>=8.1.0",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
@@ -60,6 +62,7 @@ docs = [
 
 [project.scripts]
 haven = "haven.main:main"
+haven-cli = "haven.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/jazzydog-labs/haven"

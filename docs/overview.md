@@ -131,6 +131,12 @@
   - Multi-stage Dockerfile and hardening
   - **When to read**: Deploying or optimizing containers
 
+### 🖥️ Command Line Interface
+- **[`docs/cli.md`](cli.md)** `#cli #commands #diff-generation`
+  - Haven CLI tool for git diff generation
+  - Command reference and usage examples
+  - **When to read**: Using Haven as a command-line tool
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -199,6 +205,7 @@ Use these tags to quickly find relevant documentation:
 - `#database #migrations #schema` → Database operations
 - `#rest #graphql #api` → API documentation
 - `#docker #containers #security` → Container and deployment
+- `#cli #commands #diff-generation` → Command-line interface and tools
 - `#scripts #automation #demos` → Build scripts and demo automation
 - `#planning #features #debt` → Project planning and roadmap
 - `#completed #achievements #history` → Completed work tracking
@@ -230,6 +237,10 @@ just demo-commits      # Demo git diff viewer (auto-starts server)
 just demo-diff-generation  # Demo git diff API (requires server)
 just clean             # Clean environment
 just --list            # Show all available commands
+
+# CLI tools  
+haven-cli list-commits     # List commits for diff generation
+haven-cli generate --verbose  # Generate diff files with progress
 
 # Direct script access
 ./scripts/demo-commits.sh apps/api .venv/bin/python  # Run demo script directly
