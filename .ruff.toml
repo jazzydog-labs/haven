@@ -1,0 +1,4 @@
+# Ruff configuration file (alternative to pyproject.toml)
+# This file is created for visibility but settings are in pyproject.toml
+
+# See pyproject.toml [tool.ruff] section for actual configuration
