@@ -24,11 +24,12 @@ config = context.config
 # Get database URL from environment variables or construct from parts
 database_url = os.getenv("DATABASE_URL")
 if not database_url:
-    db_host = os.getenv("DB_HOST", "localhost")
-    db_port = os.getenv("DB_PORT", "5432")
-    db_name = os.getenv("DB_NAME", "haven")
-    db_user = os.getenv("DB_USER", "haven")
-    db_password = os.getenv("DB_PASSWORD", "haven")
+    # Support both old env vars and new Hydra-style env vars
+    db_host = os.getenv("HAVEN_DATABASE__HOST", os.getenv("DB_HOST", "localhost"))
+    db_port = os.getenv("HAVEN_DATABASE__PORT", os.getenv("DB_PORT", "5432"))
+    db_name = os.getenv("HAVEN_DATABASE__DATABASE", os.getenv("DB_NAME", "haven"))
+    db_user = os.getenv("HAVEN_DATABASE__USERNAME", os.getenv("DB_USER", "haven"))
+    db_password = os.getenv("HAVEN_DATABASE__PASSWORD", os.getenv("DB_PASSWORD", "haven"))
     database_url = f"postgresql+asyncpg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
 config.set_main_option("sqlalchemy.url", database_url)

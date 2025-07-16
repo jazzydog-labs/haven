@@ -12,23 +12,52 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - haven-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U haven"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  # Haven service will be added in a later commit
-  # haven:
-  #   build: .
-  #   container_name: haven-app
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     DATABASE_URL: postgresql+asyncpg://haven:haven@postgres:5432/haven
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+      target: development
+    container_name: haven-api
+    ports:
+      - "8080:8080"
+    environment:
+      # Database connection using container networking
+      HAVEN_DATABASE__HOST: postgres
+      HAVEN_DATABASE__PORT: 5432
+      HAVEN_DATABASE__USERNAME: haven
+      HAVEN_DATABASE__PASSWORD: haven
+      HAVEN_DATABASE__DATABASE: haven
+      # Hydra config overrides
+      HYDRA_FULL_ERROR: 1
+    volumes:
+      # Mount source code for hot-reload
+      - ./apps/api/src:/app/src:cached
+      - ./apps/api/conf:/app/conf:cached
+      - ./apps/api/alembic:/app/alembic:cached
+      - ./apps/api/alembic.ini:/app/alembic.ini:cached
+      - ./apps/api/tests:/app/tests:cached
+      - ./apps/api/pyproject.toml:/app/pyproject.toml:cached
+      - ./apps/api/pytest.ini:/app/pytest.ini:cached
+      # Mount logs directory
+      - ./apps/api/logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - haven-network
+    command: ["python", "-m", "haven.main"]
+
+networks:
+  haven-network:
+    driver: bridge
 
 volumes:
   postgres-data:

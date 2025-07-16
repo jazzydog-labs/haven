@@ -18,6 +18,12 @@ Key fixes:
 - Created `.coveragerc` to exclude CLI and diff routes temporarily
 - Added test for main.py entry point
 
+## 2025-01-16.0002 - Centralized diff output storage and improved cleanup
+**Added**: Moved diff generation output to monorepo .tmp directory and enhanced cleanup
+**See**: Check `apps/api/src/haven/interface/api/diff_routes.py:101-105` and `Justfile:214-216`
+**Test**: `just demo-diff-generation` then check `.tmp/diff-output/` exists at monorepo root
+**Demo**: Run `just demo-diff-generation`, note the file:// URL output, then `just clean` to verify cleanup
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*

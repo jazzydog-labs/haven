@@ -228,21 +228,128 @@ clean-web:
     cd {{ web_dir }} && rm -rf dist/ node_modules/.cache/
     cd {{ web_dir }} && rm -rf .eslintcache
 
-# Docker commands
+# Docker commands - Legacy single-image commands
 docker-build tag="latest":
     ./scripts/build-docker.sh --tag {{ tag }}
 
 docker-build-multi:
     ./scripts/build-docker.sh --multi-arch
 
-docker-run:
-    docker run -p 8080:8080 --env-file .env haven:latest
-
 docker-push registry tag="latest":
     ./scripts/build-docker.sh --push --registry {{ registry }} --tag {{ tag }}
 
 docker-size:
     @docker images haven --format "table {{ '{{' }}.Repository{{ '}}' }}\t{{ '{{' }}.Tag{{ '}}' }}\t{{ '{{' }}.Size{{ '}}' }}"
+
+# Docker Compose Development Commands
+# Run entire stack in containers
+run-docker:
+    docker compose up
+
+# Run in detached mode
+run-docker-d:
+    docker compose up -d
+
+# Run only API in container (with hot-reload)
+run-api-docker:
+    docker compose up api
+
+# Stop all containers
+stop-docker:
+    docker compose down
+
+# Database Operations in Docker
+# Run migrations in container
+db-migrate-docker:
+    docker compose exec api alembic upgrade head
+
+# Create migration from container
+db-make-docker message:
+    docker compose exec api alembic revision --autogenerate -m "{{ message }}"
+
+# Database console via container
+db-console-docker:
+    docker compose exec postgres psql -U haven -d haven
+
+# Reset database in container
+db-reset-docker:
+    docker compose exec api alembic downgrade base
+    docker compose exec api alembic upgrade head
+
+# Testing & Quality in Docker
+# Run tests in container
+test-docker:
+    docker compose run --rm api pytest tests/ --no-cov
+
+# Run tests with coverage in container
+test-cov-docker:
+    docker compose run --rm api pytest tests/ --cov=haven --cov-report=html
+
+# Run specific test file in container
+test-file-docker file:
+    docker compose run --rm api pytest tests/{{ file }}
+
+# Run linting in container
+lint-docker:
+    docker compose run --rm api ruff check .
+
+# Fix linting in container
+lint-fix-docker:
+    docker compose run --rm api ruff check --fix .
+    docker compose run --rm api ruff format .
+
+# Run type checking in container
+type-docker:
+    docker compose run --rm api pyright
+
+# Run all quality checks in container
+check-docker:
+    docker compose run --rm api ruff check .
+    docker compose run --rm api pyright
+    docker compose run --rm api pytest -m "not slow"
+
+# Docker Utilities
+# Shell into API container
+shell-docker:
+    docker compose exec api /bin/bash
+
+# Python REPL in container
+shell-python-docker:
+    docker compose exec api python -m asyncio
+
+# View container logs
+logs-docker service="":
+    docker compose logs -f {{ service }}
+
+# Show running containers
+ps-docker:
+    docker compose ps
+
+# Rebuild containers
+rebuild-docker:
+    docker compose build --no-cache
+
+# Development Helpers for Docker
+# Full reset (containers + volumes)
+reset-docker:
+    docker compose down -v
+    docker compose up -d
+
+# Update dependencies in container
+update-docker:
+    docker compose exec api pip install -e ".[dev]"
+
+# Clean Docker resources
+clean-docker:
+    docker compose down
+    docker system prune -f
+
+# Run demo commands in container
+demo-commits-docker:
+    docker compose exec api python -m haven.cli demo-commits
+
+demo-diff-generation-docker:
+    docker compose exec api python -m haven.cli demo-diff-generation
 
 # Pre-commit setup
 pre-commit-install:
