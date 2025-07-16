@@ -23,7 +23,7 @@ This file tracks immediate tasks and notes. For completed work, see `work-log.md
    - [ ] Frontend-Backend Sync Workflow (`tasks/open/frontend-backend-sync-workflow.md`)
 
 3. **Containerization Phase 3** (Enhancements):
-   - [ ] Set up local HTTPS (`tasks/open/local-https-setup.md`)
+   - [x] Set up local HTTPS ✓ COMPLETED 2025-07-16
    - [ ] Create production-like environment (`tasks/open/production-like-local-env.md`)
 
 
@@ -54,10 +54,10 @@ Current next steps:
 
 **Frontend Development (Priority 2):**
 - ✓ COMPLETED: `crud-frontend-records.md` - Complete CRUD UI for Records management
-- `frontend-backend-sync-workflow.md` - Automated type generation from backend
+- ✓ COMPLETED: `frontend-backend-sync-workflow.md` - Automated type generation from backend
 
 **Optional Enhancements (Priority 3):**
-- `local-https-setup.md` - HTTPS development environment
+- ✓ COMPLETED: `local-https-setup.md` - HTTPS development environment
 - `production-like-local-env.md` - Full production-like setup with reverse proxy
 
 ---

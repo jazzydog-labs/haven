@@ -546,6 +546,45 @@ Key features:
 - Added vite-env.d.ts for proper TypeScript support
 - Generated files are gitignored to prevent conflicts
 
+## 2025-07-16.0014 - Local HTTPS Development Setup
+**Added**: Complete HTTPS setup for local development with multiple configuration options
+**See**: 
+- Setup script: `scripts/setup-https.sh`
+- Documentation: `docs/development/https-setup.md`  
+- Just commands: `setup-https`, `run-https`, `run-https-d`, `stop-https`
+**Test**: 
+```bash
+# Setup HTTPS
+just setup-https
+
+# Run the demo
+just demo-https
+```
+**Demo**: 
+```bash
+# Generate certificates
+just setup-https
+
+# Update hosts file
+sudo nano /etc/hosts
+# Add: 127.0.0.1 haven.local api.haven.local app.haven.local
+
+# Run with HTTPS
+just run-https-d
+
+# Access services
+# https://haven.local
+# https://api.haven.local
+```
+
+Key features:
+- Automatic certificate generation (mkcert or self-signed)
+- Multiple reverse proxy options (Caddy, nginx, direct)
+- Docker Compose integration for HTTPS services
+- Support for secure cookies and OAuth flows
+- Comprehensive documentation and demo script
+- Fallback to self-signed certificates when mkcert unavailable
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
