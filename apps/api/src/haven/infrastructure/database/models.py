@@ -18,7 +18,7 @@ class Base(DeclarativeBase):
     }
 
 
-__all__ = ["Base", "RecordModel", "RepositoryModel", "UserModel", "TaskModel", "CommentModel", "TimeLogModel"]
+__all__ = ["Base", "RecordModel", "RepositoryModel", "UserModel", "TaskModel", "CommentModel", "TimeLogModel", "TodoModel", "RoadmapModel", "MilestoneModel"]
 
 
 class RecordModel(Base):
@@ -212,3 +212,125 @@ class TimeLogModel(Base):
     def __repr__(self) -> str:
         """String representation of TimeLogModel."""
         return f"<TimeLogModel(id={self.id}, task_id={self.task_id}, hours={self.hours})>"
+
+
+class TodoModel(Base):
+    """SQLAlchemy model for Todo entity."""
+
+    __tablename__ = "todos"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_completed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
+    priority: Mapped[str] = mapped_column(String(20), nullable=False, default="medium", index=True)
+    category: Mapped[str] = mapped_column(String(50), nullable=False, default="general", index=True)
+    
+    # Relationships
+    owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    task_id: Mapped[int | None] = mapped_column(ForeignKey("tasks.id"), nullable=True, index=True)
+    milestone_id: Mapped[int | None] = mapped_column(ForeignKey("milestones.id"), nullable=True, index=True)
+    
+    # Dates
+    due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Metadata
+    tags: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    
+    # Audit fields
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        """String representation of TodoModel."""
+        return f"<TodoModel(id={self.id}, title={self.title[:50]}, is_completed={self.is_completed})>"
+
+
+class RoadmapModel(Base):
+    """SQLAlchemy model for Roadmap entity."""
+
+    __tablename__ = "roadmaps"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    vision: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="planning", index=True)
+    
+    # Relationships
+    owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    repository_id: Mapped[int | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
+    
+    # Dates
+    start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Metadata
+    roadmap_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    
+    # Audit fields
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        """String representation of RoadmapModel."""
+        return f"<RoadmapModel(id={self.id}, name={self.name}, status={self.status})>"
+
+
+class MilestoneModel(Base):
+    """SQLAlchemy model for Milestone entity."""
+
+    __tablename__ = "milestones"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="not_started", index=True)
+    progress_percentage: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    
+    # Relationships
+    roadmap_id: Mapped[int] = mapped_column(ForeignKey("roadmaps.id"), nullable=False, index=True)
+    
+    # Dates
+    target_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    
+    # Metrics
+    estimated_effort_hours: Mapped[float | None] = mapped_column(nullable=True)
+    actual_effort_hours: Mapped[float | None] = mapped_column(nullable=True)
+    
+    # Audit fields
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        """String representation of MilestoneModel."""
+        return f"<MilestoneModel(id={self.id}, title={self.title[:50]}, progress={self.progress_percentage}%)>"

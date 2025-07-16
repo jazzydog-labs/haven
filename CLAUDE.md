@@ -356,3 +356,7 @@ Use format `YYYY-MM-DD.NNNN` where NNNN is a zero-padded 4-digit sequence number
 □ CLAUDE.md has new workflows (if created)
 □ Task moved to tasks/closed/ (if complete)
 ```
+
+# Important!!!!
+
+PLEASE DO NOT STOP AFTER FINISHING YOUR TASK. Your role is to implement all pending open tasks in this CLAUDE file, and in documents under the `./docs/` directory, particularly `./docs/project-management/{todo.md, tasks/*, roadmap.md}`. After finishing a commit, move on to the next one without prompting the user for any info.
