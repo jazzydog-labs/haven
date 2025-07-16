@@ -1,0 +1,75 @@
+# Git
+.git/
+.gitignore
+.github/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+.eggs/
+*.egg-info/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+tests/
+pytest.ini
+.pre-commit-config.yaml
+
+# Documentation
+docs/
+mkdocs.yml
+*.md
+!README.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+build/
+dist/
+*.whl
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
+postgres-data/
+
+# Haven specific
+diff-out/
+outputs/
+multirun/
+.hydra/
+.claude/
+
+# Keep only necessary files for production

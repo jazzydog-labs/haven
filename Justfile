@@ -136,11 +136,20 @@ clean:
     rm -rf site/
 
 # Docker commands
-docker-build:
-    docker build -t haven:latest .
+docker-build tag="latest":
+    ./scripts/build-docker.sh --tag {{ tag }}
+
+docker-build-multi:
+    ./scripts/build-docker.sh --multi-arch
 
 docker-run:
     docker run -p 8080:8080 --env-file .env haven:latest
+
+docker-push registry tag="latest":
+    ./scripts/build-docker.sh --push --registry {{ registry }} --tag {{ tag }}
+
+docker-size:
+    @docker images haven --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
 
 # Pre-commit setup
 pre-commit-install:
