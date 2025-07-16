@@ -1,7 +1,6 @@
 """Task repository interface."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
 
 from haven.domain.entities.task import Task
 
@@ -15,27 +14,27 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, task_id: int) -> Optional[Task]:
+    async def get_by_id(self, task_id: int) -> Task | None:
         """Get a task by its ID."""
         pass
 
     @abstractmethod
-    async def get_all(self, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_all(self, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get all tasks with pagination."""
         pass
 
     @abstractmethod
-    async def get_by_status(self, status: str, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_by_status(self, status: str, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks by status."""
         pass
 
     @abstractmethod
-    async def get_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks by assignee."""
         pass
 
     @abstractmethod
-    async def get_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks by repository."""
         pass
 
@@ -50,16 +49,16 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    async def search(self, query: str, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def search(self, query: str, limit: int = 100, offset: int = 0) -> list[Task]:
         """Search tasks by title or description."""
         pass
 
     @abstractmethod
-    async def get_overdue_tasks(self, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_overdue_tasks(self, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get overdue tasks."""
         pass
 
     @abstractmethod
-    async def get_task_metrics(self, repository_id: Optional[int] = None) -> dict:
+    async def get_task_metrics(self, repository_id: int | None = None) -> dict:
         """Get task metrics and statistics."""
         pass

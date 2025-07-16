@@ -4,9 +4,9 @@ from datetime import datetime
 from typing import Any, ClassVar
 from uuid import UUID
 
-from sqlalchemy import JSON, DateTime, String, Text, func, Boolean, Integer, ForeignKey
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -18,7 +18,7 @@ class Base(DeclarativeBase):
     }
 
 
-__all__ = ["Base", "RecordModel", "RepositoryModel", "UserModel", "TaskModel", "CommentModel", "TimeLogModel", "TodoModel", "RoadmapModel", "MilestoneModel"]
+__all__ = ["Base", "CommentModel", "MilestoneModel", "RecordModel", "RepositoryModel", "RoadmapModel", "TaskModel", "TimeLogModel", "TodoModel", "UserModel"]
 
 
 class RecordModel(Base):
@@ -113,20 +113,20 @@ class TaskModel(Base):
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="open", index=True)
     priority: Mapped[str] = mapped_column(String(20), nullable=False, default="medium", index=True)
     task_type: Mapped[str] = mapped_column(String(50), nullable=False, default="task", index=True)
-    
+
     # Relationships
     assignee_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
     repository_id: Mapped[int | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
-    
+
     # Time tracking
     estimated_hours: Mapped[float | None] = mapped_column(nullable=True)
     actual_hours: Mapped[float | None] = mapped_column(nullable=True)
-    
+
     # Dates
     due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    
+
     # Audit fields
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -153,14 +153,14 @@ class CommentModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     comment_type: Mapped[str] = mapped_column(String(50), nullable=False, default="comment", index=True)
-    
+
     # Relationships
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=False, index=True)
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
-    
+
     # Metadata
     comment_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
-    
+
     # Audit fields
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -188,14 +188,14 @@ class TimeLogModel(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     hours: Mapped[float] = mapped_column(nullable=False)
     log_type: Mapped[str] = mapped_column(String(50), nullable=False, default="work", index=True)
-    
+
     # Relationships
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=False, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
-    
+
     # Date tracking
     logged_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    
+
     # Audit fields
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -225,19 +225,19 @@ class TodoModel(Base):
     is_completed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     priority: Mapped[str] = mapped_column(String(20), nullable=False, default="medium", index=True)
     category: Mapped[str] = mapped_column(String(50), nullable=False, default="general", index=True)
-    
+
     # Relationships
     owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
     task_id: Mapped[int | None] = mapped_column(ForeignKey("tasks.id"), nullable=True, index=True)
     milestone_id: Mapped[int | None] = mapped_column(ForeignKey("milestones.id"), nullable=True, index=True)
-    
+
     # Dates
     due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    
+
     # Metadata
     tags: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
-    
+
     # Audit fields
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -266,18 +266,18 @@ class RoadmapModel(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     vision: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="planning", index=True)
-    
+
     # Relationships
     owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
     repository_id: Mapped[int | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
-    
+
     # Dates
     start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    
+
     # Metadata
     roadmap_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
-    
+
     # Audit fields
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -306,18 +306,18 @@ class MilestoneModel(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="not_started", index=True)
     progress_percentage: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    
+
     # Relationships
     roadmap_id: Mapped[int] = mapped_column(ForeignKey("roadmaps.id"), nullable=False, index=True)
-    
+
     # Dates
     target_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    
+
     # Metrics
     estimated_effort_hours: Mapped[float | None] = mapped_column(nullable=True)
     actual_effort_hours: Mapped[float | None] = mapped_column(nullable=True)
-    
+
     # Audit fields
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

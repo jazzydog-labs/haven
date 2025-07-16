@@ -1,19 +1,17 @@
 """TTR API routes for task management."""
 
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from haven.application.dtos.task_dtos import (
     TaskCreateRequest,
-    TaskUpdateRequest,
-    TaskResponse,
     TaskListResponse,
     TaskMetricsResponse,
-    TimeToResolutionStatsResponse,
+    TaskResponse,
     TaskSearchRequest,
-    TaskStatusUpdateRequest,
     TaskTimeLogRequest,
+    TaskUpdateRequest,
+    TimeToResolutionStatsResponse,
 )
 from haven.application.services.task_service import TaskService
 from haven.domain.entities.task import Task
@@ -86,9 +84,9 @@ async def create_task(
 async def get_tasks(
     limit: int = Query(100, ge=1, le=1000, description="Maximum number of tasks to return"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
-    status_filter: Optional[str] = Query(None, description="Filter by task status"),
-    assignee_id: Optional[int] = Query(None, description="Filter by assignee ID"),
-    repository_id: Optional[int] = Query(None, description="Filter by repository ID"),
+    status_filter: str | None = Query(None, description="Filter by task status"),
+    assignee_id: int | None = Query(None, description="Filter by assignee ID"),
+    repository_id: int | None = Query(None, description="Filter by repository ID"),
     service: TaskService = Depends(get_task_service),
 ) -> TaskListResponse:
     """Get tasks with optional filters."""
@@ -101,7 +99,7 @@ async def get_tasks(
             tasks = await service.get_tasks_by_repository(repository_id, limit=limit, offset=offset)
         else:
             tasks = await service.get_all_tasks(limit=limit, offset=offset)
-        
+
         return TaskListResponse(
             tasks=[task_to_response(task) for task in tasks],
             total=len(tasks),
@@ -121,7 +119,7 @@ async def get_task(
     task = await service.get_task_by_id(task_id)
     if not task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
-    
+
     return task_to_response(task)
 
 
@@ -174,7 +172,7 @@ async def search_tasks(
             limit=request.limit,
             offset=request.offset,
         )
-        
+
         return TaskListResponse(
             tasks=[task_to_response(task) for task in tasks],
             total=len(tasks),
@@ -234,7 +232,7 @@ async def get_overdue_tasks(
     """Get overdue tasks."""
     try:
         tasks = await service.get_overdue_tasks(limit=limit, offset=offset)
-        
+
         return TaskListResponse(
             tasks=[task_to_response(task) for task in tasks],
             total=len(tasks),
@@ -247,13 +245,13 @@ async def get_overdue_tasks(
 
 @router.get("/metrics", response_model=TaskMetricsResponse)
 async def get_task_metrics(
-    repository_id: Optional[int] = Query(None, description="Filter metrics by repository ID"),
+    repository_id: int | None = Query(None, description="Filter metrics by repository ID"),
     service: TaskService = Depends(get_task_service),
 ) -> TaskMetricsResponse:
     """Get task metrics and statistics."""
     try:
         metrics = await service.get_task_metrics(repository_id=repository_id)
-        
+
         return TaskMetricsResponse(
             status_distribution=metrics.get("status_distribution", {}),
             priority_distribution=metrics.get("priority_distribution", {}),
@@ -265,13 +263,13 @@ async def get_task_metrics(
 
 @router.get("/ttr-stats", response_model=TimeToResolutionStatsResponse)
 async def get_ttr_statistics(
-    repository_id: Optional[int] = Query(None, description="Filter stats by repository ID"),
+    repository_id: int | None = Query(None, description="Filter stats by repository ID"),
     service: TaskService = Depends(get_task_service),
 ) -> TimeToResolutionStatsResponse:
     """Get time-to-resolution statistics."""
     try:
         stats = await service.get_time_to_resolution_stats(repository_id=repository_id)
-        
+
         return TimeToResolutionStatsResponse(
             total_completed_tasks=stats["total_completed_tasks"],
             average_resolution_time_hours=stats["average_resolution_time_hours"],

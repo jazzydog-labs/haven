@@ -1,7 +1,6 @@
 """Task repository implementation using SQLAlchemy."""
 
 from datetime import datetime
-from typing import List, Optional
 
 from sqlalchemy import and_, desc, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,18 +32,18 @@ class TaskRepositoryImpl(TaskRepository):
             started_at=task.started_at,
             completed_at=task.completed_at,
         )
-        
+
         self.session.add(task_model)
         await self.session.flush()
-        
+
         return self._model_to_entity(task_model)
 
-    async def get_by_id(self, task_id: int) -> Optional[Task]:
+    async def get_by_id(self, task_id: int) -> Task | None:
         """Get a task by its ID."""
         result = await self.session.get(TaskModel, task_id)
         return self._model_to_entity(result) if result else None
 
-    async def get_all(self, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_all(self, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get all tasks with pagination."""
         result = await self.session.execute(
             TaskModel.__table__.select()
@@ -54,7 +53,7 @@ class TaskRepositoryImpl(TaskRepository):
         )
         return [self._model_to_entity(TaskModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_status(self, status: str, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_by_status(self, status: str, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks by status."""
         result = await self.session.execute(
             TaskModel.__table__.select()
@@ -65,7 +64,7 @@ class TaskRepositoryImpl(TaskRepository):
         )
         return [self._model_to_entity(TaskModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks by assignee."""
         result = await self.session.execute(
             TaskModel.__table__.select()
@@ -76,7 +75,7 @@ class TaskRepositoryImpl(TaskRepository):
         )
         return [self._model_to_entity(TaskModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks by repository."""
         result = await self.session.execute(
             TaskModel.__table__.select()
@@ -120,7 +119,7 @@ class TaskRepositoryImpl(TaskRepository):
         await self.session.flush()
         return True
 
-    async def search(self, query: str, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def search(self, query: str, limit: int = 100, offset: int = 0) -> list[Task]:
         """Search tasks by title or description."""
         result = await self.session.execute(
             TaskModel.__table__.select()
@@ -134,7 +133,7 @@ class TaskRepositoryImpl(TaskRepository):
         )
         return [self._model_to_entity(TaskModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_overdue_tasks(self, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_overdue_tasks(self, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get overdue tasks."""
         now = datetime.utcnow()
         result = await self.session.execute(
@@ -149,7 +148,7 @@ class TaskRepositoryImpl(TaskRepository):
         )
         return [self._model_to_entity(TaskModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_task_metrics(self, repository_id: Optional[int] = None) -> dict:
+    async def get_task_metrics(self, repository_id: int | None = None) -> dict:
         """Get task metrics and statistics."""
         base_query = TaskModel.__table__.select()
         if repository_id:
@@ -162,7 +161,7 @@ class TaskRepositoryImpl(TaskRepository):
                 func.count(TaskModel.id).label("count")
             ).group_by(TaskModel.status)
         )
-        
+
         # Count by priority
         priority_counts = await self.session.execute(
             base_query.with_only_columns(
@@ -170,7 +169,7 @@ class TaskRepositoryImpl(TaskRepository):
                 func.count(TaskModel.id).label("count")
             ).group_by(TaskModel.priority)
         )
-        
+
         # Average time to resolution
         avg_resolution_time = await self.session.execute(
             base_query.with_only_columns(

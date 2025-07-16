@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Optional
 
 from haven.domain.entities.time_log import TimeLog
 
@@ -16,34 +15,34 @@ class TimeLogRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, time_log_id: int) -> Optional[TimeLog]:
+    async def get_by_id(self, time_log_id: int) -> TimeLog | None:
         """Get a time log by its ID."""
         pass
 
     @abstractmethod
-    async def get_by_task(self, task_id: int, limit: int = 100, offset: int = 0) -> List[TimeLog]:
+    async def get_by_task(self, task_id: int, limit: int = 100, offset: int = 0) -> list[TimeLog]:
         """Get time logs for a specific task."""
         pass
 
     @abstractmethod
-    async def get_by_user(self, user_id: int, limit: int = 100, offset: int = 0) -> List[TimeLog]:
+    async def get_by_user(self, user_id: int, limit: int = 100, offset: int = 0) -> list[TimeLog]:
         """Get time logs by user."""
         pass
 
     @abstractmethod
     async def get_by_date_range(
-        self, 
-        start_date: datetime, 
-        end_date: datetime, 
-        user_id: Optional[int] = None,
-        limit: int = 100, 
+        self,
+        start_date: datetime,
+        end_date: datetime,
+        user_id: int | None = None,
+        limit: int = 100,
         offset: int = 0
-    ) -> List[TimeLog]:
+    ) -> list[TimeLog]:
         """Get time logs within a date range."""
         pass
 
     @abstractmethod
-    async def get_by_type(self, log_type: str, limit: int = 100, offset: int = 0) -> List[TimeLog]:
+    async def get_by_type(self, log_type: str, limit: int = 100, offset: int = 0) -> list[TimeLog]:
         """Get time logs by type."""
         pass
 
@@ -78,6 +77,6 @@ class TimeLogRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_efficiency_metrics(self, user_id: Optional[int] = None) -> dict:
+    async def get_efficiency_metrics(self, user_id: int | None = None) -> dict:
         """Get efficiency metrics and statistics."""
         pass

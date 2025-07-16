@@ -1,7 +1,6 @@
 """Task service for TTR system."""
 
 from datetime import datetime
-from typing import List, Optional
 
 from haven.domain.entities.task import Task
 from haven.domain.repositories.task_repository import TaskRepository
@@ -16,13 +15,13 @@ class TaskService:
     async def create_task(
         self,
         title: str,
-        description: Optional[str] = None,
+        description: str | None = None,
         priority: str = "medium",
         task_type: str = "task",
-        assignee_id: Optional[int] = None,
-        repository_id: Optional[int] = None,
-        estimated_hours: Optional[float] = None,
-        due_date: Optional[datetime] = None,
+        assignee_id: int | None = None,
+        repository_id: int | None = None,
+        estimated_hours: float | None = None,
+        due_date: datetime | None = None,
     ) -> Task:
         """Create a new task."""
         task = Task(
@@ -35,42 +34,42 @@ class TaskService:
             estimated_hours=estimated_hours,
             due_date=due_date,
         )
-        
+
         return await self.task_repository.create(task)
 
-    async def get_task_by_id(self, task_id: int) -> Optional[Task]:
+    async def get_task_by_id(self, task_id: int) -> Task | None:
         """Get a task by its ID."""
         return await self.task_repository.get_by_id(task_id)
 
-    async def get_all_tasks(self, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_all_tasks(self, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get all tasks with pagination."""
         return await self.task_repository.get_all(limit=limit, offset=offset)
 
-    async def get_tasks_by_status(self, status: str, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_tasks_by_status(self, status: str, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks by status."""
         return await self.task_repository.get_by_status(status, limit=limit, offset=offset)
 
-    async def get_tasks_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_tasks_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks assigned to a specific user."""
         return await self.task_repository.get_by_assignee(assignee_id, limit=limit, offset=offset)
 
-    async def get_tasks_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_tasks_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get tasks for a specific repository."""
         return await self.task_repository.get_by_repository(repository_id, limit=limit, offset=offset)
 
     async def update_task(
         self,
         task_id: int,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        status: Optional[str] = None,
-        priority: Optional[str] = None,
-        task_type: Optional[str] = None,
-        assignee_id: Optional[int] = None,
-        repository_id: Optional[int] = None,
-        estimated_hours: Optional[float] = None,
-        actual_hours: Optional[float] = None,
-        due_date: Optional[datetime] = None,
+        title: str | None = None,
+        description: str | None = None,
+        status: str | None = None,
+        priority: str | None = None,
+        task_type: str | None = None,
+        assignee_id: int | None = None,
+        repository_id: int | None = None,
+        estimated_hours: float | None = None,
+        actual_hours: float | None = None,
+        due_date: datetime | None = None,
     ) -> Task:
         """Update a task."""
         task = await self.task_repository.get_by_id(task_id)
@@ -133,37 +132,37 @@ class TaskService:
         """Delete a task."""
         return await self.task_repository.delete(task_id)
 
-    async def search_tasks(self, query: str, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def search_tasks(self, query: str, limit: int = 100, offset: int = 0) -> list[Task]:
         """Search tasks by title or description."""
         return await self.task_repository.search(query, limit=limit, offset=offset)
 
-    async def get_overdue_tasks(self, limit: int = 100, offset: int = 0) -> List[Task]:
+    async def get_overdue_tasks(self, limit: int = 100, offset: int = 0) -> list[Task]:
         """Get overdue tasks."""
         return await self.task_repository.get_overdue_tasks(limit=limit, offset=offset)
 
-    async def get_task_metrics(self, repository_id: Optional[int] = None) -> dict:
+    async def get_task_metrics(self, repository_id: int | None = None) -> dict:
         """Get task metrics and statistics."""
         return await self.task_repository.get_task_metrics(repository_id=repository_id)
 
-    async def get_time_to_resolution_stats(self, repository_id: Optional[int] = None) -> dict:
+    async def get_time_to_resolution_stats(self, repository_id: int | None = None) -> dict:
         """Get time-to-resolution statistics."""
         metrics = await self.task_repository.get_task_metrics(repository_id=repository_id)
-        
+
         # Get completed tasks to calculate more detailed stats
         completed_tasks = await self.task_repository.get_by_status("completed", limit=1000)
-        
+
         resolution_times = []
         for task in completed_tasks:
             if task.started_at and task.completed_at:
                 resolution_time = task.get_time_to_resolution()
                 if resolution_time:
                     resolution_times.append(resolution_time)
-        
+
         if resolution_times:
             resolution_times.sort()
             count = len(resolution_times)
             median_index = count // 2
-            
+
             return {
                 "total_completed_tasks": count,
                 "average_resolution_time_hours": sum(resolution_times) / count,
@@ -173,7 +172,7 @@ class TaskService:
                 "status_distribution": metrics.get("status_distribution", {}),
                 "priority_distribution": metrics.get("priority_distribution", {}),
             }
-        
+
         return {
             "total_completed_tasks": 0,
             "average_resolution_time_hours": 0.0,

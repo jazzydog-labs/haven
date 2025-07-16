@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Optional
 
 
 @dataclass
@@ -14,18 +13,18 @@ class TimeLog:
     for tasks, todos, or reviews in the TTR system.
     """
 
-    id: Optional[int] = None
-    description: Optional[str] = None
+    id: int | None = None
+    description: str | None = None
     hours: float = 0.0
     log_type: str = "work"
-    
+
     # Relationships
-    task_id: Optional[int] = None
-    user_id: Optional[int] = None
-    
+    task_id: int | None = None
+    user_id: int | None = None
+
     # Date tracking
     logged_date: datetime = field(default_factory=lambda: datetime.now(UTC))
-    
+
     # Audit fields
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
@@ -34,19 +33,19 @@ class TimeLog:
         """Validate time log after initialization."""
         if self.hours < 0:
             raise ValueError("Hours cannot be negative")
-        
+
         if self.hours > 24:
             raise ValueError("Hours cannot exceed 24 in a single log entry")
-        
+
         if self.log_type not in ["work", "review", "testing", "documentation", "meeting"]:
             raise ValueError(f"Invalid log type: {self.log_type}")
-        
+
         if self.task_id is not None and self.task_id <= 0:
             raise ValueError("Task ID must be positive")
-        
+
         if self.user_id is not None and self.user_id <= 0:
             raise ValueError("User ID must be positive")
-        
+
         # Ensure timestamps are timezone-aware
         if self.logged_date and self.logged_date.tzinfo is None:
             self.logged_date = self.logged_date.replace(tzinfo=UTC)
@@ -59,10 +58,10 @@ class TimeLog:
         """Update the hours logged."""
         if new_hours < 0:
             raise ValueError("Hours cannot be negative")
-        
+
         if new_hours > 24:
             raise ValueError("Hours cannot exceed 24 in a single log entry")
-        
+
         self.hours = new_hours
         self.updated_at = datetime.now(UTC)
 
@@ -92,7 +91,7 @@ class TimeLog:
             "documentation": 0.7,
             "meeting": 0.5,
         }
-        
+
         multiplier = type_multipliers.get(self.log_type, 1.0)
         return self.hours * multiplier
 

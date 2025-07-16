@@ -1,7 +1,6 @@
 """Comment repository interface."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
 
 from haven.domain.entities.comment import Comment
 
@@ -15,22 +14,22 @@ class CommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, comment_id: int) -> Optional[Comment]:
+    async def get_by_id(self, comment_id: int) -> Comment | None:
         """Get a comment by its ID."""
         pass
 
     @abstractmethod
-    async def get_by_task(self, task_id: int, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def get_by_task(self, task_id: int, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Get comments for a specific task."""
         pass
 
     @abstractmethod
-    async def get_by_author(self, author_id: int, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def get_by_author(self, author_id: int, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Get comments by author."""
         pass
 
     @abstractmethod
-    async def get_by_type(self, comment_type: str, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def get_by_type(self, comment_type: str, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Get comments by type."""
         pass
 
@@ -45,11 +44,11 @@ class CommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_recent_comments(self, limit: int = 10) -> List[Comment]:
+    async def get_recent_comments(self, limit: int = 10) -> list[Comment]:
         """Get recent comments across all tasks."""
         pass
 
     @abstractmethod
-    async def search(self, query: str, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def search(self, query: str, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Search comments by content."""
         pass

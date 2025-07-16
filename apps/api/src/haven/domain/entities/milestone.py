@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Optional
 
 
 @dataclass
@@ -14,23 +13,23 @@ class Milestone:
     within a roadmap, tracking progress toward specific goals.
     """
 
-    id: Optional[int] = None
+    id: int | None = None
     title: str = ""
-    description: Optional[str] = None
+    description: str | None = None
     status: str = "not_started"
     progress_percentage: int = 0
-    
+
     # Relationships
-    roadmap_id: Optional[int] = None
-    
+    roadmap_id: int | None = None
+
     # Dates
-    target_date: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    
+    target_date: datetime | None = None
+    completed_at: datetime | None = None
+
     # Metrics
-    estimated_effort_hours: Optional[float] = None
-    actual_effort_hours: Optional[float] = None
-    
+    estimated_effort_hours: float | None = None
+    actual_effort_hours: float | None = None
+
     # Audit fields
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
@@ -39,19 +38,19 @@ class Milestone:
         """Validate milestone after initialization."""
         if not self.title or not self.title.strip():
             raise ValueError("Milestone title cannot be empty")
-        
+
         if self.status not in ["not_started", "in_progress", "completed", "blocked", "cancelled"]:
             raise ValueError(f"Invalid milestone status: {self.status}")
-        
+
         if self.progress_percentage < 0 or self.progress_percentage > 100:
             raise ValueError("Progress percentage must be between 0 and 100")
-        
+
         if self.estimated_effort_hours is not None and self.estimated_effort_hours < 0:
             raise ValueError("Estimated effort hours cannot be negative")
-        
+
         if self.actual_effort_hours is not None and self.actual_effort_hours < 0:
             raise ValueError("Actual effort hours cannot be negative")
-        
+
         # Ensure timestamps are timezone-aware
         if self.created_at and self.created_at.tzinfo is None:
             self.created_at = self.created_at.replace(tzinfo=UTC)
@@ -68,7 +67,7 @@ class Milestone:
             raise ValueError("Cannot start a completed milestone")
         if self.status == "cancelled":
             raise ValueError("Cannot start a cancelled milestone")
-        
+
         self.status = "in_progress"
         self.updated_at = datetime.now(UTC)
 
@@ -76,7 +75,7 @@ class Milestone:
         """Mark milestone as completed."""
         if self.status == "completed":
             raise ValueError("Milestone is already completed")
-        
+
         self.status = "completed"
         self.progress_percentage = 100
         self.completed_at = datetime.now(UTC)
@@ -88,7 +87,7 @@ class Milestone:
             raise ValueError("Cannot block a completed milestone")
         if self.status == "cancelled":
             raise ValueError("Cannot block a cancelled milestone")
-        
+
         self.status = "blocked"
         self.updated_at = datetime.now(UTC)
 
@@ -96,7 +95,7 @@ class Milestone:
         """Cancel the milestone."""
         if self.status == "completed":
             raise ValueError("Cannot cancel a completed milestone")
-        
+
         self.status = "cancelled"
         self.updated_at = datetime.now(UTC)
 
@@ -104,9 +103,9 @@ class Milestone:
         """Update milestone progress."""
         if progress_percentage < 0 or progress_percentage > 100:
             raise ValueError("Progress percentage must be between 0 and 100")
-        
+
         self.progress_percentage = progress_percentage
-        
+
         # Auto-update status based on progress
         if progress_percentage == 0 and self.status == "in_progress":
             self.status = "not_started"
@@ -121,7 +120,7 @@ class Milestone:
         """Update actual effort hours."""
         if actual_hours < 0:
             raise ValueError("Actual effort hours cannot be negative")
-        
+
         self.actual_effort_hours = actual_hours
         self.updated_at = datetime.now(UTC)
 
@@ -129,25 +128,25 @@ class Milestone:
         """Check if milestone is overdue."""
         if not self.target_date:
             return False
-        
+
         return datetime.now(UTC) > self.target_date and self.status != "completed"
 
-    def get_effort_variance(self) -> Optional[float]:
+    def get_effort_variance(self) -> float | None:
         """Get variance between estimated and actual effort."""
         if self.estimated_effort_hours is None or self.actual_effort_hours is None:
             return None
-        
+
         return self.actual_effort_hours - self.estimated_effort_hours
 
-    def get_effort_variance_percentage(self) -> Optional[float]:
+    def get_effort_variance_percentage(self) -> float | None:
         """Get effort variance as a percentage."""
         if self.estimated_effort_hours is None or self.estimated_effort_hours == 0:
             return None
-        
+
         variance = self.get_effort_variance()
         if variance is None:
             return None
-        
+
         return (variance / self.estimated_effort_hours) * 100
 
     def to_dict(self) -> dict:

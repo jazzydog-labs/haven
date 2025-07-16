@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
@@ -14,17 +14,17 @@ class Comment:
     on tasks, todos, or reviews in the TTR system.
     """
 
-    id: Optional[int] = None
+    id: int | None = None
     content: str = ""
     comment_type: str = "comment"
-    
+
     # Relationships
-    task_id: Optional[int] = None
-    author_id: Optional[int] = None
-    
+    task_id: int | None = None
+    author_id: int | None = None
+
     # Metadata
     metadata: dict[str, Any] = field(default_factory=dict)
-    
+
     # Audit fields
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
@@ -33,16 +33,16 @@ class Comment:
         """Validate comment after initialization."""
         if not self.content or not self.content.strip():
             raise ValueError("Comment content cannot be empty")
-        
+
         if self.comment_type not in ["comment", "review", "status_change", "time_log"]:
             raise ValueError(f"Invalid comment type: {self.comment_type}")
-        
+
         if self.task_id is not None and self.task_id <= 0:
             raise ValueError("Task ID must be positive")
-        
+
         if self.author_id is not None and self.author_id <= 0:
             raise ValueError("Author ID must be positive")
-        
+
         # Ensure timestamps are timezone-aware
         if self.created_at and self.created_at.tzinfo is None:
             self.created_at = self.created_at.replace(tzinfo=UTC)
@@ -53,7 +53,7 @@ class Comment:
         """Update comment content."""
         if not new_content or not new_content.strip():
             raise ValueError("Comment content cannot be empty")
-        
+
         self.content = new_content
         self.updated_at = datetime.now(UTC)
 

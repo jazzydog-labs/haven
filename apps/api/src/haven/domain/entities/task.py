@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Optional
 
 
 @dataclass
@@ -14,26 +13,26 @@ class Task:
     item with tracking information for time-to-resolution.
     """
 
-    id: Optional[int] = None
+    id: int | None = None
     title: str = ""
-    description: Optional[str] = None
+    description: str | None = None
     status: str = "open"
     priority: str = "medium"
     task_type: str = "task"
-    
+
     # Relationships
-    assignee_id: Optional[int] = None
-    repository_id: Optional[int] = None
-    
+    assignee_id: int | None = None
+    repository_id: int | None = None
+
     # Time tracking
-    estimated_hours: Optional[float] = None
-    actual_hours: Optional[float] = None
-    
+    estimated_hours: float | None = None
+    actual_hours: float | None = None
+
     # Dates
-    due_date: Optional[datetime] = None
-    started_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    
+    due_date: datetime | None = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
+
     # Audit fields
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
@@ -42,22 +41,22 @@ class Task:
         """Validate task after initialization."""
         if not self.title or not self.title.strip():
             raise ValueError("Task title cannot be empty")
-        
+
         if self.status not in ["open", "in_progress", "completed", "cancelled", "blocked"]:
             raise ValueError(f"Invalid task status: {self.status}")
-        
+
         if self.priority not in ["low", "medium", "high", "urgent"]:
             raise ValueError(f"Invalid task priority: {self.priority}")
-        
+
         if self.task_type not in ["task", "todo", "review", "bug", "feature"]:
             raise ValueError(f"Invalid task type: {self.task_type}")
-        
+
         if self.estimated_hours is not None and self.estimated_hours < 0:
             raise ValueError("Estimated hours cannot be negative")
-        
+
         if self.actual_hours is not None and self.actual_hours < 0:
             raise ValueError("Actual hours cannot be negative")
-        
+
         # Ensure timestamps are timezone-aware
         if self.created_at and self.created_at.tzinfo is None:
             self.created_at = self.created_at.replace(tzinfo=UTC)
@@ -68,7 +67,7 @@ class Task:
         """Mark task as started."""
         if self.status == "completed":
             raise ValueError("Cannot start a completed task")
-        
+
         self.status = "in_progress"
         self.started_at = datetime.now(UTC)
         self.updated_at = datetime.now(UTC)
@@ -77,7 +76,7 @@ class Task:
         """Mark task as completed."""
         if self.status == "completed":
             raise ValueError("Task is already completed")
-        
+
         self.status = "completed"
         self.completed_at = datetime.now(UTC)
         self.updated_at = datetime.now(UTC)
@@ -86,15 +85,15 @@ class Task:
         """Update actual hours worked on the task."""
         if hours_worked < 0:
             raise ValueError("Hours worked cannot be negative")
-        
+
         self.actual_hours = (self.actual_hours or 0) + hours_worked
         self.updated_at = datetime.now(UTC)
 
-    def get_time_to_resolution(self) -> Optional[float]:
+    def get_time_to_resolution(self) -> float | None:
         """Calculate time to resolution in hours."""
         if not self.started_at or not self.completed_at:
             return None
-        
+
         delta = self.completed_at - self.started_at
         return delta.total_seconds() / 3600  # Convert to hours
 
@@ -102,17 +101,17 @@ class Task:
         """Check if task is overdue."""
         if not self.due_date:
             return False
-        
+
         return datetime.now(UTC) > self.due_date and self.status != "completed"
 
     def get_progress_percentage(self) -> float:
         """Calculate progress percentage based on estimated vs actual hours."""
         if not self.estimated_hours or not self.actual_hours:
             return 0.0
-        
+
         if self.status == "completed":
             return 100.0
-        
+
         return min(100.0, (self.actual_hours / self.estimated_hours) * 100)
 
     def to_dict(self) -> dict:

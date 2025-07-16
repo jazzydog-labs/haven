@@ -1,8 +1,7 @@
 """Comment repository implementation using SQLAlchemy."""
 
-from typing import List, Optional
 
-from sqlalchemy import desc, or_
+from sqlalchemy import desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from haven.domain.entities.comment import Comment
@@ -25,18 +24,18 @@ class CommentRepositoryImpl(CommentRepository):
             author_id=comment.author_id,
             comment_metadata=comment.metadata,
         )
-        
+
         self.session.add(comment_model)
         await self.session.flush()
-        
+
         return self._model_to_entity(comment_model)
 
-    async def get_by_id(self, comment_id: int) -> Optional[Comment]:
+    async def get_by_id(self, comment_id: int) -> Comment | None:
         """Get a comment by its ID."""
         result = await self.session.get(CommentModel, comment_id)
         return self._model_to_entity(result) if result else None
 
-    async def get_by_task(self, task_id: int, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def get_by_task(self, task_id: int, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Get comments for a specific task."""
         result = await self.session.execute(
             CommentModel.__table__.select()
@@ -47,7 +46,7 @@ class CommentRepositoryImpl(CommentRepository):
         )
         return [self._model_to_entity(CommentModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_author(self, author_id: int, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def get_by_author(self, author_id: int, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Get comments by author."""
         result = await self.session.execute(
             CommentModel.__table__.select()
@@ -58,7 +57,7 @@ class CommentRepositoryImpl(CommentRepository):
         )
         return [self._model_to_entity(CommentModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_type(self, comment_type: str, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def get_by_type(self, comment_type: str, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Get comments by type."""
         result = await self.session.execute(
             CommentModel.__table__.select()
@@ -93,7 +92,7 @@ class CommentRepositoryImpl(CommentRepository):
         await self.session.flush()
         return True
 
-    async def get_recent_comments(self, limit: int = 10) -> List[Comment]:
+    async def get_recent_comments(self, limit: int = 10) -> list[Comment]:
         """Get recent comments across all tasks."""
         result = await self.session.execute(
             CommentModel.__table__.select()
@@ -102,7 +101,7 @@ class CommentRepositoryImpl(CommentRepository):
         )
         return [self._model_to_entity(CommentModel(**row._mapping)) for row in result.fetchall()]
 
-    async def search(self, query: str, limit: int = 100, offset: int = 0) -> List[Comment]:
+    async def search(self, query: str, limit: int = 100, offset: int = 0) -> list[Comment]:
         """Search comments by content."""
         result = await self.session.execute(
             CommentModel.__table__.select()

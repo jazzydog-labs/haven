@@ -1,7 +1,6 @@
 """GraphQL schema definition."""
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 import strawberry
@@ -73,20 +72,20 @@ class TaskType:
 
     id: int
     title: str
-    description: Optional[str]
+    description: str | None
     status: str
     priority: str
     task_type: str
-    assignee_id: Optional[int]
-    repository_id: Optional[int]
-    estimated_hours: Optional[float]
-    actual_hours: Optional[float]
-    due_date: Optional[datetime]
-    started_at: Optional[datetime]
-    completed_at: Optional[datetime]
+    assignee_id: int | None
+    repository_id: int | None
+    estimated_hours: float | None
+    actual_hours: float | None
+    due_date: datetime | None
+    started_at: datetime | None
+    completed_at: datetime | None
     created_at: datetime
     updated_at: datetime
-    time_to_resolution: Optional[float]
+    time_to_resolution: float | None
     is_overdue: bool
     progress_percentage: float
 
@@ -158,29 +157,29 @@ class TaskInput:
     """Input type for creating tasks."""
 
     title: str
-    description: Optional[str] = None
+    description: str | None = None
     priority: str = "medium"
     task_type: str = "task"
-    assignee_id: Optional[int] = None
-    repository_id: Optional[int] = None
-    estimated_hours: Optional[float] = None
-    due_date: Optional[datetime] = None
+    assignee_id: int | None = None
+    repository_id: int | None = None
+    estimated_hours: float | None = None
+    due_date: datetime | None = None
 
 
 @strawberry.input
 class TaskUpdateInput:
     """Input type for updating tasks."""
 
-    title: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[str] = None
-    priority: Optional[str] = None
-    task_type: Optional[str] = None
-    assignee_id: Optional[int] = None
-    repository_id: Optional[int] = None
-    estimated_hours: Optional[float] = None
-    actual_hours: Optional[float] = None
-    due_date: Optional[datetime] = None
+    title: str | None = None
+    description: str | None = None
+    status: str | None = None
+    priority: str | None = None
+    task_type: str | None = None
+    assignee_id: int | None = None
+    repository_id: int | None = None
+    estimated_hours: float | None = None
+    actual_hours: float | None = None
+    due_date: datetime | None = None
 
 
 @strawberry.type
@@ -426,9 +425,9 @@ class Query:
             async with uow:
                 task_repo = TaskRepositoryImpl(uow.session)
                 service = TaskService(task_repo)
-                
+
                 metrics = await service.get_task_metrics(repository_id=repository_id)
-                
+
                 return TaskMetrics(
                     status_distribution=metrics.get("status_distribution", {}),
                     priority_distribution=metrics.get("priority_distribution", {}),
@@ -446,9 +445,9 @@ class Query:
             async with uow:
                 task_repo = TaskRepositoryImpl(uow.session)
                 service = TaskService(task_repo)
-                
+
                 stats = await service.get_time_to_resolution_stats(repository_id=repository_id)
-                
+
                 return TimeToResolutionStats(
                     total_completed_tasks=stats["total_completed_tasks"],
                     average_resolution_time_hours=stats["average_resolution_time_hours"],
@@ -497,7 +496,7 @@ class Mutation:
             async with uow:
                 task_repo = TaskRepositoryImpl(uow.session)
                 service = TaskService(task_repo)
-                
+
                 task = await service.create_task(
                     title=input.title,
                     description=input.description,
@@ -508,7 +507,7 @@ class Mutation:
                     estimated_hours=input.estimated_hours,
                     due_date=input.due_date,
                 )
-                
+
                 return TaskType.from_entity(task)
 
     @strawberry.mutation
@@ -518,7 +517,7 @@ class Mutation:
             async with uow:
                 task_repo = TaskRepositoryImpl(uow.session)
                 service = TaskService(task_repo)
-                
+
                 task = await service.update_task(
                     task_id=id,
                     title=input.title,
@@ -532,7 +531,7 @@ class Mutation:
                     actual_hours=input.actual_hours,
                     due_date=input.due_date,
                 )
-                
+
                 return TaskType.from_entity(task)
 
     @strawberry.mutation
@@ -551,7 +550,7 @@ class Mutation:
             async with uow:
                 task_repo = TaskRepositoryImpl(uow.session)
                 service = TaskService(task_repo)
-                
+
                 task = await service.start_task(id)
                 return TaskType.from_entity(task)
 
@@ -562,7 +561,7 @@ class Mutation:
             async with uow:
                 task_repo = TaskRepositoryImpl(uow.session)
                 service = TaskService(task_repo)
-                
+
                 task = await service.complete_task(id)
                 return TaskType.from_entity(task)
 
@@ -573,7 +572,7 @@ class Mutation:
             async with uow:
                 task_repo = TaskRepositoryImpl(uow.session)
                 service = TaskService(task_repo)
-                
+
                 task = await service.log_time_on_task(id, hours)
                 return TaskType.from_entity(task)
 
