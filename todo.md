@@ -1,40 +1,71 @@
-[DONE] Definition of done has been documented in `docs/definition-of-done.md` with complete checklist:
+# Haven - Current Tasks & Immediate Notes
 
-- Ruff = 0 errors (`just lint`)
-- Pyright strict = pass (`just type`) 
-- pytest cov ≥ 70%, all tests pass (`just test`)
-- MkDocs build succeeds (`just docs`)
-- Demo showcasing high-impact features (`just demo`)
-- Feature is committed with clear message
+*Updated: 2025-07-16*
 
-See also: `docs/quality.md` for detailed quality gate information.
+This file tracks immediate tasks and notes. For completed work, see `work-log.md`.
 
+---
 
-[DONE] Documentation structure has been established:
+## 🎯 Current Focus: Documentation & Testing Phase
 
-- `docs/architecture.md` - Clean Architecture patterns and layer design
-- `docs/definition-of-done.md` - Complete quality checklist
-- `docs/roadmap.md` - Feature planning and technical debt tracking
-- `docs/refactoring.md` - Safe code reorganization procedures
-- Additional feature-specific docs to be added as features are implemented
+### Documentation Updates (In Progress)
+- [x] Create work-log.md from completed development 
+- [x] Update this todo.md to remove completed items
+- [ ] Update docs/roadmap.md to reflect completed milestones
+- [ ] Update docs/commits-plan.md to mark commits 0-11 as done
+- [ ] Completely rewrite docs/overview.md with file tags
 
-CLAUDE.md now serves as a directory pointing to relevant documentation based on the task at hand.
+### Comprehensive Just Command Testing
+All commands need verification after monorepo restructure:
 
-The roadmap.md is particularly useful for tracking tech debt and maintaining development flow across sessions.
+**Core Commands**
+- [ ] `just bootstrap` - Full environment setup
+- [ ] `just db-up` - PostgreSQL startup  
+- [ ] `just run` - API server with hot reload
+- [ ] `just clean` - Environment cleanup
+- [ ] `just down` - Stop all services
 
+**Python Development**
+- [ ] `just test-python` - Run Python test suite
+- [ ] `just lint-python` - Python linting with Ruff
+- [ ] `just type-python` - Type checking with Pyright
+- [ ] `just format-python` - Code formatting
+- [ ] `just check-python` - All Python quality gates
 
+**TypeScript Development** 
+- [ ] `just test-web` - Run React/TypeScript tests
+- [ ] `just lint-web` - TypeScript linting with ESLint
+- [ ] `just type-web` - TypeScript type checking
+- [ ] `just format-web` - Code formatting with Prettier
+- [ ] `just check-web` - All TypeScript quality gates
 
+**Utilities**
+- [ ] `just docs` - Build MkDocs documentation
+- [ ] `just demo-diff-generation` - Full repository diff demo
+- [ ] `just db-console` - Database console access
+- [ ] `just shell` - Python REPL with app context
+- [ ] `just logs` - View application logs
 
-[IN PROGRESS] Track progress across multiple documents:
-- This file (todo.md) - Immediate tasks and notes
-- `docs/roadmap.md` - Long-term planning and tech debt
-- `docs/commits-plan.md` - Implementation milestones
+### Fix Issues
+- [ ] Address any failing just commands discovered during testing
 
+---
 
+## 📋 Immediate Next Steps
+
+1. **Complete Documentation Updates** - Update all planning docs to reflect current state
+2. **Test All Commands** - Systematically verify every just command works
+3. **Fix Any Issues** - Address command failures or configuration problems
+4. **Begin Next Development Phase** - Start implementing new features
+
+---
+
+## 🔄 Development Workflow
 
 When resuming work:
-1. Check `todo.md` for immediate tasks
+1. Check this `todo.md` for immediate tasks
 2. Review docs for implementation strategy:
+   - `work-log.md` - What's been completed
    - `docs/roadmap.md` - Current sprint and backlog
    - `docs/commits-plan.md` - Implementation order
    - `docs/architecture.md` - Design patterns to follow
@@ -47,24 +78,30 @@ When resuming work:
 
 **Critical**: Never batch multiple tasks into one commit. Each logical unit of work should be committed separately for clear history and safe rollbacks.
 
+---
 
-[NOTE] Configuration management principle:
-- Start by documenting configs in .md files for visibility
-- Once stable, migrate to proper config files (Hydra yaml, pyproject.toml, etc.)
-- Config should live in code, not documentation
-- See `docs/configuration.md` for Hydra config management
+## 📝 Notes & Context
 
+### Project Status
+- **Phase Completed**: Monorepo transformation with Python API + React client
+- **Current State**: All core functionality operational, need comprehensive testing
+- **Next Phase**: Documentation cleanup, then continue feature development
 
-[DONE] Refactoring workflow documented in `docs/refactoring.md`:
-- Safe procedures for directory reorganization
-- Config migration strategies  
-- Code pattern refactoring
-- Database schema evolution
-- Rollback procedures
+### Key Achievements
+- ✅ FastAPI REST + Strawberry GraphQL APIs
+- ✅ Git diff generation with HTML export  
+- ✅ Monorepo with Hatch workspaces
+- ✅ React client with TypeScript + Tailwind
+- ✅ Comprehensive testing and quality gates
+- ✅ Production-ready containerization
 
+### Architecture Notes
+- **Backend**: apps/api/ with Clean Architecture patterns
+- **Frontend**: apps/web/ with React + TypeScript + Vite
+- **Shared**: packages/ for future SDK and shared components
+- **Config**: Hydra for multi-environment configuration
+- **Database**: PostgreSQL with SQLAlchemy 2.x async
 
-[DONE] API documentation created:
-- `docs/api/rest.md` - REST endpoint reference with examples
-- `docs/api/graphql.md` - GraphQL schema and query examples
+---
 
-**TODO**: Set up auto-generation from OpenAPI/GraphQL schemas in future commit.
+*Keep this file updated as you complete tasks. Move completed items to work-log.md periodically.*

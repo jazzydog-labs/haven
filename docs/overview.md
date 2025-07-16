@@ -1,138 +1,237 @@
-### Haven — Documentation Map (non-table edition)
+# Haven — Documentation Navigation Hub
 
-Below is a narrative “sitemap” of every document we plan to maintain, where it will live, and what it’s for.  
-
----
-
-#### 1 Project Entry Points – repo root
-
-- **`README.md`**
-    
-    - _Why it exists_: the one-screen elevator pitch and quick-start.
-        
-    - _What goes inside_: purpose, install snippet (`just install`), how to run, badge links, pointer to full docs.
-        
-    - _When to update_: every release or whenever onboarding steps change.
-        
-- **`CLAUDE.md`**
-    
-    - _Why_: living changelog + design-decision diary.
-        
-    - _What_: incremental progress notes, tick-box TODOs, links to new docs.
-        
-    - _When_: after each meaningful commit.
-        
+*Your complete guide to the Haven codebase and development workflow*
 
 ---
 
-#### 2 Core Specs & Planning – `docs/`
+## 🎯 Quick Start Paths
 
-- **`spec.md`**
-    
-    - _Why_: immutable North Star—goals, tech choices, success criteria.
-        
-    - _When_: only on scope shifts.
-        
-- **`commits_plan.md`**
-    
-    - _Why_: storyboard of intended milestones.
-        
-    - _When_: rarely—if roadmap moves.
-        
-- **`architecture.md`**
-    
-    - _Why_: diagrams and narrative about layers, dependencies, sequence flows.
-        
-    - _When_: anytime the architecture evolves.
-        
-- **`roadmap.md`**
-    
-    - _Why_: tracks planned features, technical debt, and incomplete items to maintain development flow.
-        
-    - _When_: weekly updates on progress, new items as discovered.
-        
-- **`definition-of-done.md`**
-    
-    - _Why_: clear checklist ensuring all code meets quality standards before merge.
-        
-    - _When_: rarely—only if team agrees on new criteria.
+**New to Haven?** → [`docs/spec.md`](#project-specification) → [`CLAUDE.md`](#development-workflow)  
+**Setting up locally?** → [`docs/local-setup.md`](#environment-setup) → [`just bootstrap`](#task-runner)  
+**Adding a feature?** → [`docs/architecture.md`](#clean-architecture-guide) → [`docs/api/`](#api-references)  
+**Making changes?** → [`docs/definition-of-done.md`](#quality-checklist) → [`work-log.md`](#development-tracking)
 
 ---
 
-#### 3 Developer How-Tos – `docs/setup` and friends
+## 📚 Core Documentation
 
-- **`setup/local_dev.md`** – environment setup, Docker compose, Justfile cheat-sheet.
-    
-- **`testing.md`** – pytest patterns, coverage gate, fixtures.
-    
-- **`quality.md`** – Ruff & Pyright rules, pre-commit info.
-    
-- **`configuration.md`** – Hydra tree explained, env overrides.
-    
-- **`database/alembic.md`** – migration workflow, branching, squash policy.
-    
-- **`refactoring.md`** – safe procedures for reorganizing code, directories, and configurations.
-    
+### 🎯 Project Specification
+- **[`docs/spec.md`](spec.md)** `#requirements #goals #success-criteria`
+  - Project requirements and success criteria
+  - Technology choices and constraints
+  - **When to read**: Understanding project purpose and scope
 
-_Update these whenever corresponding tooling or process changes._
+### 🏗️ Clean Architecture Guide  
+- **[`docs/architecture.md`](architecture.md)** `#patterns #layers #design`
+  - Clean Architecture implementation patterns
+  - Layer responsibilities and dependencies
+  - Sequence flows and design decisions
+  - **When to read**: Before implementing features or refactoring
 
----
+### 📋 Development Tracking
+- **[`work-log.md`](../work-log.md)** `#completed #achievements #history`
+  - Comprehensive log of completed development work
+  - Phase summaries and technical achievements
+  - **When to read**: Understanding what's been built
 
-#### 4 API References – `docs/api/`
+- **[`todo.md`](../todo.md)** `#current #tasks #immediate`
+  - Current tasks and immediate next steps
+  - Command testing checklist
+  - **When to read**: Daily development planning
 
-- **`api/rest.md`** – endpoint list with example requests/responses.
-    
-- **`api/graphql.md`** – SDL, sample queries/mutations, pagination examples.
-    
+- **[`docs/roadmap.md`](roadmap.md)** `#planning #features #debt`
+  - Feature planning and technical debt tracking
+  - Sprint goals and long-term vision
+  - **When to read**: Sprint planning and prioritization
 
-_Regenerate or tweak whenever the surface changes._
-
----
-
-#### 5 Operations & Deployment – `docs/deploy/`
-
-- **`docker.md`** – multi-stage Dockerfile walkthrough, hardening notes.
-    
-~~- **`compose.md`** – service stack, volumes, local vs. CI overrides.~~
-    
-~~- **`release.md`** – manual release checklist (tag, smoke test, doc publish).~~
-    
-
-_Revise when deployment mechanics evolve._
+- **[`docs/commits-plan.md`](commits-plan.md)** `#implementation #milestones #progress`
+  - Implementation milestones and progress tracking
+  - Original plan vs actual achievements
+  - **When to read**: Understanding implementation history
 
 ---
 
-#### 6 MkDocs Site Structure
+## ⚙️ Development Workflow
 
-Everything under `docs/` is automatically rendered by MkDocs-Material.  
-Top-level navigation is controlled by `mkdocs.yml`; rebuilding is as simple as `just docs`.
+### 🚀 Development Workflow
+- **[`CLAUDE.md`](../CLAUDE.md)** `#workflow #commands #daily`
+  - Fast development operations and daily commands
+  - Quick start guide and task runner reference
+  - **When to read**: Daily development workflow
 
-**Note**: MkDocs configuration and theme setup to be implemented in a future commit.
+### ✅ Quality Checklist
+- **[`docs/definition-of-done.md`](definition-of-done.md)** `#quality #checklist #standards`
+  - Complete quality checklist for task completion
+  - Testing, linting, documentation requirements
+  - **When to read**: Before committing any changes
 
----
-
-#### 7 Community & Future 
-
-These documents will be added as the project matures:
-
-- **`glossary.md`** – definitions of key terms (Record, UoW, etc.).
-- **`contributing.md`** – PR etiquette, code-review checklist.
-- **`changelog.md`** – user-facing changes per release.
-
-_Update these continuously as norms and ambitions grow._
-
----
-
-#### 8 Non-Prose Configuration Artifacts
-
-Files like `pyproject.toml`, `.justfile`, `mkdocs.yml`, and `alembic.ini` live at the repo root. They’re referenced from the guides above but are not documentation themselves.
+### 🛠️ Environment Setup
+- **[`docs/local-setup.md`](local-setup.md)** `#setup #environment #prerequisites`
+  - Local development environment setup
+  - Prerequisites and installation guide
+  - **When to read**: First-time setup or troubleshooting
 
 ---
 
-### Using this Map
+## 🧪 Development Guides
 
-1. Add it to the docs directory and link it first in `mkdocs.yml`.
-    
-2. Treat it as a living index—every time you add or rename a doc, come back here.
-    
-3. New contributors can read this single page and know exactly where to dive in.
+### 🧪 Testing Strategy
+- **[`docs/testing.md`](testing.md)** `#testing #fixtures #coverage`
+  - Test strategy, patterns, and coverage requirements
+  - Pytest configuration and fixture usage
+  - **When to read**: Writing tests or debugging test issues
+
+### 🔍 Code Quality
+- **[`docs/quality.md`](quality.md)** `#linting #typing #standards`
+  - Linting, type checking, and code standards
+  - Ruff and Pyright configuration details
+  - **When to read**: Setting up quality tools or resolving lint errors
+
+### 🔧 Configuration Management
+- **[`docs/configuration.md`](configuration.md)** `#hydra #config #environments`
+  - Hydra configuration management and usage
+  - Multi-environment setup and overrides
+  - **When to read**: Adding configuration or environment support
+
+### 🗃️ Database Operations
+- **[`docs/alembic.md`](alembic.md)** `#database #migrations #schema`
+  - Database migration workflows and procedures
+  - Alembic usage and best practices
+  - **When to read**: Making database schema changes
+
+### 🔄 Safe Refactoring
+- **[`docs/refactoring.md`](refactoring.md)** `#refactoring #safety #procedures`
+  - Safe code reorganization procedures
+  - Directory restructuring and config migrations
+  - **When to read**: Planning code reorganization or cleanup
+
+---
+
+## 🌐 API References
+
+### 🔌 REST API
+- **[`docs/api/rest.md`](api/rest.md)** `#rest #endpoints #examples`
+  - REST endpoint reference with examples
+  - Request/response schemas and error codes
+  - **When to read**: Implementing or consuming REST endpoints
+
+### 📡 GraphQL API  
+- **[`docs/api/graphql.md`](api/graphql.md)** `#graphql #schema #queries`
+  - GraphQL schema and query examples
+  - Mutations, subscriptions, and pagination
+  - **When to read**: Working with GraphQL features
+
+---
+
+## 🐳 Operations
+
+### 🐳 Container Deployment
+- **[`docs/docker.md`](docker.md)** `#docker #containers #security`
+  - Container build and security practices
+  - Multi-stage Dockerfile and hardening
+  - **When to read**: Deploying or optimizing containers
+
+---
+
+## 🏗️ Architecture Overview
+
+### Monorepo Structure
+```
+haven/
+├── apps/
+│   ├── api/          # Python backend (FastAPI + GraphQL)
+│   └── web/          # React frontend (TypeScript + Vite)
+├── packages/         # Shared libraries (future SDK)
+├── docs/            # Documentation (MkDocs)
+├── scripts/         # Build and utility scripts
+└── tools/           # Development tooling
+```
+
+### Technology Stack
+- **Backend**: FastAPI + Strawberry GraphQL + SQLAlchemy 2.x
+- **Frontend**: React + TypeScript + Vite + Tailwind CSS
+- **Database**: PostgreSQL with Alembic migrations  
+- **Quality**: Ruff + Pyright + pytest + ESLint + Prettier
+- **Config**: Hydra for multi-environment configuration
+- **Containers**: Docker with Chainguard security-hardened images
+
+---
+
+## 🔍 Finding What You Need
+
+### By Task Type
+
+**🏗️ Building Features**
+- Architecture patterns → [`docs/architecture.md`](architecture.md)
+- API design → [`docs/api/`](api/)
+- Database changes → [`docs/alembic.md`](alembic.md)
+- Quality gates → [`docs/definition-of-done.md`](definition-of-done.md)
+
+**🐛 Debugging Issues**
+- Environment setup → [`docs/local-setup.md`](local-setup.md)
+- Test failures → [`docs/testing.md`](testing.md)
+- Lint errors → [`docs/quality.md`](quality.md)
+- Configuration → [`docs/configuration.md`](configuration.md)
+
+**🔄 Maintaining Code**
+- Refactoring safely → [`docs/refactoring.md`](refactoring.md)
+- Understanding history → [`work-log.md`](../work-log.md)
+- Planning work → [`docs/roadmap.md`](roadmap.md)
+- Current tasks → [`todo.md`](../todo.md)
+
+**📖 Learning the System**
+- Project overview → [`docs/spec.md`](spec.md)
+- Architecture design → [`docs/architecture.md`](architecture.md)
+- Development workflow → [`CLAUDE.md`](../CLAUDE.md)
+- Implementation story → [`docs/commits-plan.md`](commits-plan.md)
+
+### By File Tags
+
+Use these tags to quickly find relevant documentation:
+
+- `#requirements #goals` → Project specification and success criteria
+- `#patterns #layers #design` → Architecture and design patterns
+- `#workflow #commands #daily` → Development workflow and commands
+- `#quality #checklist #standards` → Quality gates and standards
+- `#testing #fixtures #coverage` → Testing strategy and patterns
+- `#setup #environment #prerequisites` → Environment setup
+- `#config #hydra #environments` → Configuration management
+- `#database #migrations #schema` → Database operations
+- `#rest #graphql #api` → API documentation
+- `#docker #containers #security` → Container and deployment
+- `#planning #features #debt` → Project planning and roadmap
+- `#completed #achievements #history` → Completed work tracking
+- `#current #tasks #immediate` → Current development tasks
+
+---
+
+## 📱 Quick Reference Commands
+
+```bash
+# Setup and run
+just bootstrap          # Complete environment setup
+just db-up             # Start PostgreSQL
+just run               # Start API server with hot reload
+
+# Development workflow  
+just test-python       # Run Python tests
+just lint-python       # Check Python code quality
+just type-python       # Python type checking
+just check-python      # All Python quality gates
+
+just test-web          # Run TypeScript/React tests
+just lint-web          # Check TypeScript code quality
+just check-web         # All TypeScript quality gates
+
+# Utilities
+just docs              # Build documentation
+just demo-diff-generation  # Demo git diff API
+just clean             # Clean environment
+just --list            # Show all available commands
+```
+
+---
+
+**💡 Pro Tip**: Bookmark this page and use the file tags to quickly navigate to the documentation you need. Each document is designed to be self-contained while linking to related resources.
+
+*This overview is your starting point for navigating the Haven documentation ecosystem. Keep it updated as the project evolves!*
