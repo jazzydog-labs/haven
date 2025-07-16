@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+
 
 @dataclass
 class User:
     username: str
     email: str
     display_name: str
-    avatar_url: Optional[str] = None
-    id: Optional[int] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-    
+    avatar_url: str | None = None
+    id: int | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
     def __post_init__(self):
         # Validation logic
         if not self.username:

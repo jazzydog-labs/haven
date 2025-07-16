@@ -1,6 +1,10 @@
 # API-specific Justfile commands
 # This file is imported by the main Justfile
 
+# Variables for API operations
+python := ".venv/bin/python"
+pip := ".venv/bin/pip"
+
 # Run API server
 run:
     {{ python }} -m haven.main

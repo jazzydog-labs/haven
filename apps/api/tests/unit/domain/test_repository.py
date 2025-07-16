@@ -1,5 +1,7 @@
 import pytest
+
 from haven.domain.entities.repository import Repository
+
 
 def test_repository_creation():
     repo = Repository(
@@ -20,10 +22,10 @@ def test_repository_creation():
 def test_repository_validation():
     with pytest.raises(ValueError, match="Repository name cannot be empty"):
         Repository(name="", full_name="test", url="/path", branch="main")
-    
+
     with pytest.raises(ValueError, match="Repository URL cannot be empty"):
         Repository(name="test", full_name="test", url="", branch="main")
-    
+
     with pytest.raises(ValueError, match="Branch cannot be empty"):
         Repository(name="test", full_name="test", url="/path", branch="")
 
@@ -45,7 +47,7 @@ def test_repository_display_name_property():
         branch="main"
     )
     assert repo.display_name == "jazzydog-labs/haven"
-    
+
     repo_no_full_name = Repository(
         name="haven",
         full_name="",
@@ -63,7 +65,7 @@ def test_repository_is_github_property():
         is_local=False
     )
     assert github_repo.is_github is True
-    
+
     local_repo = Repository(
         name="test",
         full_name="test",

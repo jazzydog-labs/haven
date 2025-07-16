@@ -17,7 +17,7 @@ just db-migrate
 just demo-ttr
 
 # Option B: Using demo Justfile directly
-just -f justfile.demos demo-ttr
+just -f justfile.demos.standalone demo-ttr
 
 # 4. Optional: Start API server for interactive testing
 just run
@@ -46,18 +46,18 @@ just run
 
 ## Running Demo Commands Independently
 
-You can run demo commands directly from the demo justfile:
+You can run demo commands directly from the standalone demo justfile:
 
 ```bash
 # View all available demo commands
-just -f justfile.demos demo
+just -f justfile.demos.standalone demo
 
 # Run specific demos
-just -f justfile.demos demo-ttr           # TTR system demo
-just -f justfile.demos demo-health        # Health check endpoints
-just -f justfile.demos demo-api           # REST API operations
-just -f justfile.demos demo-graphql       # GraphQL operations
-just -f justfile.demos demo-all           # All demos in sequence
+just -f justfile.demos.standalone demo-ttr           # TTR system demo
+just -f justfile.demos.standalone demo-health        # Health check endpoints
+just -f justfile.demos.standalone demo-api           # REST API operations
+just -f justfile.demos.standalone demo-graphql       # GraphQL operations
+just -f justfile.demos.standalone demo-all           # All demos in sequence
 ```
 
 This is useful when you want to:

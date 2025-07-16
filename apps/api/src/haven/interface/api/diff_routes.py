@@ -50,7 +50,7 @@ async def run_command(cmd: list[str], cwd: str | None = None) -> tuple[str, str,
     # In Docker, use /repo as working directory for git commands
     if cwd is None and cmd[0] == "git" and Path("/repo").exists():
         cwd = "/repo"
-    
+
     process = await asyncio.create_subprocess_exec(
         *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, cwd=cwd
     )

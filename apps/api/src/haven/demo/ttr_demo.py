@@ -6,37 +6,38 @@ that have been implemented so far.
 """
 
 import asyncio
-from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession
-from haven.config import get_settings
-from haven.infrastructure.database.session import create_engine, create_session_factory
-from haven.infrastructure.database.repositories.user_repository import UserRepositoryImpl
-from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
-from haven.application.services.user_service import UserService
+
 from haven.application.services.repository_service import RepositoryService
-from haven.domain.entities.user import User
+from haven.application.services.user_service import UserService
 from haven.domain.entities.repository import Repository
+from haven.domain.entities.user import User
+from haven.infrastructure.database.repositories.repository_repository import (
+    RepositoryRepositoryImpl,
+)
+from haven.infrastructure.database.repositories.user_repository import UserRepositoryImpl
+from haven.infrastructure.database.session import create_engine, create_session_factory
+
 
 async def demo_ttr_system():
     """Demonstrate TTR system features"""
     print("=" * 60)
     print("🔥 TTR (Task, Todo, Review) System Demo")
     print("=" * 60)
-    
+
     # Initialize database session
     engine = create_engine()
     session_factory = create_session_factory(engine)
-    
+
     async with session_factory() as session:
         # Initialize repositories and services
         user_repo = UserRepositoryImpl(session)
         repo_repo = RepositoryRepositoryImpl(session)
         user_service = UserService(user_repo)
         repo_service = RepositoryService(repo_repo)
-        
+
         print("\n1. 👤 User Management Demo")
         print("-" * 40)
-        
+
         # Create a user
         print("Creating user 'plva'...")
         user = await user_service.create_user(
@@ -49,13 +50,13 @@ async def demo_ttr_system():
         print(f"   ID: {user.id}")
         print(f"   Display name: {user.display_name}")
         print(f"   Created at: {user.created_at}")
-        
+
         # Get user by username
         print("\nRetrieving user by username...")
         found_user = await user_service.get_user_by_username("plva")
         if found_user:
             print(f"✅ Found user: {found_user.username}")
-        
+
         # Update user
         print("\nUpdating user display name...")
         updated_user = await user_service.update_user(
@@ -63,10 +64,10 @@ async def demo_ttr_system():
             display_name="Paul (Updated)"
         )
         print(f"✅ Updated display name: {updated_user.display_name}")
-        
+
         print("\n2. 🗂️ Repository Management Demo")
         print("-" * 40)
-        
+
         # Create local repository
         print("Creating local repository...")
         local_repo = await repo_service.create_repository(
@@ -83,7 +84,7 @@ async def demo_ttr_system():
         print(f"   Branch: {local_repo.branch}")
         print(f"   Is local: {local_repo.is_local}")
         print(f"   Display name: {local_repo.display_name}")
-        
+
         # Create remote repository
         print("\nCreating remote repository...")
         try:
@@ -101,14 +102,14 @@ async def demo_ttr_system():
             print(f"   Is local: {remote_repo.is_local}")
         except Exception as e:
             print(f"⚠️ Remote repository creation: {e}")
-        
+
         # List all repositories
         print("\nListing all repositories...")
         all_repos = await repo_service.get_all_repositories()
         print(f"✅ Found {len(all_repos)} repositories:")
         for repo in all_repos:
             print(f"   - {repo.name} ({repo.branch}) - {'Local' if repo.is_local else 'Remote'}")
-        
+
         # Update repository
         print("\nUpdating repository description...")
         updated_repo = await repo_service.update_repository(
@@ -116,10 +117,10 @@ async def demo_ttr_system():
             description="Haven repository - updated description"
         )
         print(f"✅ Updated description: {updated_repo.description}")
-        
+
         print("\n3. 🔍 Data Validation Demo")
         print("-" * 40)
-        
+
         # Test user validation
         print("Testing user validation...")
         try:
@@ -130,7 +131,7 @@ async def demo_ttr_system():
             )
         except ValueError as e:
             print(f"✅ User validation works: {e}")
-        
+
         # Test repository validation
         print("\nTesting repository validation...")
         try:
@@ -142,27 +143,27 @@ async def demo_ttr_system():
             )
         except ValueError as e:
             print(f"✅ Repository validation works: {e}")
-        
+
         print("\n4. 📊 Database Statistics")
         print("-" * 40)
-        
+
         # Count users
         all_users = await user_service.get_all_users()
         print(f"Total users: {len(all_users)}")
-        
+
         # Count repositories
         all_repos = await repo_service.get_all_repositories()
         print(f"Total repositories: {len(all_repos)}")
-        
+
         print("\n5. 🧪 Test Coverage Summary")
         print("-" * 40)
         print("✅ User domain entity: 100% test coverage")
-        print("✅ User repository: 94% test coverage") 
+        print("✅ User repository: 94% test coverage")
         print("✅ User service: 88% test coverage")
         print("✅ Repository domain entity: 100% test coverage")
         print("✅ Repository repository: 96% test coverage")
         print("✅ Repository service: 88% test coverage")
-        
+
         print("\n6. 🚀 Next Steps")
         print("-" * 40)
         print("🔄 Commit domain entity (in progress)")
@@ -171,11 +172,11 @@ async def demo_ttr_system():
         print("🌐 REST API endpoints (planned)")
         print("🎨 GraphQL schema (planned)")
         print("⚛️ React frontend (planned)")
-        
+
         print("\n" + "=" * 60)
         print("🎉 TTR System Demo Complete!")
         print("=" * 60)
-        
+
         # Cleanup demo data
         print("\n🧹 Cleaning up demo data...")
         await user_service.delete_user(user.id)
@@ -183,7 +184,7 @@ async def demo_ttr_system():
         if 'remote_repo' in locals():
             await repo_service.delete_repository(remote_repo.id)
         print("✅ Demo data cleaned up")
-    
+
     # Clean up database connection
     await engine.dispose()
 

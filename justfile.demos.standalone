@@ -1,0 +1,11 @@
+# Standalone demo commands
+# Use this file for running demos independently: just -f justfile.demos.standalone
+
+# Variables for standalone execution
+api_dir := "apps/api"
+web_dir := "apps/web"
+python := ".venv/bin/python"
+pip := ".venv/bin/pip"
+
+# Import the main demo commands
+import 'justfile.demos'
