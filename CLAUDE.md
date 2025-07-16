@@ -34,17 +34,17 @@ just check        # Full quality gates (lint + type + test)
 ```
 
 ### Development Cycle
-1. Pick a task from roadmap/todo or `tasks/open/`
+1. Pick a task from roadmap/todo or `docs/project-management/tasks/open/`
 2. Implement the feature
 3. Run `just check` to verify quality
 4. **Commit immediately** - don't batch changes
 5. **Update tracking files** - Keep everything in sync:
-   - Append entry to `work-log.md`
-   - Update `todo.md` to mark task complete
-   - Update `docs/roadmap.md` if milestone achieved
-   - Update `docs/commits-plan.md` if following plan
+   - Append entry to `docs/project-management/work-log.md`
+   - Update `docs/project-management/todo.md` to mark task complete
+   - Update `docs/project-management/roadmap.md` if milestone achieved
+   - Update `docs/project-management/commits-plan.md` if following plan
    - Update `CLAUDE.md` if new workflow added
-6. Move task to `tasks/closed/` if complete
+6. Move task to `docs/project-management/tasks/closed/` if complete
 7. Move to next task
 
 Each task should result in at least one atomic commit and synchronized documentation!
@@ -178,12 +178,12 @@ See `docs/quality.md` for linting/typing details and `docs/definition-of-done.md
 3. Create container troubleshooting guide
 
 ### Progress Tracking
-- `docs/commits-plan.md` - ✅ Original plan complete (commits 0-11)
-- `docs/roadmap.md` - Current sprint and feature backlog
-- `todo.md` - Immediate tasks and priorities
-- `work-log.md` - Completed work with demo commands
-- `tasks/open/` - Active tasks ready for implementation
-- `tasks/closed/` - Completed tasks archive
+- `docs/project-management/commits-plan.md` - ✅ Original plan complete (commits 0-11)
+- `docs/project-management/roadmap.md` - Current sprint and feature backlog
+- `docs/project-management/todo.md` - Immediate tasks and priorities
+- `docs/project-management/work-log.md` - Completed work with demo commands
+- `docs/project-management/tasks/open/` - Active tasks ready for implementation
+- `docs/project-management/tasks/closed/` - Completed tasks archive
 
 **Project Status**: Production-ready with containerization enhancements in progress.
 
@@ -247,35 +247,35 @@ just --list
 ## Documentation Directory
 
 ### Core Documentation
-- **`docs/spec.md`** - Project requirements and success criteria
+- **`docs/project-management/spec.md`** - Project requirements and success criteria
 - **`docs/overview.md`** - Complete documentation map
-- **`docs/architecture.md`** - Clean Architecture patterns and layer design
+- **`docs/architecture/architecture.md`** - Clean Architecture patterns and layer design
 
 ### Task & Project Management
-- **`docs/roadmap.md`** - Development timeline and technical debt tracking
-- **`docs/commits-plan.md`** - Detailed implementation phases
-- **`docs/tasks-workflow.md`** - Task lifecycle from creation to completion
-- **`todo.md`** - Immediate tasks and notes
-- **`work-log.md`** - Append-only log of completed work
-- **`tasks/open/`** - Active tasks awaiting implementation
-- **`tasks/closed/`** - Completed tasks for archival
+- **`docs/project-management/roadmap.md`** - Development timeline and technical debt tracking
+- **`docs/project-management/commits-plan.md`** - Detailed implementation phases
+- **`docs/development/tasks-workflow.md`** - Task lifecycle from creation to completion
+- **`docs/project-management/todo.md`** - Immediate tasks and notes
+- **`docs/project-management/work-log.md`** - Append-only log of completed work
+- **`docs/project-management/tasks/open/`** - Active tasks awaiting implementation
+- **`docs/project-management/tasks/closed/`** - Completed tasks for archival
 
 ### Developer Guides  
-- **`docs/local-setup.md`** - Environment setup and prerequisites
-- **`docs/testing.md`** - Test strategy, fixtures, and coverage requirements
-- **`docs/quality.md`** - Linting, type checking, and code standards
-- **`docs/definition-of-done.md`** - Complete checklist for task completion
-- **`docs/configuration.md`** - Hydra configuration management
-- **`docs/alembic.md`** - Database migration workflows
-- **`docs/refactoring.md`** - Safe code reorganization procedures
+- **`docs/development/local-setup.md`** - Environment setup and prerequisites
+- **`docs/development/testing.md`** - Test strategy, fixtures, and coverage requirements
+- **`docs/development/quality.md`** - Linting, type checking, and code standards
+- **`docs/development/definition-of-done.md`** - Complete checklist for task completion
+- **`docs/development/configuration.md`** - Hydra configuration management
+- **`docs/development/alembic.md`** - Database migration workflows
+- **`docs/development/refactoring.md`** - Safe code reorganization procedures
 
 ### API References
 - **`docs/api/rest.md`** - REST endpoints with examples
 - **`docs/api/graphql.md`** - GraphQL schema and queries
 
 ### Operations
-- **`docs/docker.md`** - Container build and security practices
-- **`docs/cli.md`** - Haven CLI tool for git diff generation
+- **`docs/operations/docker.md`** - Container build and security practices
+- **`docs/operations/cli.md`** - Haven CLI tool for git diff generation
 
 ### When to Read Which Doc
 
@@ -293,7 +293,7 @@ just --list
 
 After each commit, ensure all tracking files are synchronized:
 
-### 1. Work Log (`work-log.md`)
+### 1. Work Log (`docs/project-management/work-log.md`)
 Append an entry with:
 - **What was added/changed** - High-level description of the work done
 - **How to see it** - URLs, commands, or file paths to view the changes
@@ -311,7 +311,7 @@ Example format:
 
 Use format `YYYY-MM-DD.NNNN` where NNNN is a zero-padded 4-digit sequence number starting from 0001 each day.
 
-### 2. Todo List (`todo.md`)
+### 2. Todo List (`docs/project-management/todo.md`)
 - Mark completed tasks with [x]
 - Remove or strike through finished items
 - Add any new tasks discovered during implementation
@@ -336,8 +336,8 @@ Use format `YYYY-MM-DD.NNNN` where NNNN is a zero-padded 4-digit sequence number
 ### Sync Checklist
 ```bash
 # After each commit, verify:
-□ work-log.md has new entry
-□ todo.md reflects completed work
+□ docs/project-management/work-log.md has new entry
+□ docs/project-management/todo.md reflects completed work
 □ roadmap.md shows progress
 □ commits-plan.md updated (if applicable)
 □ CLAUDE.md has new workflows (if created)

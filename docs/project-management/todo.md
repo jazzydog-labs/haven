@@ -99,9 +99,13 @@ All commands need verification after monorepo restructure:
 - [ ] Set up local HTTPS (see `tasks/open/local-https-setup.md`)
 - [ ] Create production-like environment (see `tasks/open/production-like-local-env.md`)
 
-### Priority 3: Next Development Phase
-6. **Fix Any Issues** - Address command failures or configuration problems  
-7. **Begin Next Development Phase** - Start implementing new features
+### Priority 3: Frontend Development
+6. **CRUD Frontend for Records** - Complete UI for Records management (see `tasks/open/crud-frontend-records.md`)
+7. **Frontend-Backend Sync Workflow** - Automated type generation and API sync (see `tasks/open/frontend-backend-sync-workflow.md`)
+
+### Priority 4: Next Development Phase
+8. **Fix Any Issues** - Address command failures or configuration problems  
+9. **Begin Next Development Phase** - Start implementing new features
 
 ### Active Tasks in `tasks/open/` (By Priority)
 
@@ -118,6 +122,11 @@ All commands need verification after monorepo restructure:
 **Containerization Phase 3 (Enhancements):**
 - `local-cors-and-domains.md` - CORS and custom domain configuration
 - `local-https-setup.md` - HTTPS development environment
+- `production-like-local-env.md` - Full production-like setup with reverse proxy
+
+**Frontend Development (Priority 3):**
+- `crud-frontend-records.md` - Complete CRUD UI for Records management
+- `frontend-backend-sync-workflow.md` - Automated type generation from backend
 - `production-like-local-env.md` - Full production-like setup with reverse proxy
 
 ---

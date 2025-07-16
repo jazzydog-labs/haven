@@ -41,7 +41,9 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 - [ ] **HTTPS Setup** - Local SSL certificates for secure development
 - [ ] **Reverse Proxy** - Production-like setup with Traefik/Caddy
 
-#### Feature Development (After Containerization)
+#### Frontend Development (After Container Phase 2)
+- [ ] **CRUD Frontend for Records** - Complete UI for Records entity with all operations
+- [ ] **Frontend-Backend Sync** - Automated type generation and API client from backend
 - [ ] **React Client Features** - Diff visualization interface
 - [ ] **API Enhancements** - Additional diff analysis features
 - [ ] **Shared SDK** - packages/sdk/ for API client library
@@ -51,6 +53,8 @@ This roadmap tracks planned features, technical debt, and incomplete items to ma
 ## 📋 Backlog
 
 ### Frontend Development
+- [ ] **Records CRUD Interface** - Complete management UI for Records entity
+- [ ] **Backend Sync Workflow** - Automated TypeScript types from Python models
 - [ ] **Diff Visualization Interface** - React components for viewing diffs
 - [ ] **Repository Browser** - Navigate commits and file changes
 - [ ] **Search & Filter** - Find specific changes across history

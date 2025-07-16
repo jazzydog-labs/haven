@@ -6,45 +6,45 @@
 
 ## 🎯 Quick Start Paths
 
-**New to Haven?** → [`docs/spec.md`](#project-specification) → [`CLAUDE.md`](#development-workflow)  
-**Setting up locally?** → [`docs/local-setup.md`](#environment-setup) → [`just bootstrap`](#task-runner)  
-**Adding a feature?** → [`docs/architecture.md`](#clean-architecture-guide) → [`docs/api/`](#api-references)  
-**Making changes?** → [`docs/definition-of-done.md`](#quality-checklist) → [`work-log.md`](#development-tracking)
+**New to Haven?** → [`docs/project-management/spec.md`](#project-specification) → [`CLAUDE.md`](#development-workflow)  
+**Setting up locally?** → [`docs/development/local-setup.md`](#environment-setup) → [`just bootstrap`](#task-runner)  
+**Adding a feature?** → [`docs/architecture/architecture.md`](#clean-architecture-guide) → [`docs/api/`](#api-references)  
+**Making changes?** → [`docs/development/definition-of-done.md`](#quality-checklist) → [`docs/project-management/work-log.md`](#development-tracking)
 
 ---
 
 ## 📚 Core Documentation
 
 ### 🎯 Project Specification
-- **[`docs/spec.md`](spec.md)** `#requirements #goals #success-criteria`
+- **[`docs/project-management/spec.md`](project-management/spec.md)** `#requirements #goals #success-criteria`
   - Project requirements and success criteria
   - Technology choices and constraints
   - **When to read**: Understanding project purpose and scope
 
 ### 🏗️ Clean Architecture Guide  
-- **[`docs/architecture.md`](architecture.md)** `#patterns #layers #design`
+- **[`docs/architecture/architecture.md`](architecture/architecture.md)** `#patterns #layers #design`
   - Clean Architecture implementation patterns
   - Layer responsibilities and dependencies
   - Sequence flows and design decisions
   - **When to read**: Before implementing features or refactoring
 
 ### 📋 Development Tracking
-- **[`work-log.md`](../work-log.md)** `#completed #achievements #history`
+- **[`docs/project-management/work-log.md`](project-management/work-log.md)** `#completed #achievements #history`
   - Comprehensive log of completed development work
   - Phase summaries and technical achievements
   - **When to read**: Understanding what's been built
 
-- **[`todo.md`](../todo.md)** `#current #tasks #immediate`
+- **[`docs/project-management/todo.md`](project-management/todo.md)** `#current #tasks #immediate`
   - Current tasks and immediate next steps
   - Command testing checklist
   - **When to read**: Daily development planning
 
-- **[`docs/roadmap.md`](roadmap.md)** `#planning #features #debt`
+- **[`docs/project-management/roadmap.md`](project-management/roadmap.md)** `#planning #features #debt`
   - Feature planning and technical debt tracking
   - Sprint goals and long-term vision
   - **When to read**: Sprint planning and prioritization
 
-- **[`docs/commits-plan.md`](commits-plan.md)** `#implementation #milestones #progress`
+- **[`docs/project-management/commits-plan.md`](project-management/commits-plan.md)** `#implementation #milestones #progress`
   - Implementation milestones and progress tracking
   - Original plan vs actual achievements
   - **When to read**: Understanding implementation history
@@ -60,13 +60,13 @@
   - **When to read**: Daily development workflow
 
 ### ✅ Quality Checklist
-- **[`docs/definition-of-done.md`](definition-of-done.md)** `#quality #checklist #standards`
+- **[`docs/development/definition-of-done.md`](development/definition-of-done.md)** `#quality #checklist #standards`
   - Complete quality checklist for task completion
   - Testing, linting, documentation requirements
   - **When to read**: Before committing any changes
 
 ### 🛠️ Environment Setup
-- **[`docs/local-setup.md`](local-setup.md)** `#setup #environment #prerequisites`
+- **[`docs/development/local-setup.md`](development/local-setup.md)** `#setup #environment #prerequisites`
   - Local development environment setup
   - Prerequisites and installation guide
   - **When to read**: First-time setup or troubleshooting
@@ -76,31 +76,31 @@
 ## 🧪 Development Guides
 
 ### 🧪 Testing Strategy
-- **[`docs/testing.md`](testing.md)** `#testing #fixtures #coverage`
+- **[`docs/development/testing.md`](development/testing.md)** `#testing #fixtures #coverage`
   - Test strategy, patterns, and coverage requirements
   - Pytest configuration and fixture usage
   - **When to read**: Writing tests or debugging test issues
 
 ### 🔍 Code Quality
-- **[`docs/quality.md`](quality.md)** `#linting #typing #standards`
+- **[`docs/development/quality.md`](development/quality.md)** `#linting #typing #standards`
   - Linting, type checking, and code standards
   - Ruff and Pyright configuration details
   - **When to read**: Setting up quality tools or resolving lint errors
 
 ### 🔧 Configuration Management
-- **[`docs/configuration.md`](configuration.md)** `#hydra #config #environments`
+- **[`docs/development/configuration.md`](development/configuration.md)** `#hydra #config #environments`
   - Hydra configuration management and usage
   - Multi-environment setup and overrides
   - **When to read**: Adding configuration or environment support
 
 ### 🗃️ Database Operations
-- **[`docs/alembic.md`](alembic.md)** `#database #migrations #schema`
+- **[`docs/development/alembic.md`](development/alembic.md)** `#database #migrations #schema`
   - Database migration workflows and procedures
   - Alembic usage and best practices
   - **When to read**: Making database schema changes
 
 ### 🔄 Safe Refactoring
-- **[`docs/refactoring.md`](refactoring.md)** `#refactoring #safety #procedures`
+- **[`docs/development/refactoring.md`](development/refactoring.md)** `#refactoring #safety #procedures`
   - Safe code reorganization procedures
   - Directory restructuring and config migrations
   - **When to read**: Planning code reorganization or cleanup
@@ -126,13 +126,13 @@
 ## 🐳 Operations
 
 ### 🐳 Container Deployment
-- **[`docs/docker.md`](docker.md)** `#docker #containers #security`
+- **[`docs/operations/docker.md`](operations/docker.md)** `#docker #containers #security`
   - Container build and security practices
   - Multi-stage Dockerfile and hardening
   - **When to read**: Deploying or optimizing containers
 
 ### 🖥️ Command Line Interface
-- **[`docs/cli.md`](cli.md)** `#cli #commands #diff-generation`
+- **[`docs/operations/cli.md`](operations/cli.md)** `#cli #commands #diff-generation`
   - Haven CLI tool for git diff generation
   - Command reference and usage examples
   - **When to read**: Using Haven as a command-line tool

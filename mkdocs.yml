@@ -102,35 +102,44 @@ nav:
   - Home:
     - Overview: index.md
     - Quick Start: quickstart.md
-    - Specification: spec.md
-    - Commits Plan: commits-plan.md
+    - Navigation Hub: overview.md
   
   - Architecture:
-    - Overview: architecture.md
-    - Clean Architecture: architecture.md
+    - Overview: architecture/README.md
+    - Clean Architecture: architecture/architecture.md
     - API Design: api/index.md
     
   - Development:
-    - Local Setup: local-setup.md
-    - Configuration: configuration.md
-    - Testing: testing.md
-    - Code Quality: quality.md
-    - Database Migrations: alembic.md
-    - Refactoring Guide: refactoring.md
-    - Definition of Done: definition-of-done.md
+    - Overview: development/README.md
+    - Local Setup: development/local-setup.md
+    - Configuration: development/configuration.md
+    - Testing: development/testing.md
+    - Code Quality: development/quality.md
+    - Database Migrations: development/alembic.md
+    - Refactoring Guide: development/refactoring.md
+    - Definition of Done: development/definition-of-done.md
+    - Task Workflow: development/tasks-workflow.md
     
   - API Reference:
     - REST API: api/rest.md
     - GraphQL API: api/graphql.md
     - OpenAPI Schema: api/openapi.md
+    - Diff Generation: api/diff-generation.md
     
   - Operations:
-    - Docker: docker.md
-    - Deployment: deployment.md
-    - Monitoring: monitoring.md
+    - Overview: operations/README.md
+    - Docker: operations/docker.md
+    - Deployment: operations/deployment.md
+    - Monitoring: operations/monitoring.md
+    - CLI Tool: operations/cli.md
     
-  - Project:
-    - Roadmap: roadmap.md
+  - Project Management:
+    - Overview: project-management/README.md
+    - Specification: project-management/spec.md
+    - Roadmap: project-management/roadmap.md
+    - Commits Plan: project-management/commits-plan.md
+    - Todo List: project-management/todo.md
+    - Work Log: project-management/work-log.md
     - Contributing: contributing.md
     - Changelog: changelog.md
 
