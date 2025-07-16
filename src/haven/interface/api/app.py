@@ -12,6 +12,7 @@ from haven.config import get_settings
 from haven.domain.exceptions import DomainError, RecordNotFoundError
 from haven.infrastructure.database.factory import db_factory
 from haven.interface.api.routes import router as api_router
+from haven.interface.api.diff_routes import router as diff_router
 from haven.interface.graphql.schema import schema
 
 
@@ -51,6 +52,7 @@ def create_app() -> FastAPI:
     
     # Include API routes
     app.include_router(api_router, prefix="/api/v1")
+    app.include_router(diff_router, prefix="/api/v1")
     
     # Add GraphQL endpoint
     graphql_app = GraphQLRouter(schema)

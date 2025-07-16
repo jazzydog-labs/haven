@@ -1,5 +1,6 @@
 """Record entity - core domain model."""
 
+import copy
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
@@ -24,6 +25,9 @@ class Record:
         """Validate record after initialization."""
         if not isinstance(self.data, dict):
             raise ValueError("Record data must be a dictionary")
+        
+        # Deep copy the data to ensure isolation
+        self.data = copy.deepcopy(self.data)
         
         # Ensure timestamps are timezone-aware
         if self.created_at.tzinfo is None:
