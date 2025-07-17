@@ -4,6 +4,17 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0003 - Enhanced stop commands to kill all processes
+**Fixed**: stop-all and stop-proxy commands now properly terminate all frontend processes
+**Added**: pkill commands to ensure npm and vite processes are killed even if started manually
+**See**: Updated justfile with enhanced stop-all and stop-proxy commands
+**Test**: Run `just stop-all` and verify `curl http://localhost:3000` returns connection refused
+**Demo**: 
+1. Start multiple frontend instances manually
+2. Run `just stop-all`
+3. Verify all processes are terminated with `ps aux | grep -E "(npm|vite)"`
+4. Confirm ports are free: http://localhost:3000 should not respond
+
 ## 2025-07-17.0002 - Created convenient script for port 80 proxy setup
 **Added**: start-proxy-80.sh script for easy proxy startup on standard HTTP port
 **Fixed**: Automated the process of starting all services and running Caddy with sudo

@@ -11,8 +11,8 @@ just run
 just run-proxy
 
 # Or with local domains on port 80 (requires sudo password):
-# Note: You'll be prompted for your password when running this command
-just run-proxy80
+just start-proxy    # New simplified command!
+# Alternative: just run-proxy80
 
 # Access your app:
 # With run-proxy (port 9000):
