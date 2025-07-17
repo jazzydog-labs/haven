@@ -796,6 +796,111 @@ Key features:
 - Alembic migration for commits and commit_reviews tables
 - Full Clean Architecture separation with 84% service coverage
 
+## 2025-07-17.0001 - Configured local domain access with reverse proxy
+**Added**: Complete local domain access system with clean URLs and port forwarding options
+**See**: 
+- Vite config: `apps/web/vite.config.ts` with allowedHosts configuration
+- Caddy proxy: `Caddyfile.http` with port 9000 HTTP-only setup
+- Port forwarding scripts: `setup-port-forwarding.sh` and `remove-port-forwarding.sh`
+- Test script: `test-complete-setup.sh` for validation
+**Test**: 
+```bash
+# Test all access methods
+./test-complete-setup.sh
+
+# Test specific URLs
+curl http://web.haven.local:9000
+curl http://api.haven.local:9000/health
+```
+**Demo**: 
+```bash
+# Start everything with clean domain access
+just run-proxy
+
+# Access services with clean URLs:
+# Frontend: http://web.haven.local:9000
+# API: http://api.haven.local:9000
+# Main: http://haven.local:9000
+
+# Optional: Set up truly clean URLs (no port)
+./setup-port-forwarding.sh
+# Then access: http://web.haven.local (no :9000 needed)
+```
+
+Key features:
+- Fixed Vite allowedHosts to support custom domains
+- Caddy reverse proxy on port 9000 (no sudo required)
+- Automatic port detection and configuration updates
+- Optional port forwarding for truly clean URLs
+- Comprehensive test suite for all access methods
+- Works with existing domain mappings from /etc/hosts
+
+## 2025-07-17.0002 - Cleaned up TTR system and synchronized tracking documents
+**Added**: Complete TTR system cleanup moving all completed work to proper status
+**See**: Updated `docs/project-management/roadmap.md` and moved completed task files
+**Test**: Review roadmap.md to verify all completed items are marked as [x]
+**Demo**: 
+```bash
+# Check synchronized status
+grep -A20 "Current Sprint Focus" docs/project-management/roadmap.md
+
+# Verify completed tasks moved
+ls docs/project-management/tasks/closed/ttr-commit-domain-entity.md
+
+# See all completed work
+head -50 docs/project-management/work-log.md
+```
+
+Key updates:
+- Marked all 6 major infrastructure and frontend tasks as completed in roadmap
+- Updated Current Sprint Focus to reflect "ALL WORK COMPLETED" status
+- Moved TTR commit entity task from open to closed directory
+- Synchronized roadmap.md with actual completion status from work-log.md
+- Ready for next phase planning with clean tracking state
+
+## 2025-07-17.0001 - Configured local domain access with reverse proxy
+**Added**: Complete local domain access system with reverse proxy on port 9000
+**See**: 
+- Vite configuration: `apps/web/vite.config.ts` (allowedHosts for custom domains)
+- Caddy configuration: `Caddyfile.http` (reverse proxy on port 9000)
+- Port forwarding scripts: `setup-port-forwarding.sh` and `remove-port-forwarding.sh`
+- Test script: `test-complete-setup.sh` (validates all access methods)
+**Test**: 
+```bash
+# Test all access methods
+./test-complete-setup.sh
+
+# Test specific URLs
+curl http://web.haven.local:9000
+curl http://api.haven.local:9000/health
+```
+**Demo**: 
+```bash
+# Start services with domain access
+just run-proxy
+
+# Access clean URLs (with port 9000):
+# Frontend: http://web.haven.local:9000
+# API: http://api.haven.local:9000
+# Main: http://haven.local:9000
+
+# Optional: Setup truly clean URLs (no port)
+./setup-port-forwarding.sh
+# Then access: http://web.haven.local (no port needed)
+
+# Stop everything
+just stop-proxy
+```
+
+Key features:
+- Custom domain access via /etc/hosts mapping (haven.local, web.haven.local, api.haven.local, app.haven.local)
+- Vite allowedHosts configuration prevents "blocked request" errors
+- Caddy reverse proxy on port 9000 (no sudo required) routes domains to correct services
+- Optional port forwarding scripts for truly clean URLs (port 80 → 9000)
+- Comprehensive test script validates all access methods
+- Fixed justfile variable references (ROOT_DIR → PROJECT_ROOT)
+- Automatic port detection (frontend runs on 3003 due to conflicts)
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*

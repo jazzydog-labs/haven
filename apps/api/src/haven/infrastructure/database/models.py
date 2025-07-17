@@ -18,7 +18,7 @@ class Base(DeclarativeBase):
     }
 
 
-__all__ = ["Base", "CommentModel", "MilestoneModel", "RecordModel", "RepositoryModel", "RoadmapModel", "TaskModel", "TimeLogModel", "TodoModel", "UserModel"]
+__all__ = ["Base", "CommentModel", "MilestoneModel", "RecordModel", "RepositoryModel", "RoadmapModel", "TaskModel", "TimeLogModel", "TodoModel", "UserModel", "CommitModel", "CommitReviewModel", "ReviewCommentModel"]
 
 
 class RecordModel(Base):
@@ -407,3 +407,33 @@ class CommitReviewModel(Base):
     def __repr__(self) -> str:
         """String representation of CommitReviewModel."""
         return f"<CommitReviewModel(id={self.id}, commit_id={self.commit_id}, status={self.status})>"
+
+
+class ReviewCommentModel(Base):
+    """SQLAlchemy model for ReviewComment entity."""
+
+    __tablename__ = "review_comments"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    commit_id: Mapped[int] = mapped_column(ForeignKey("commits.id"), nullable=False, index=True)
+    reviewer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    line_number: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
+    file_path: Mapped[str | None] = mapped_column(String(500), nullable=True, index=True)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+
+    # Audit fields
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        """String representation of ReviewCommentModel."""
+        comment_preview = self.content[:50] + "..." if len(self.content) > 50 else self.content
+        return f"<ReviewCommentModel(id={self.id}, commit_id={self.commit_id}, content='{comment_preview}')>"

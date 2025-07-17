@@ -27,5 +27,6 @@
     }
   },
   "include": ["src"],
+  "exclude": ["src/types/api-generated.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
