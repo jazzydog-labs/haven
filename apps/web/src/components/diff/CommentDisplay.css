@@ -1,0 +1,36 @@
+.comment-display {
+  background: #f6f8fa;
+  border: 1px solid #d1d5da;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.comment-display + .comment-display {
+  margin-top: 4px;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #586069;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #24292e;
+}
+
+.comment-date {
+  color: #586069;
+}
+
+.comment-body {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #24292e;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

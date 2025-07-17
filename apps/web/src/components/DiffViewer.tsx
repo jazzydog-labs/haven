@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { InlineComment } from '../diff/InlineComment';
+import { CommentDisplay } from '../diff/CommentDisplay';
 import './DiffViewer.css';
 
 interface DiffLine {
@@ -44,6 +45,17 @@ interface DiffData {
   files: DiffFile[];
 }
 
+interface ReviewComment {
+  id: number;
+  commit_id: number;
+  reviewer_id: number;
+  line_number: number | null;
+  file_path: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string | null;
+}
+
 interface DiffViewerProps {
   commitId: number;
 }
@@ -55,9 +67,11 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
   const [viewMode, setViewMode] = useState<'unified' | 'split'>('unified');
   const [activeCommentLines, setActiveCommentLines] = useState<Set<string>>(new Set());
   const [selectedLineRange, setSelectedLineRange] = useState<{ start: string; end: string } | null>(null);
+  const [existingComments, setExistingComments] = useState<ReviewComment[]>([]);
 
   useEffect(() => {
     fetchDiffData();
+    fetchExistingComments();
   }, [commitId]);
 
   const fetchDiffData = async () => {
@@ -75,6 +89,19 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
     }
   };
 
+  const fetchExistingComments = async () => {
+    try {
+      const response = await fetch(`/api/v1/commits/${commitId}/comments`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+      const comments: ReviewComment[] = await response.json();
+      setExistingComments(comments);
+    } catch (err) {
+      console.error('Failed to load comments:', err);
+    }
+  };
+
   const getLineClass = (type: string) => {
     switch (type) {
       case 'insert':
@@ -88,6 +115,12 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
 
   const getLineKey = (fileIndex: number, blockIndex: number, lineIndex: number, side?: 'left' | 'right') => {
     return `${fileIndex}-${blockIndex}-${lineIndex}${side ? `-${side}` : ''}`;
+  };
+
+  const getCommentsForLine = (fileName: string, lineNumber: number): ReviewComment[] => {
+    return existingComments.filter(
+      comment => comment.file_path === fileName && comment.line_number === lineNumber
+    );
   };
 
   const handleLineClick = (lineKey: string, fileName: string, lineNumber: number) => {
@@ -133,7 +166,8 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
         return newSet;
       });
       
-      // TODO: Add the saved comment to the UI to show it immediately
+      // Refresh comments to show the new one
+      await fetchExistingComments();
     } catch (error) {
       console.error('Failed to save comment:', error);
       alert('Failed to save comment');
@@ -158,6 +192,7 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
               const lineKey = getLineKey(fileIndex, blockIndex, lineIndex);
               const lineNumber = line.newNumber || line.oldNumber || 0;
               const showComment = activeCommentLines.has(lineKey);
+              const existingLineComments = getCommentsForLine(fileName, lineNumber);
               
               return (
                 <React.Fragment key={lineIndex}>
@@ -178,6 +213,13 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
                       <span>{line.content.replace(/^[+-]\s?/, '')}</span>
                     </span>
                   </div>
+                  {existingLineComments.length > 0 && (
+                    <div className="diff-comment-row">
+                      {existingLineComments.map((comment) => (
+                        <CommentDisplay key={comment.id} comment={comment} />
+                      ))}
+                    </div>
+                  )}
                   {showComment && (
                     <div className="diff-comment-row">
                       <InlineComment
@@ -233,6 +275,8 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
                 const rightLineNumber = rightLine?.newNumber || 0;
                 const showLeftComment = leftLine && leftLine.type === 'delete' && activeCommentLines.has(leftLineKey);
                 const showRightComment = rightLine && rightLine.type === 'insert' && activeCommentLines.has(rightLineKey);
+                const leftExistingComments = leftLine ? getCommentsForLine(fileName, leftLineNumber) : [];
+                const rightExistingComments = rightLine ? getCommentsForLine(fileName, rightLineNumber) : [];
                 
                 return (
                   <React.Fragment key={lineIndex}>
@@ -274,6 +318,27 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
                         </span>
                       </div>
                     </div>
+                    {(leftExistingComments.length > 0 || rightExistingComments.length > 0) && (
+                      <div className="diff-comment-row split">
+                        {leftExistingComments.length > 0 && (
+                          <div className="diff-comment-left">
+                            {leftExistingComments.map((comment) => (
+                              <CommentDisplay key={comment.id} comment={comment} />
+                            ))}
+                          </div>
+                        )}
+                        {rightExistingComments.length > 0 && (
+                          <div className="diff-comment-right">
+                            {rightExistingComments.map((comment) => (
+                              <CommentDisplay key={comment.id} comment={comment} />
+                            ))}
+                          </div>
+                        )}
+                        {leftExistingComments.length === 0 && rightExistingComments.length > 0 && (
+                          <div className="diff-comment-left"></div>
+                        )}
+                      </div>
+                    )}
                     {(showLeftComment || showRightComment) && (
                       <div className="diff-comment-row split">
                         {showLeftComment && (
