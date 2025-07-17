@@ -4,6 +4,19 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0005 - Simplified justfile and consolidated run commands
+**Refactored**: Major cleanup of justfile to reduce command complexity
+**Consolidated**: Multiple run commands into simple 'just run' that starts everything with proxy on port 80
+**Moved**: Complex logic to shell scripts in scripts/ directory for maintainability
+**See**: New simplified justfile and scripts in scripts/ directory
+**Test**: Run `just run` and enter sudo password to start everything
+**Demo**: 
+1. `just stop` - Stop any running services
+2. `just run` - Start everything (will prompt for sudo)
+3. Access http://haven.local with clean URLs
+4. `just status` - Check what's running
+5. `just logs` - View logs with interactive menu
+
 ## 2025-07-17.0004 - Added 'just start-proxy' command for port 80 setup
 **Added**: New `just start-proxy` command that automatically starts all services with proxy on port 80
 **Created**: Port architecture documentation explaining the correct port usage
