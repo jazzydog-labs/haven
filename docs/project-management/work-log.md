@@ -4,6 +4,28 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0009 - Added inline comments on diff lines
+**Added**: Ability to add inline comments on specific lines in commit diffs
+**Features**:
+- Click on any added (green) or deleted (red) line in the diff viewer to add a comment
+- Comments are saved to the database via API endpoint
+- Visual hover effects indicate clickable lines
+- Works in both unified and split view modes
+**See**: 
+- `apps/web/src/components/diff/InlineComment.tsx` - Comment form component
+- `apps/api/src/haven/interface/api/commit_routes.py:481-547` - API endpoints
+**Test**: 
+1. Navigate to a commit review page
+2. Click on any green or red line in the diff
+3. Enter a comment and click "Add Comment"
+4. Check API logs for successful POST to `/api/v1/commits/{id}/comments`
+**Demo**:
+1. Start services: `just run`
+2. Go to http://haven.local/repository/[repo-id]/browse
+3. Click on any commit to view its diff
+4. Click on a changed line (green or red) to see comment form
+5. Add a comment and save it
+
 ## 2025-07-17.0008 - Fixed 5-second delay in repository browser loading
 **Fixed**: Repository browser was taking 5+ seconds to load commits due to IPv6 DNS timeout
 **Root Cause**: Vite proxy was using api.haven.local which attempted IPv6 first, timed out, then fell back to IPv4
