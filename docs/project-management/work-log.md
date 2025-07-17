@@ -1335,4 +1335,12 @@ Key features:
 
 ---
 
+## 2025-07-17.0003 - Removed export options and API rate limiting from roadmap
+**Removed**: PDF/markdown export and API rate limiting features from project roadmap
+**See**: `docs/project-management/roadmap.md` - these features no longer appear in the backlog
+**Test**: `grep -i "export.*pdf\|rate.*limit" docs/project-management/roadmap.md` returns no results
+**Demo**: View the updated roadmap to confirm these features have been removed from planning
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
