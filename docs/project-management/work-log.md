@@ -4,6 +4,18 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0002 - Created convenient script for port 80 proxy setup
+**Added**: start-proxy-80.sh script for easy proxy startup on standard HTTP port
+**Fixed**: Automated the process of starting all services and running Caddy with sudo
+**See**: New script `start-proxy-80.sh` and updated CLAUDE.md documentation
+**Test**: Run `./start-proxy-80.sh` and enter sudo password when prompted
+**Demo**: 
+1. Stop any running services: `just stop-all`
+2. Run the script: `./start-proxy-80.sh`
+3. Enter your sudo password when prompted
+4. Access clean URLs: http://haven.local, http://api.haven.local/docs
+5. No port numbers needed in URLs!
+
 ## 2025-07-17.0001 - Fixed Caddy proxy port configuration for clean URLs
 **Added**: Support for running Caddy proxy on standard port 80 without port numbers in URLs
 **Fixed**: Port mismatch in Caddyfile.http (was routing to wrong port 3003 instead of 3000)

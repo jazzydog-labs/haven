@@ -116,8 +116,13 @@ stop-all:
         PID=`cat /tmp/haven-frontend.pid`; \
         kill $$PID 2>/dev/null || true; \
         rm -f /tmp/haven-frontend.pid; \
-        echo "✅ Frontend stopped"; \
+        echo "✅ Frontend stopped (from PID file)"; \
     fi
+    
+    # Kill any remaining frontend processes
+    @pkill -f "npm run dev" 2>/dev/null || true
+    @pkill -f "vite --host" 2>/dev/null || true
+    @echo "✅ All frontend processes stopped"
     
     # Stop backend
     @just docker::down > /dev/null 2>&1
@@ -306,13 +311,21 @@ stop-proxy:
         echo "✅ Caddy proxy stopped"; \
     fi
     
+    # Kill any remaining Caddy processes
+    @pkill -f caddy 2>/dev/null || true
+    
     # Stop frontend if running
     @if [ -f /tmp/haven-frontend.pid ]; then \
         PID=`cat /tmp/haven-frontend.pid`; \
         kill $$PID 2>/dev/null || true; \
         rm -f /tmp/haven-frontend.pid; \
-        echo "✅ Frontend stopped"; \
+        echo "✅ Frontend stopped (from PID file)"; \
     fi
+    
+    # Kill any remaining frontend processes
+    @pkill -f "npm run dev" 2>/dev/null || true
+    @pkill -f "vite --host" 2>/dev/null || true
+    @echo "✅ All frontend processes stopped"
     
     # Stop backend
     @just docker::down > /dev/null 2>&1
