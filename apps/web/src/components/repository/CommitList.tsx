@@ -238,7 +238,7 @@ export const CommitList: React.FC<CommitListProps> = ({
     return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   };
 
-  const truncateMessage = (message: string, maxLength: number = 80) => {
+  const truncateMessage = (message: string, maxLength: number = 60) => {
     if (message.length <= maxLength) return message;
     return message.substring(0, maxLength - 3) + "...";
   };
@@ -331,37 +331,33 @@ export const CommitList: React.FC<CommitListProps> = ({
           commits.map((commit) => (
           <div
             key={commit.id}
-            className={`commit-item ${
+            className={`commit-item compact ${
               selectedCommitId === commit.id ? "selected" : ""
             }`}
             onClick={() => handleCommitClick(commit)}
           >
-            <div className="commit-header">
+            <div className="commit-compact-line">
               <span className="commit-hash">
                 {highlightMatch(commit.commit_hash.substring(0, 7), searchMatches.get(commit.id), 'commit_hash')}
               </span>
               <CommitTypeTag message={commit.message} />
-              {getReviewStatusBadge(commit.review_status)}
-              <span className="commit-date">{formatDate(commit.committed_at)}</span>
-            </div>
-            
-            <div className="commit-message">
-              {highlightMatch(truncateMessage(commit.message), searchMatches.get(commit.id), 'message')}
-            </div>
-            
-            <div className="commit-meta">
-              <span className="commit-author">
-                {highlightMatch(commit.author_name, searchMatches.get(commit.id), 'author_name')}
+              <span className="commit-message">
+                {highlightMatch(truncateMessage(commit.message), searchMatches.get(commit.id), 'message')}
               </span>
-              <div className="commit-stats">
-                <span className="stat files">{commit.diff_stats.files_changed} files</span>
-                <span className="stat additions">+{commit.diff_stats.insertions}</span>
-                <span className="stat deletions">-{commit.diff_stats.deletions}</span>
-                {commit.diff_html_path && (
-                  <span className="stat diff-ready" title="Diff generated">
-                    📄
-                  </span>
-                )}
+              <div className="commit-right-info">
+                <span className="commit-author">
+                  {highlightMatch(commit.author_name, searchMatches.get(commit.id), 'author_name')}
+                </span>
+                <div className="commit-stats">
+                  <span className="stat files">{commit.diff_stats.files_changed}f</span>
+                  <span className="stat additions">+{commit.diff_stats.insertions}</span>
+                  <span className="stat deletions">-{commit.diff_stats.deletions}</span>
+                  {commit.diff_html_path && (
+                    <span className="stat diff-ready" title="Diff generated">📄</span>
+                  )}
+                </div>
+                {getReviewStatusBadge(commit.review_status)}
+                <span className="commit-date">{formatDate(commit.committed_at)}</span>
               </div>
             </div>
           </div>

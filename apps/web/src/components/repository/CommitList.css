@@ -68,7 +68,7 @@
 
 /* Commit Item */
 .commit-item {
-  padding: 16px 24px;
+  padding: 8px 16px;
   border-bottom: 1px solid #e0e0e0;
   cursor: pointer;
   transition: background-color 0.15s;
@@ -81,11 +81,35 @@
 .commit-item.selected {
   background: #e3f2fd;
   border-left: 3px solid #1976d2;
-  padding-left: 21px;
+  padding-left: 13px;
 }
 
 .commit-item:last-child {
   border-bottom: none;
+}
+
+/* Compact Layout */
+.commit-item.compact {
+  padding: 6px 16px;
+}
+
+.commit-item.compact.selected {
+  padding-left: 13px;
+}
+
+.commit-compact-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.commit-right-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
 /* Commit Header */
@@ -104,11 +128,22 @@
   background: #e3f2fd;
   padding: 2px 8px;
   border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.commit-compact-line .commit-hash {
+  font-size: 12px;
+  padding: 1px 6px;
 }
 
 .commit-date {
   font-size: 0.75rem;
   color: #666;
+  flex-shrink: 0;
+}
+
+.commit-compact-line .commit-date {
+  font-size: 11px;
 }
 
 /* Commit Message */
@@ -117,6 +152,16 @@
   color: #333;
   margin-bottom: 8px;
   line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commit-compact-line .commit-message {
+  margin-bottom: 0;
+  font-size: 14px;
 }
 
 /* Commit Meta */
@@ -136,19 +181,30 @@
   border-radius: 12px;
   font-size: 0.8125rem;
   font-weight: 500;
+  flex-shrink: 0;
+}
+
+.commit-compact-line .commit-author {
+  padding: 1px 8px;
+  font-size: 11px;
 }
 
 /* Commit Stats */
 .commit-stats {
   display: flex;
-  gap: 12px;
+  gap: 6px;
 }
 
 .commit-stats .stat {
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
   font-size: 0.75rem;
   background: #f5f5f5;
+}
+
+.commit-compact-line .commit-stats .stat {
+  padding: 1px 4px;
+  font-size: 11px;
 }
 
 .commit-stats .additions {
@@ -164,7 +220,7 @@
 .commit-stats .diff-ready {
   background: transparent;
   padding: 0;
-  font-size: 1rem;
+  font-size: 0.875rem;
 }
 
 /* Pagination */
@@ -211,6 +267,13 @@
   font-weight: 600;
   border-radius: 12px;
   margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.commit-compact-line .review-badge {
+  padding: 1px 6px;
+  font-size: 10px;
+  margin-left: 0;
 }
 
 .badge-pending {
