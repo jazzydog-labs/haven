@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { InlineComment } from '../diff/InlineComment';
-import { CommentDisplay } from '../diff/CommentDisplay';
+import { InlineComment } from './diff/InlineComment';
+import { CommentDisplay } from './diff/CommentDisplay';
 import './DiffViewer.css';
 
 interface DiffLine {
