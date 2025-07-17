@@ -50,6 +50,14 @@ Current next steps:
 
 ### Recent Completions (2025-07-17)
 - ✅ Search & Filter Feature for Repository Browser - Full-text search, author filtering, and date range filtering implemented
+- ✅ Fixed scrolling issues in repository browser and diff viewer - Single page scroll, no nested containers
+- ✅ Increased pagination to 500 commits per page
+- ✅ Fixed "Failed to submit review" error by creating default reviewer user
+- ✅ Added review status filter with multiple selection checkboxes
+- ✅ Implemented inline comments on diff lines with click-to-comment interface
+- ✅ Added conventional commit tags with emojis (feat, fix, docs, etc.)
+- ✅ Enhanced real-time fuzzy search with highlighting and visual feedback
+- ✅ Display existing comments on diff lines automatically
 
 **Completed Infrastructure (Priority 1):**
 - ✓ COMPLETED: `implement-scalable-justfile-system.md` - Hierarchical command structure
