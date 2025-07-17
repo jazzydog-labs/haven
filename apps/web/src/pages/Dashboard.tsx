@@ -4,7 +4,7 @@ const Dashboard = () => {
   const { data: health, isLoading } = useQuery({
     queryKey: ["health"],
     queryFn: async () => {
-      const response = await fetch("/api/health");
+      const response = await fetch("/api/v1/health");
       if (!response.ok) {
         throw new Error("Failed to fetch health status");
       }

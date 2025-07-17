@@ -77,10 +77,20 @@ def create_app() -> FastAPI:
             content={"detail": str(exc)},
         )
 
-    # Add health check
+    # Add health check at root (for container health checks)
     @app.get("/health", tags=["Health"])
     async def health_check():
         """Check service health."""
+        return {
+            "status": "healthy",
+            "version": settings.app.version,
+            "environment": settings.app.env,
+        }
+    
+    # Also add health check under API v1 (for frontend)
+    @app.get("/api/v1/health", tags=["Health"])
+    async def api_health_check():
+        """Check service health via API."""
         return {
             "status": "healthy",
             "version": settings.app.version,

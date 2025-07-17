@@ -4,6 +4,17 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0007 - Fixed dashboard API health check endpoint
+**Fixed**: Dashboard was showing "API Health: Unavailable" due to incorrect endpoint path
+**Added**: Health endpoint at /api/v1/health to match frontend expectations
+**Maintained**: Original /health endpoint for container health checks
+**See**: Dashboard now correctly displays API health status
+**Test**: `curl http://localhost:3000/api/v1/health` returns healthy status
+**Demo**:
+1. Navigate to http://localhost:3000
+2. Dashboard shows "API Health: Healthy" with green indicator
+3. Both endpoints work: `/health` (containers) and `/api/v1/health` (frontend)
+
 ## 2025-07-17.0006 - Repository browser integration complete with real commits
 **Integrated**: Repository browser fully functional with real commit data from current repository
 **Fixed**: API import issues and route ordering to enable commit endpoints
