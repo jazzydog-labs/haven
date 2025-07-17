@@ -1343,4 +1343,50 @@ Key features:
 
 ---
 
+## 2025-07-17.0006 - Major repository browser improvements
+**Added**: Complete overhaul of repository browser with hash-based URLs and enhanced UI
+**See**: 
+- Frontend: `apps/web/src/pages/RepositoryBrowser.tsx` - Shows repo info, uses hash URLs
+- Backend: `apps/api/src/haven/interface/api/repository_routes.py` - New repository API
+- Backend: `apps/api/src/haven/interface/api/commit_routes.py` - Added paginated-with-reviews endpoint
+**Test**: 
+```bash
+# Update existing repos with hashes
+cd apps/api && python scripts/update-repository-hashes.py
+
+# Test repository endpoint
+curl http://localhost:8080/api/v1/repositories/{repository_hash}
+
+# Test commits with review status
+curl "http://localhost:8080/api/v1/commits/paginated-with-reviews?repository_id=1"
+```
+**Demo**: 
+```bash
+# Start services
+just run
+
+# Navigate to repository browser (use hash from DB)
+# http://localhost:3000/repository/{repository_hash}/browse
+
+# Features demonstrated:
+# 1. Repository info display (name, paths, branches, commit count)
+# 2. Commits show review status badges
+# 3. Click commit to review - uses hash in URL
+# 4. Diff auto-generates on page load
+# 5. Search/filter still works with review status
+```
+
+Key improvements:
+- Repository URLs use SHA256 hash of local path
+- Repository page shows full info (local path, remote URL, branches)
+- Commits display review status badges (Pending, Approved, Needs Revision, Draft)
+- Commit review URLs use commit hash instead of numeric ID
+- Auto-generate diff when viewing commit (no manual button click)
+- Fixed diff HTML rendering using dangerouslySetInnerHTML
+- Added migration to populate repository hashes
+
+Breaking changes require URL updates in any bookmarks or links.
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
