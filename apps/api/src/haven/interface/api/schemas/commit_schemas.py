@@ -128,3 +128,13 @@ class CommitReviewResponse(CommitReviewBase):
             created_at=review.created_at,
             updated_at=review.updated_at,
         )
+
+
+class PaginatedCommitResponse(BaseModel):
+    """Paginated response for commit listings."""
+
+    items: list[CommitResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int

@@ -6,12 +6,14 @@ import DiffGeneration from "./pages/DiffGeneration";
 import Dashboards from "./pages/Dashboards";
 import CommitViewer from "./components/diff/CommitViewer";
 import { CommitReviewPage } from "./pages/CommitReview";
+import { RepositoryBrowserPage } from "./pages/RepositoryBrowser";
 
 function App() {
   return (
     <Routes>
       <Route path="/diffs/commit/:commitHash" element={<CommitViewer />} />
       <Route path="/commits/:commitId/review" element={<CommitReviewPage />} />
+      <Route path="/repository/:repositoryId/browse" element={<RepositoryBrowserPage />} />
       <Route
         path="/*"
         element={

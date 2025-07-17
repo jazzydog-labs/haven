@@ -20,6 +20,7 @@ from haven.interface.api.schemas.commit_schemas import (
     CommitResponse,
     CommitReviewCreate,
     CommitReviewResponse,
+    PaginatedCommitResponse,
 )
 
 router = APIRouter(prefix="/api/v1/commits", tags=["commits"])
@@ -80,6 +81,35 @@ async def list_commits(
     commits = await repo.get_by_repository(repository_id, limit, offset)
 
     return [CommitResponse.from_entity(commit) for commit in commits]
+
+
+@router.get("/paginated", response_model=PaginatedCommitResponse)
+async def list_commits_paginated(
+    repository_id: int = Query(..., description="Repository ID"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    db: AsyncSession = Depends(get_db),
+) -> PaginatedCommitResponse:
+    """List commits for a repository with pagination metadata."""
+    repo = SQLAlchemyCommitRepository(db)
+
+    # Calculate offset from page number
+    offset = (page - 1) * page_size
+
+    # Get commits and total count
+    commits = await repo.get_by_repository(repository_id, page_size, offset)
+    total = await repo.count_by_repository(repository_id)
+
+    # Calculate total pages
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+
+    return PaginatedCommitResponse(
+        items=[CommitResponse.from_entity(commit) for commit in commits],
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages,
+    )
 
 
 @router.post("/{commit_id}/generate-diff", response_model=CommitDiffResponse)

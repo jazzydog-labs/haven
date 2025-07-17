@@ -116,6 +116,16 @@ class SQLAlchemyCommitRepository(CommitRepository):
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
 
+    async def count_by_repository(self, repository_id: int) -> int:
+        """Count commits for a repository."""
+        from sqlalchemy import func
+
+        stmt = select(func.count(CommitModel.id)).where(
+            CommitModel.repository_id == repository_id
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar() or 0
+
     def _model_to_entity(self, model: CommitModel) -> Commit:
         """Convert CommitModel to Commit entity."""
         return Commit(

@@ -45,6 +45,11 @@ class CommitRepository(ABC):
         """Check if a commit exists by hash."""
         pass
 
+    @abstractmethod
+    async def count_by_repository(self, repository_id: int) -> int:
+        """Count commits for a repository."""
+        pass
+
 
 class CommitReviewRepository(ABC):
     """Repository interface for CommitReview entities."""
