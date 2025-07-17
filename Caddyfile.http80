@@ -1,9 +1,9 @@
-# HTTP Caddy configuration for local development
+# HTTP Caddy configuration for local development on port 80
 {
     # Disable automatic HTTPS
     auto_https off
-    # Use port 9000 for reverse proxy (no sudo required)
-    http_port 9000
+    # Use standard HTTP port 80 (requires sudo)
+    http_port 80
 }
 
 # Main domain - serves the web app

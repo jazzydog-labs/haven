@@ -206,8 +206,80 @@ run-proxy: _check-hosts
     @echo "🔒 HTTPS available at https://haven.local (if certificates are set up)"
     @echo ""
     @echo "🎯 Want clean URLs without port numbers?"
-    @echo "   Run: ./setup-port-forwarding.sh"
-    @echo "   Then access: http://web.haven.local (no :9000 needed)"
+    @echo "   Option 1: Run 'just run-proxy80' (requires sudo)"
+    @echo "   Option 2: Run './setup-port-forwarding.sh' to forward port 80 to 9000"
+    @echo ""
+    @echo "📝 Logs:"
+    @echo "  Backend:  just docker::logs api"
+    @echo "  Frontend: tail -f /tmp/haven-frontend.log"
+    @echo "  Proxy:    tail -f /tmp/haven-caddy.log"
+    @echo ""
+    @echo "🛑 To stop everything: just stop-proxy"
+    @echo ""
+    @echo "Press Ctrl+C to exit (services will continue running)"
+    @echo ""
+    
+    # Keep running to show the info
+    @while true; do sleep 60; done
+
+# Run with local reverse proxy on port 80 (requires sudo)
+run-proxy80: _check-hosts
+    @echo "🚀 Starting Haven with reverse proxy on port 80..."
+    @echo "⚠️  This requires sudo access to bind to port 80"
+    @echo "==========================================="
+    @echo ""
+    
+    # Start backend services in background
+    @just docker::up-d > /dev/null 2>&1
+    
+    # Wait for backend to be ready
+    @echo "⏳ Waiting for backend services to start..."
+    @while ! curl -s http://localhost:8080/health > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    @just _success "Backend services ready!"
+    @echo ""
+    
+    # Start frontend in background
+    @echo "🎨 Starting frontend development server..."
+    @cd {{ WEB_DIR }} && npm run dev > /tmp/haven-frontend.log 2>&1 & echo $$! > /tmp/haven-frontend.pid
+    
+    # Wait for frontend
+    @echo "⏳ Waiting for frontend to start..."
+    @while ! curl -s http://localhost:3000 > /dev/null 2>&1; do \
+        printf "."; \
+        sleep 0.3; \
+    done
+    @echo ""
+    @just _success "Frontend ready!"
+    @echo ""
+    
+    # Start Caddy proxy on port 80 (requires sudo)
+    @echo "🔐 Starting Caddy reverse proxy on port 80 (requires sudo)..."
+    @cd {{ PROJECT_ROOT }} && sudo caddy run --config ./Caddyfile.http80 --adapter caddyfile > /tmp/haven-caddy.log 2>&1 & echo $$! > /tmp/haven-caddy.pid
+    
+    # Wait for Caddy
+    @sleep 2
+    
+    @echo ""
+    @echo "======================================"
+    @echo "🎉 Haven is running with reverse proxy!"
+    @echo "======================================"
+    @echo ""
+    @echo "📱 Access your application at:"
+    @echo ""
+    @echo "  🌐 Main:        http://haven.local"
+    @echo "  🌐 Frontend:    http://web.haven.local"
+    @echo "  📚 API:         http://api.haven.local"
+    @echo "  📊 Swagger:     http://api.haven.local/docs"
+    @echo "  🔮 GraphQL:     http://api.haven.local/graphql"
+    @echo "  ❤️  Health:     http://api.haven.local/health"
+    @echo ""
+    @echo "✨ No port numbers needed!"
+    @echo ""
+    @echo "🔥 Hot-reload enabled for both frontend and backend!"
     @echo ""
     @echo "📝 Logs:"
     @echo "  Backend:  just docker::logs api"

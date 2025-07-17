@@ -7,10 +7,19 @@
 # Start EVERYTHING (backend + frontend with hot-reload)
 just run
 
-# Or with local domains (recommended):
+# Or with local domains on port 9000:
 just run-proxy
 
+# Or with local domains on port 80 (requires sudo):
+just run-proxy80
+
 # Access your app:
+# With run-proxy (port 9000):
+# 🌐 Frontend:    http://web.haven.local:9000
+# 📚 API Docs:    http://api.haven.local:9000/docs
+# 🔮 GraphQL:     http://api.haven.local:9000/graphql
+
+# With run-proxy80 (port 80, no port needed in URL):
 # 🌐 Frontend:    http://web.haven.local
 # 📚 API Docs:    http://api.haven.local/docs
 # 🔮 GraphQL:     http://api.haven.local/graphql
