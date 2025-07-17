@@ -64,7 +64,9 @@ class TaskRepositoryImpl(TaskRepository):
         )
         return [self._model_to_entity(TaskModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
+    async def get_by_assignee(
+        self, assignee_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         """Get tasks by assignee."""
         result = await self.session.execute(
             TaskModel.__table__.select()
@@ -75,7 +77,9 @@ class TaskRepositoryImpl(TaskRepository):
         )
         return [self._model_to_entity(TaskModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
+    async def get_by_repository(
+        self, repository_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         """Get tasks by repository."""
         result = await self.session.execute(
             TaskModel.__table__.select()
@@ -123,10 +127,9 @@ class TaskRepositoryImpl(TaskRepository):
         """Search tasks by title or description."""
         result = await self.session.execute(
             TaskModel.__table__.select()
-            .where(or_(
-                TaskModel.title.ilike(f"%{query}%"),
-                TaskModel.description.ilike(f"%{query}%")
-            ))
+            .where(
+                or_(TaskModel.title.ilike(f"%{query}%"), TaskModel.description.ilike(f"%{query}%"))
+            )
             .order_by(desc(TaskModel.created_at))
             .limit(limit)
             .offset(offset)
@@ -138,10 +141,7 @@ class TaskRepositoryImpl(TaskRepository):
         now = datetime.utcnow()
         result = await self.session.execute(
             TaskModel.__table__.select()
-            .where(and_(
-                TaskModel.due_date < now,
-                TaskModel.status != "completed"
-            ))
+            .where(and_(TaskModel.due_date < now, TaskModel.status != "completed"))
             .order_by(TaskModel.due_date)
             .limit(limit)
             .offset(offset)
@@ -157,16 +157,14 @@ class TaskRepositoryImpl(TaskRepository):
         # Count by status
         status_counts = await self.session.execute(
             base_query.with_only_columns(
-                TaskModel.status,
-                func.count(TaskModel.id).label("count")
+                TaskModel.status, func.count(TaskModel.id).label("count")
             ).group_by(TaskModel.status)
         )
 
         # Count by priority
         priority_counts = await self.session.execute(
             base_query.with_only_columns(
-                TaskModel.priority,
-                func.count(TaskModel.id).label("count")
+                TaskModel.priority, func.count(TaskModel.id).label("count")
             ).group_by(TaskModel.priority)
         )
 
@@ -174,18 +172,22 @@ class TaskRepositoryImpl(TaskRepository):
         avg_resolution_time = await self.session.execute(
             base_query.with_only_columns(
                 func.avg(
-                    func.extract('epoch', TaskModel.completed_at - TaskModel.started_at) / 3600
+                    func.extract("epoch", TaskModel.completed_at - TaskModel.started_at) / 3600
                 ).label("avg_hours")
-            ).where(and_(
-                TaskModel.status == "completed",
-                TaskModel.started_at.is_not(None),
-                TaskModel.completed_at.is_not(None)
-            ))
+            ).where(
+                and_(
+                    TaskModel.status == "completed",
+                    TaskModel.started_at.is_not(None),
+                    TaskModel.completed_at.is_not(None),
+                )
+            )
         )
 
         return {
             "status_distribution": {row.status: row.count for row in status_counts.fetchall()},
-            "priority_distribution": {row.priority: row.count for row in priority_counts.fetchall()},
+            "priority_distribution": {
+                row.priority: row.count for row in priority_counts.fetchall()
+            },
             "average_resolution_time_hours": avg_resolution_time.scalar() or 0.0,
         }
 

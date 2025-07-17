@@ -1,4 +1,4 @@
-import { RecordItem } from '../../types/record';
+import { RecordItem } from "../../types/record";
 
 interface DeleteConfirmProps {
   record: RecordItem;
@@ -7,14 +7,20 @@ interface DeleteConfirmProps {
   isDeleting: boolean;
 }
 
-const DeleteConfirm = ({ record, onConfirm, onCancel, isDeleting }: DeleteConfirmProps) => {
+const DeleteConfirm = ({
+  record,
+  onConfirm,
+  onCancel,
+  isDeleting,
+}: DeleteConfirmProps) => {
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg max-w-md w-full p-6">
         <div className="mb-4">
           <h3 className="text-lg font-medium text-gray-900">Delete Record</h3>
           <p className="mt-2 text-sm text-gray-500">
-            Are you sure you want to delete this record? This action cannot be undone.
+            Are you sure you want to delete this record? This action cannot be
+            undone.
           </p>
         </div>
 
@@ -23,7 +29,7 @@ const DeleteConfirm = ({ record, onConfirm, onCancel, isDeleting }: DeleteConfir
             <span className="font-medium">Record ID:</span> {record.id}
           </p>
           <p className="text-sm text-gray-600 mt-1">
-            <span className="font-medium">Created:</span>{' '}
+            <span className="font-medium">Created:</span>{" "}
             {new Date(record.created_at).toLocaleString()}
           </p>
         </div>
@@ -43,7 +49,7 @@ const DeleteConfirm = ({ record, onConfirm, onCancel, isDeleting }: DeleteConfir
             disabled={isDeleting}
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>

@@ -91,7 +91,9 @@ class Roadmap:
         self.status = "cancelled"
         self.updated_at = datetime.now(UTC)
 
-    def update_dates(self, start_date: datetime | None = None, end_date: datetime | None = None) -> None:
+    def update_dates(
+        self, start_date: datetime | None = None, end_date: datetime | None = None
+    ) -> None:
         """Update roadmap dates."""
         if start_date and end_date and start_date > end_date:
             raise ValueError("Start date cannot be after end date")

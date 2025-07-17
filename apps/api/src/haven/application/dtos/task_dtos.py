@@ -23,7 +23,9 @@ class TaskUpdateRequest(BaseModel):
 
     title: str | None = Field(None, min_length=1, max_length=255, description="Task title")
     description: str | None = Field(None, max_length=5000, description="Task description")
-    status: str | None = Field(None, description="Task status (open, in_progress, completed, cancelled, blocked)")
+    status: str | None = Field(
+        None, description="Task status (open, in_progress, completed, cancelled, blocked)"
+    )
     priority: str | None = Field(None, description="Task priority (low, medium, high, urgent)")
     task_type: str | None = Field(None, description="Task type (task, todo, review, bug, feature)")
     assignee_id: int | None = Field(None, description="ID of the assigned user")
@@ -96,7 +98,9 @@ class TaskSearchRequest(BaseModel):
 class TaskStatusUpdateRequest(BaseModel):
     """Request DTO for updating task status."""
 
-    status: str = Field(..., description="New task status (open, in_progress, completed, cancelled, blocked)")
+    status: str = Field(
+        ..., description="New task status (open, in_progress, completed, cancelled, blocked)"
+    )
 
 
 class TaskTimeLogRequest(BaseModel):

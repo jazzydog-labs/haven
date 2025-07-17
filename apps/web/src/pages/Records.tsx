@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useRecords } from '../hooks/useRecords';
-import RecordList from '../components/records/RecordList';
-import RecordForm from '../components/records/RecordForm';
-import RecordDetail from '../components/records/RecordDetail';
-import DeleteConfirm from '../components/records/DeleteConfirm';
-import { RecordItem } from '../types/record';
+import { useState } from "react";
+import { useRecords } from "../hooks/useRecords";
+import RecordList from "../components/records/RecordList";
+import RecordForm from "../components/records/RecordForm";
+import RecordDetail from "../components/records/RecordDetail";
+import DeleteConfirm from "../components/records/DeleteConfirm";
+import { RecordItem } from "../types/record";
 
 const Records = () => {
   const [showForm, setShowForm] = useState(false);
@@ -61,7 +61,7 @@ const Records = () => {
         await deleteRecord(deletingRecord.id);
         setDeletingRecord(null);
       } catch (err) {
-        console.error('Failed to delete record:', err);
+        console.error("Failed to delete record:", err);
       } finally {
         setIsDeleting(false);
       }
@@ -72,7 +72,9 @@ const Records = () => {
     <div className="px-4 py-6 sm:px-0">
       <div className="sm:flex sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Records Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Records Management
+          </h1>
           <p className="mt-2 text-sm text-gray-700">
             Create, view, edit, and delete records with JSON data
           </p>
@@ -83,8 +85,16 @@ const Records = () => {
             onClick={handleCreate}
             className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            <svg className="-ml-1 mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+            <svg
+              className="-ml-1 mr-2 h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
             </svg>
             New Record
           </button>

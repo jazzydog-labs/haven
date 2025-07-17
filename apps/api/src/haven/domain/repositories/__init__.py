@@ -16,5 +16,5 @@ __all__ = [
     "RepositoryRepository",
     "TaskRepository",
     "TimeLogRepository",
-    "UserRepository"
+    "UserRepository",
 ]

@@ -17,7 +17,7 @@ async def test_create_repository(test_session: AsyncSession):
         url="https://github.com/user/test-repo.git",
         branch="main",
         description="Test repository",
-        is_local=False
+        is_local=False,
     )
 
     created_repo = await repo.create(repository)
@@ -32,6 +32,7 @@ async def test_create_repository(test_session: AsyncSession):
     assert created_repo.created_at is not None
     assert created_repo.updated_at is not None
 
+
 @pytest.mark.asyncio
 async def test_get_repository_by_id(test_session: AsyncSession):
     repo = RepositoryRepositoryImpl(test_session)
@@ -41,7 +42,7 @@ async def test_get_repository_by_id(test_session: AsyncSession):
         full_name="user/test-repo",
         url="https://github.com/user/test-repo.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
 
     created_repo = await repo.create(repository)
@@ -50,6 +51,7 @@ async def test_get_repository_by_id(test_session: AsyncSession):
     assert found_repo is not None
     assert found_repo.id == created_repo.id
     assert found_repo.name == "test-repo"
+
 
 @pytest.mark.asyncio
 async def test_get_repository_by_name(test_session: AsyncSession):
@@ -60,7 +62,7 @@ async def test_get_repository_by_name(test_session: AsyncSession):
         full_name="user/test-repo",
         url="https://github.com/user/test-repo.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
 
     await repo.create(repository)
@@ -68,6 +70,7 @@ async def test_get_repository_by_name(test_session: AsyncSession):
 
     assert found_repo is not None
     assert found_repo.name == "test-repo"
+
 
 @pytest.mark.asyncio
 async def test_get_repository_by_url(test_session: AsyncSession):
@@ -78,7 +81,7 @@ async def test_get_repository_by_url(test_session: AsyncSession):
         full_name="user/test-repo",
         url="https://github.com/user/test-repo.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
 
     await repo.create(repository)
@@ -86,6 +89,7 @@ async def test_get_repository_by_url(test_session: AsyncSession):
 
     assert found_repo is not None
     assert found_repo.url == "https://github.com/user/test-repo.git"
+
 
 @pytest.mark.asyncio
 async def test_get_all_repositories(test_session: AsyncSession):
@@ -96,14 +100,14 @@ async def test_get_all_repositories(test_session: AsyncSession):
         full_name="user/repo1",
         url="https://github.com/user/repo1.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
     repo2 = Repository(
         name="repo2",
         full_name="user/repo2",
         url="https://github.com/user/repo2.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
 
     await repo.create(repo1)
@@ -116,6 +120,7 @@ async def test_get_all_repositories(test_session: AsyncSession):
     assert "repo1" in repo_names
     assert "repo2" in repo_names
 
+
 @pytest.mark.asyncio
 async def test_update_repository(test_session: AsyncSession):
     repo = RepositoryRepositoryImpl(test_session)
@@ -125,7 +130,7 @@ async def test_update_repository(test_session: AsyncSession):
         full_name="user/test-repo",
         url="https://github.com/user/test-repo.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
 
     created_repo = await repo.create(repository)
@@ -137,6 +142,7 @@ async def test_update_repository(test_session: AsyncSession):
     assert updated_repo.description == "Updated description"
     assert updated_repo.branch == "develop"
 
+
 @pytest.mark.asyncio
 async def test_delete_repository(test_session: AsyncSession):
     repo = RepositoryRepositoryImpl(test_session)
@@ -146,7 +152,7 @@ async def test_delete_repository(test_session: AsyncSession):
         full_name="user/test-repo",
         url="https://github.com/user/test-repo.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
 
     created_repo = await repo.create(repository)
@@ -156,6 +162,7 @@ async def test_delete_repository(test_session: AsyncSession):
 
     deleted_repo = await repo.get_by_id(created_repo.id)
     assert deleted_repo is None
+
 
 @pytest.mark.asyncio
 async def test_update_repository_not_found(test_session: AsyncSession):
@@ -167,11 +174,12 @@ async def test_update_repository_not_found(test_session: AsyncSession):
         full_name="user/test-repo",
         url="https://github.com/user/test-repo.git",
         branch="main",
-        is_local=False
+        is_local=False,
     )
 
     with pytest.raises(ValueError, match="Repository with id 999 not found"):
         await repo.update(repository)
+
 
 @pytest.mark.asyncio
 async def test_delete_repository_not_found(test_session: AsyncSession):

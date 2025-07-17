@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 interface FileChange {
   path: string;
-  type: 'added' | 'modified' | 'deleted' | 'renamed';
+  type: "added" | "modified" | "deleted" | "renamed";
   insertions: number;
   deletions: number;
   oldPath?: string;
@@ -14,19 +14,23 @@ interface FileTreeProps {
   onFileSelect: (file: FileChange) => void;
 }
 
-const FileTree: React.FC<FileTreeProps> = ({ files, selectedFile, onFileSelect }) => {
+const FileTree: React.FC<FileTreeProps> = ({
+  files,
+  selectedFile,
+  onFileSelect,
+}) => {
   // Removed unused state for simplicity
 
   // Simple flat file list display for now
   const getFileIcon = (type: string) => {
     switch (type) {
-      case 'added':
+      case "added":
         return <span className="text-green-500 font-bold">+</span>;
-      case 'deleted':
+      case "deleted":
         return <span className="text-red-500 font-bold">-</span>;
-      case 'modified':
+      case "modified":
         return <span className="text-blue-500 font-bold">M</span>;
-      case 'renamed':
+      case "renamed":
         return <span className="text-yellow-500 font-bold">R</span>;
       default:
         return <span className="text-gray-500 font-bold">?</span>;
@@ -55,19 +59,19 @@ const FileTree: React.FC<FileTreeProps> = ({ files, selectedFile, onFileSelect }
       <div className="overflow-y-auto max-h-96">
         {files.map((file, index) => {
           const isSelected = selectedFile === file.path;
-          
+
           return (
             <div
               key={index}
               className={`flex items-center py-2 px-4 hover:bg-gray-50 cursor-pointer ${
-                isSelected ? 'bg-blue-50 border-r-2 border-blue-500' : ''
+                isSelected ? "bg-blue-50 border-r-2 border-blue-500" : ""
               }`}
               onClick={() => onFileSelect(file)}
             >
               <div className="flex-shrink-0 mr-3 w-4 text-center">
                 {getFileIcon(file.type)}
               </div>
-              
+
               <span className="text-sm text-gray-900 truncate flex-1 min-w-0">
                 {file.path}
               </span>
@@ -90,19 +94,19 @@ const FileTree: React.FC<FileTreeProps> = ({ files, selectedFile, onFileSelect }
         <div className="grid grid-cols-3 gap-4 text-xs">
           <div className="text-center">
             <div className="font-medium text-gray-900">
-              {files.filter(f => f.type === 'added').length}
+              {files.filter((f) => f.type === "added").length}
             </div>
             <div className="text-green-600">Added</div>
           </div>
           <div className="text-center">
             <div className="font-medium text-gray-900">
-              {files.filter(f => f.type === 'modified').length}
+              {files.filter((f) => f.type === "modified").length}
             </div>
             <div className="text-blue-600">Modified</div>
           </div>
           <div className="text-center">
             <div className="font-medium text-gray-900">
-              {files.filter(f => f.type === 'deleted').length}
+              {files.filter((f) => f.type === "deleted").length}
             </div>
             <div className="text-red-600">Deleted</div>
           </div>

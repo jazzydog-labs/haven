@@ -4,7 +4,17 @@ from datetime import datetime
 from typing import Any, ClassVar
 from uuid import UUID
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -18,7 +28,21 @@ class Base(DeclarativeBase):
     }
 
 
-__all__ = ["Base", "CommentModel", "MilestoneModel", "RecordModel", "RepositoryModel", "RoadmapModel", "TaskModel", "TimeLogModel", "TodoModel", "UserModel", "CommitModel", "CommitReviewModel", "ReviewCommentModel"]
+__all__ = [
+    "Base",
+    "CommentModel",
+    "CommitModel",
+    "CommitReviewModel",
+    "MilestoneModel",
+    "RecordModel",
+    "RepositoryModel",
+    "ReviewCommentModel",
+    "RoadmapModel",
+    "TaskModel",
+    "TimeLogModel",
+    "TodoModel",
+    "UserModel",
+]
 
 
 class RecordModel(Base):
@@ -115,8 +139,12 @@ class TaskModel(Base):
     task_type: Mapped[str] = mapped_column(String(50), nullable=False, default="task", index=True)
 
     # Relationships
-    assignee_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
-    repository_id: Mapped[int | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
+    assignee_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True, index=True
+    )
+    repository_id: Mapped[int | None] = mapped_column(
+        ForeignKey("repositories.id"), nullable=True, index=True
+    )
 
     # Time tracking
     estimated_hours: Mapped[float | None] = mapped_column(nullable=True)
@@ -152,7 +180,9 @@ class CommentModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    comment_type: Mapped[str] = mapped_column(String(50), nullable=False, default="comment", index=True)
+    comment_type: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="comment", index=True
+    )
 
     # Relationships
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=False, index=True)
@@ -229,7 +259,9 @@ class TodoModel(Base):
     # Relationships
     owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
     task_id: Mapped[int | None] = mapped_column(ForeignKey("tasks.id"), nullable=True, index=True)
-    milestone_id: Mapped[int | None] = mapped_column(ForeignKey("milestones.id"), nullable=True, index=True)
+    milestone_id: Mapped[int | None] = mapped_column(
+        ForeignKey("milestones.id"), nullable=True, index=True
+    )
 
     # Dates
     due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -253,7 +285,9 @@ class TodoModel(Base):
 
     def __repr__(self) -> str:
         """String representation of TodoModel."""
-        return f"<TodoModel(id={self.id}, title={self.title[:50]}, is_completed={self.is_completed})>"
+        return (
+            f"<TodoModel(id={self.id}, title={self.title[:50]}, is_completed={self.is_completed})>"
+        )
 
 
 class RoadmapModel(Base):
@@ -269,7 +303,9 @@ class RoadmapModel(Base):
 
     # Relationships
     owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
-    repository_id: Mapped[int | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
+    repository_id: Mapped[int | None] = mapped_column(
+        ForeignKey("repositories.id"), nullable=True, index=True
+    )
 
     # Dates
     start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -304,7 +340,9 @@ class MilestoneModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[str] = mapped_column(String(50), nullable=False, default="not_started", index=True)
+    status: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="not_started", index=True
+    )
     progress_percentage: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     # Relationships
@@ -342,7 +380,9 @@ class CommitModel(Base):
     __tablename__ = "commits"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    repository_id: Mapped[int] = mapped_column(ForeignKey("repositories.id"), nullable=False, index=True)
+    repository_id: Mapped[int] = mapped_column(
+        ForeignKey("repositories.id"), nullable=False, index=True
+    )
     commit_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     author_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -350,11 +390,17 @@ class CommitModel(Base):
     committer_name: Mapped[str] = mapped_column(String(255), nullable=False)
     committer_email: Mapped[str] = mapped_column(String(255), nullable=False)
     committed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    
+
     # Diff statistics
     files_changed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     insertions: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     deletions: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    # Diff HTML file reference
+    diff_html_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    diff_generated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     # Audit fields
     created_at: Mapped[datetime] = mapped_column(
@@ -371,12 +417,14 @@ class CommitModel(Base):
 
     # Add unique constraint on repository_id + commit_hash
     __table_args__ = (
-        UniqueConstraint('repository_id', 'commit_hash', name='_repository_commit_hash_uc'),
+        UniqueConstraint("repository_id", "commit_hash", name="_repository_commit_hash_uc"),
     )
 
     def __repr__(self) -> str:
         """String representation of CommitModel."""
-        return f"<CommitModel(id={self.id}, hash={self.commit_hash[:7]}, message={self.message[:50]})>"
+        return (
+            f"<CommitModel(id={self.id}, hash={self.commit_hash[:7]}, message={self.message[:50]})>"
+        )
 
 
 class CommitReviewModel(Base):
@@ -387,7 +435,9 @@ class CommitReviewModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     commit_id: Mapped[int] = mapped_column(ForeignKey("commits.id"), nullable=False, index=True)
     reviewer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
-    status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending_review", index=True)
+    status: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="pending_review", index=True
+    )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
@@ -406,7 +456,9 @@ class CommitReviewModel(Base):
 
     def __repr__(self) -> str:
         """String representation of CommitReviewModel."""
-        return f"<CommitReviewModel(id={self.id}, commit_id={self.commit_id}, status={self.status})>"
+        return (
+            f"<CommitReviewModel(id={self.id}, commit_id={self.commit_id}, status={self.status})>"
+        )
 
 
 class ReviewCommentModel(Base):

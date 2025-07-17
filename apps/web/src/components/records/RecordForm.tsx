@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
-import { RecordItem, RecordCreateDTO, RecordUpdateDTO } from '../../types/record';
+import React, { useState, useEffect } from "react";
+import {
+  RecordItem,
+  RecordCreateDTO,
+  RecordUpdateDTO,
+} from "../../types/record";
 
 interface RecordFormProps {
   record?: RecordItem | null;
@@ -8,7 +12,7 @@ interface RecordFormProps {
 }
 
 const RecordForm = ({ record, onSubmit, onCancel }: RecordFormProps) => {
-  const [data, setData] = useState('{}');
+  const [data, setData] = useState("{}");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -16,7 +20,7 @@ const RecordForm = ({ record, onSubmit, onCancel }: RecordFormProps) => {
     if (record) {
       setData(JSON.stringify(record.data, null, 2));
     } else {
-      setData('{}');
+      setData("{}");
     }
   }, [record]);
 
@@ -34,7 +38,7 @@ const RecordForm = ({ record, onSubmit, onCancel }: RecordFormProps) => {
     setError(null);
 
     if (!validateJSON(data)) {
-      setError('Invalid JSON format');
+      setError("Invalid JSON format");
       return;
     }
 
@@ -44,7 +48,7 @@ const RecordForm = ({ record, onSubmit, onCancel }: RecordFormProps) => {
       await onSubmit({ data: parsedData });
       onCancel(); // Close form on success
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setSubmitting(false);
     }
@@ -54,12 +58,15 @@ const RecordForm = ({ record, onSubmit, onCancel }: RecordFormProps) => {
     <div className="bg-white shadow sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900">
-          {record ? 'Edit Record' : 'Create New Record'}
+          {record ? "Edit Record" : "Create New Record"}
         </h3>
-        
+
         <form onSubmit={handleSubmit} className="mt-5">
           <div>
-            <label htmlFor="data" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="data"
+              className="block text-sm font-medium text-gray-700"
+            >
               Record Data (JSON)
             </label>
             <div className="mt-1">
@@ -68,16 +75,14 @@ const RecordForm = ({ record, onSubmit, onCancel }: RecordFormProps) => {
                 name="data"
                 rows={10}
                 className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border rounded-md font-mono ${
-                  error ? 'border-red-300' : 'border-gray-300'
+                  error ? "border-red-300" : "border-gray-300"
                 }`}
                 value={data}
                 onChange={(e) => setData(e.target.value)}
                 placeholder='{\n  "key": "value"\n}'
               />
             </div>
-            {error && (
-              <p className="mt-2 text-sm text-red-600">{error}</p>
-            )}
+            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
             <p className="mt-2 text-sm text-gray-500">
               Enter valid JSON data for the record
             </p>
@@ -89,7 +94,7 @@ const RecordForm = ({ record, onSubmit, onCancel }: RecordFormProps) => {
               disabled={submitting}
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {submitting ? 'Saving...' : (record ? 'Update' : 'Create')}
+              {submitting ? "Saving..." : record ? "Update" : "Create"}
             </button>
             <button
               type="button"

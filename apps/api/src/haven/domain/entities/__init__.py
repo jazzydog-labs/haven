@@ -24,5 +24,5 @@ __all__ = [
     "Task",
     "TimeLog",
     "Todo",
-    "User"
+    "User",
 ]

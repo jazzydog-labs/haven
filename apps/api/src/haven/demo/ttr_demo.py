@@ -44,7 +44,7 @@ async def demo_ttr_system():
             username="plva",
             email="paul@example.com",
             display_name="Paul",
-            avatar_url="https://github.com/plva.png"
+            avatar_url="https://github.com/plva.png",
         )
         print(f"✅ Created user: {user.username} ({user.email})")
         print(f"   ID: {user.id}")
@@ -59,10 +59,7 @@ async def demo_ttr_system():
 
         # Update user
         print("\nUpdating user display name...")
-        updated_user = await user_service.update_user(
-            user.id,
-            display_name="Paul (Updated)"
-        )
+        updated_user = await user_service.update_user(user.id, display_name="Paul (Updated)")
         print(f"✅ Updated display name: {updated_user.display_name}")
 
         print("\n2. 🗂️ Repository Management Demo")
@@ -76,7 +73,7 @@ async def demo_ttr_system():
             url="/Users/paul/dev/jazzydog-labs/haven",
             branch="main",
             description="Haven repository - local development",
-            is_local=True
+            is_local=True,
         )
         print(f"✅ Created local repository: {local_repo.name}")
         print(f"   Full name: {local_repo.full_name}")
@@ -94,7 +91,7 @@ async def demo_ttr_system():
                 url="https://github.com/user/test-repo.git",
                 branch="main",
                 description="Test remote repository",
-                is_local=False
+                is_local=False,
             )
             print(f"✅ Created remote repository: {remote_repo.name}")
             print(f"   URL: {remote_repo.url}")
@@ -113,8 +110,7 @@ async def demo_ttr_system():
         # Update repository
         print("\nUpdating repository description...")
         updated_repo = await repo_service.update_repository(
-            local_repo.id,
-            description="Haven repository - updated description"
+            local_repo.id, description="Haven repository - updated description"
         )
         print(f"✅ Updated description: {updated_repo.description}")
 
@@ -124,23 +120,14 @@ async def demo_ttr_system():
         # Test user validation
         print("Testing user validation...")
         try:
-            invalid_user = User(
-                username="",
-                email="invalid-email",
-                display_name="Test"
-            )
+            invalid_user = User(username="", email="invalid-email", display_name="Test")
         except ValueError as e:
             print(f"✅ User validation works: {e}")
 
         # Test repository validation
         print("\nTesting repository validation...")
         try:
-            invalid_repo = Repository(
-                name="",
-                full_name="test",
-                url="",
-                branch="main"
-            )
+            invalid_repo = Repository(name="", full_name="test", url="", branch="main")
         except ValueError as e:
             print(f"✅ Repository validation works: {e}")
 
@@ -181,12 +168,13 @@ async def demo_ttr_system():
         print("\n🧹 Cleaning up demo data...")
         await user_service.delete_user(user.id)
         await repo_service.delete_repository(local_repo.id)
-        if 'remote_repo' in locals():
+        if "remote_repo" in locals():
             await repo_service.delete_repository(remote_repo.id)
         print("✅ Demo data cleaned up")
 
     # Clean up database connection
     await engine.dispose()
+
 
 if __name__ == "__main__":
     asyncio.run(demo_ttr_system())

@@ -1,7 +1,5 @@
 """SQLAlchemy implementation of CommitRepository."""
 
-from typing import List, Optional
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,34 +28,37 @@ class SQLAlchemyCommitRepository(CommitRepository):
             files_changed=commit.diff_stats.files_changed,
             insertions=commit.diff_stats.insertions,
             deletions=commit.diff_stats.deletions,
+            diff_html_path=commit.diff_html_path,
+            diff_generated_at=commit.diff_generated_at,
         )
-        
+
         self.session.add(model)
         await self.session.flush()
         await self.session.refresh(model)
-        
+
         return self._model_to_entity(model)
 
-    async def get_by_id(self, commit_id: int) -> Optional[Commit]:
+    async def get_by_id(self, commit_id: int) -> Commit | None:
         """Get a commit by ID."""
         stmt = select(CommitModel).where(CommitModel.id == commit_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
-        
+
         return self._model_to_entity(model) if model else None
 
-    async def get_by_hash(self, repository_id: int, commit_hash: str) -> Optional[Commit]:
+    async def get_by_hash(self, repository_id: int, commit_hash: str) -> Commit | None:
         """Get a commit by repository and hash."""
         stmt = select(CommitModel).where(
-            CommitModel.repository_id == repository_id,
-            CommitModel.commit_hash == commit_hash
+            CommitModel.repository_id == repository_id, CommitModel.commit_hash == commit_hash
         )
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
-        
+
         return self._model_to_entity(model) if model else None
 
-    async def get_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> List[Commit]:
+    async def get_by_repository(
+        self, repository_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Commit]:
         """Get commits for a repository."""
         stmt = (
             select(CommitModel)
@@ -68,7 +69,7 @@ class SQLAlchemyCommitRepository(CommitRepository):
         )
         result = await self.session.execute(stmt)
         models = result.scalars().all()
-        
+
         return [self._model_to_entity(model) for model in models]
 
     async def update(self, commit: Commit) -> Commit:
@@ -76,7 +77,7 @@ class SQLAlchemyCommitRepository(CommitRepository):
         stmt = select(CommitModel).where(CommitModel.id == commit.id)
         result = await self.session.execute(stmt)
         model = result.scalar_one()
-        
+
         # Update fields
         model.message = commit.message
         model.author_name = commit.author_name
@@ -87,10 +88,12 @@ class SQLAlchemyCommitRepository(CommitRepository):
         model.files_changed = commit.diff_stats.files_changed
         model.insertions = commit.diff_stats.insertions
         model.deletions = commit.diff_stats.deletions
-        
+        model.diff_html_path = commit.diff_html_path
+        model.diff_generated_at = commit.diff_generated_at
+
         await self.session.flush()
         await self.session.refresh(model)
-        
+
         return self._model_to_entity(model)
 
     async def delete(self, commit_id: int) -> bool:
@@ -98,7 +101,7 @@ class SQLAlchemyCommitRepository(CommitRepository):
         stmt = select(CommitModel).where(CommitModel.id == commit_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.flush()
@@ -108,8 +111,7 @@ class SQLAlchemyCommitRepository(CommitRepository):
     async def exists_by_hash(self, repository_id: int, commit_hash: str) -> bool:
         """Check if a commit exists by hash."""
         stmt = select(CommitModel.id).where(
-            CommitModel.repository_id == repository_id,
-            CommitModel.commit_hash == commit_hash
+            CommitModel.repository_id == repository_id, CommitModel.commit_hash == commit_hash
         )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
@@ -131,6 +133,8 @@ class SQLAlchemyCommitRepository(CommitRepository):
                 insertions=model.insertions,
                 deletions=model.deletions,
             ),
+            diff_html_path=model.diff_html_path,
+            diff_generated_at=model.diff_generated_at,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
@@ -151,22 +155,22 @@ class SQLAlchemyCommitReviewRepository(CommitReviewRepository):
             notes=review.notes,
             reviewed_at=review.reviewed_at,
         )
-        
+
         self.session.add(model)
         await self.session.flush()
         await self.session.refresh(model)
-        
+
         return self._model_to_entity(model)
 
-    async def get_by_id(self, review_id: int) -> Optional[CommitReview]:
+    async def get_by_id(self, review_id: int) -> CommitReview | None:
         """Get a commit review by ID."""
         stmt = select(CommitReviewModel).where(CommitReviewModel.id == review_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
-        
+
         return self._model_to_entity(model) if model else None
 
-    async def get_by_commit(self, commit_id: int) -> List[CommitReview]:
+    async def get_by_commit(self, commit_id: int) -> list[CommitReview]:
         """Get all reviews for a commit."""
         stmt = (
             select(CommitReviewModel)
@@ -175,10 +179,12 @@ class SQLAlchemyCommitReviewRepository(CommitReviewRepository):
         )
         result = await self.session.execute(stmt)
         models = result.scalars().all()
-        
+
         return [self._model_to_entity(model) for model in models]
 
-    async def get_by_reviewer(self, reviewer_id: int, limit: int = 100, offset: int = 0) -> List[CommitReview]:
+    async def get_by_reviewer(
+        self, reviewer_id: int, limit: int = 100, offset: int = 0
+    ) -> list[CommitReview]:
         """Get reviews by reviewer."""
         stmt = (
             select(CommitReviewModel)
@@ -189,7 +195,7 @@ class SQLAlchemyCommitReviewRepository(CommitReviewRepository):
         )
         result = await self.session.execute(stmt)
         models = result.scalars().all()
-        
+
         return [self._model_to_entity(model) for model in models]
 
     async def update(self, review: CommitReview) -> CommitReview:
@@ -197,15 +203,15 @@ class SQLAlchemyCommitReviewRepository(CommitReviewRepository):
         stmt = select(CommitReviewModel).where(CommitReviewModel.id == review.id)
         result = await self.session.execute(stmt)
         model = result.scalar_one()
-        
+
         # Update fields
         model.status = review.status.value
         model.notes = review.notes
         model.reviewed_at = review.reviewed_at
-        
+
         await self.session.flush()
         await self.session.refresh(model)
-        
+
         return self._model_to_entity(model)
 
     async def delete(self, review_id: int) -> bool:
@@ -213,7 +219,7 @@ class SQLAlchemyCommitReviewRepository(CommitReviewRepository):
         stmt = select(CommitReviewModel).where(CommitReviewModel.id == review_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.flush()

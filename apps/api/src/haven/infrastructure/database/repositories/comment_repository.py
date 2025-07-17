@@ -1,6 +1,5 @@
 """Comment repository implementation using SQLAlchemy."""
 
-
 from sqlalchemy import desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,7 +45,9 @@ class CommentRepositoryImpl(CommentRepository):
         )
         return [self._model_to_entity(CommentModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_author(self, author_id: int, limit: int = 100, offset: int = 0) -> list[Comment]:
+    async def get_by_author(
+        self, author_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Comment]:
         """Get comments by author."""
         result = await self.session.execute(
             CommentModel.__table__.select()
@@ -57,7 +58,9 @@ class CommentRepositoryImpl(CommentRepository):
         )
         return [self._model_to_entity(CommentModel(**row._mapping)) for row in result.fetchall()]
 
-    async def get_by_type(self, comment_type: str, limit: int = 100, offset: int = 0) -> list[Comment]:
+    async def get_by_type(
+        self, comment_type: str, limit: int = 100, offset: int = 0
+    ) -> list[Comment]:
         """Get comments by type."""
         result = await self.session.execute(
             CommentModel.__table__.select()
@@ -95,9 +98,7 @@ class CommentRepositoryImpl(CommentRepository):
     async def get_recent_comments(self, limit: int = 10) -> list[Comment]:
         """Get recent comments across all tasks."""
         result = await self.session.execute(
-            CommentModel.__table__.select()
-            .order_by(desc(CommentModel.created_at))
-            .limit(limit)
+            CommentModel.__table__.select().order_by(desc(CommentModel.created_at)).limit(limit)
         )
         return [self._model_to_entity(CommentModel(**row._mapping)) for row in result.fetchall()]
 

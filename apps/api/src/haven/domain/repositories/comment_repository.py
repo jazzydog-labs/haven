@@ -24,12 +24,16 @@ class CommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_author(self, author_id: int, limit: int = 100, offset: int = 0) -> list[Comment]:
+    async def get_by_author(
+        self, author_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Comment]:
         """Get comments by author."""
         pass
 
     @abstractmethod
-    async def get_by_type(self, comment_type: str, limit: int = 100, offset: int = 0) -> list[Comment]:
+    async def get_by_type(
+        self, comment_type: str, limit: int = 100, offset: int = 0
+    ) -> list[Comment]:
         """Get comments by type."""
         pass
 

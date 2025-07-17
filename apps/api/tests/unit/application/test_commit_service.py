@@ -1,8 +1,9 @@
 """Tests for CommitService."""
 
+from datetime import UTC, datetime
+from unittest.mock import AsyncMock
+
 import pytest
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock
 
 from haven.application.services.commit_service import CommitService
 from haven.domain.entities.commit import Commit, CommitReview, DiffStats, ReviewStatus
@@ -37,7 +38,7 @@ class TestCommitService:
             author_email="john@example.com",
             committer_name="John Doe",
             committer_email="john@example.com",
-            committed_at=datetime.now(timezone.utc),
+            committed_at=datetime.now(UTC),
             diff_stats=DiffStats(files_changed=3, insertions=50, deletions=25),
         )
 
@@ -66,7 +67,9 @@ class TestCommitService:
         mock_commit_repository.create.assert_called_once_with(sample_commit)
 
     @pytest.mark.asyncio
-    async def test_create_commit_already_exists(self, commit_service, mock_commit_repository, sample_commit):
+    async def test_create_commit_already_exists(
+        self, commit_service, mock_commit_repository, sample_commit
+    ):
         """Test creating a commit that already exists."""
         mock_commit_repository.get_by_hash.return_value = sample_commit
 
@@ -99,7 +102,9 @@ class TestCommitService:
         mock_commit_repository.get_by_hash.assert_called_once_with(1, "abc123def456")
 
     @pytest.mark.asyncio
-    async def test_get_commits_by_repository(self, commit_service, mock_commit_repository, sample_commit):
+    async def test_get_commits_by_repository(
+        self, commit_service, mock_commit_repository, sample_commit
+    ):
         """Test getting commits by repository."""
         mock_commit_repository.get_by_repository.return_value = [sample_commit]
 
@@ -128,7 +133,9 @@ class TestCommitService:
             await commit_service.update_commit(sample_commit)
 
     @pytest.mark.asyncio
-    async def test_update_commit_not_found(self, commit_service, mock_commit_repository, sample_commit):
+    async def test_update_commit_not_found(
+        self, commit_service, mock_commit_repository, sample_commit
+    ):
         """Test updating a commit that doesn't exist."""
         sample_commit.id = 1
         mock_commit_repository.get_by_id.return_value = None
@@ -147,7 +154,9 @@ class TestCommitService:
         mock_commit_repository.delete.assert_called_once_with(1)
 
     @pytest.mark.asyncio
-    async def test_sync_commits_from_git(self, commit_service, mock_commit_repository, sample_commit):
+    async def test_sync_commits_from_git(
+        self, commit_service, mock_commit_repository, sample_commit
+    ):
         """Test syncing commits from Git."""
         git_commits = [
             {
@@ -157,7 +166,7 @@ class TestCommitService:
                 "author_email": "john@example.com",
                 "committer_name": "John Doe",
                 "committer_email": "john@example.com",
-                "committed_at": datetime.now(timezone.utc),
+                "committed_at": datetime.now(UTC),
                 "diff_stats": DiffStats(files_changed=3, insertions=50, deletions=25),
             }
         ]
@@ -173,7 +182,9 @@ class TestCommitService:
         mock_commit_repository.create.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_sync_commits_from_git_existing(self, commit_service, mock_commit_repository, sample_commit):
+    async def test_sync_commits_from_git_existing(
+        self, commit_service, mock_commit_repository, sample_commit
+    ):
         """Test syncing commits from Git with existing commit."""
         git_commits = [
             {
@@ -183,7 +194,7 @@ class TestCommitService:
                 "author_email": "john@example.com",
                 "committer_name": "John Doe",
                 "committer_email": "john@example.com",
-                "committed_at": datetime.now(timezone.utc),
+                "committed_at": datetime.now(UTC),
                 "diff_stats": DiffStats(files_changed=3, insertions=50, deletions=25),
             }
         ]
@@ -198,7 +209,14 @@ class TestCommitService:
         mock_commit_repository.create.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_create_commit_review(self, commit_service, mock_commit_repository, mock_commit_review_repository, sample_commit, sample_commit_review):
+    async def test_create_commit_review(
+        self,
+        commit_service,
+        mock_commit_repository,
+        mock_commit_review_repository,
+        sample_commit,
+        sample_commit_review,
+    ):
         """Test creating a commit review."""
         mock_commit_repository.get_by_id.return_value = sample_commit
         mock_commit_review_repository.create.return_value = sample_commit_review
@@ -210,7 +228,13 @@ class TestCommitService:
         mock_commit_review_repository.create.assert_called_once_with(sample_commit_review)
 
     @pytest.mark.asyncio
-    async def test_create_commit_review_commit_not_found(self, commit_service, mock_commit_repository, mock_commit_review_repository, sample_commit_review):
+    async def test_create_commit_review_commit_not_found(
+        self,
+        commit_service,
+        mock_commit_repository,
+        mock_commit_review_repository,
+        sample_commit_review,
+    ):
         """Test creating a commit review for non-existent commit."""
         mock_commit_repository.get_by_id.return_value = None
 
@@ -221,7 +245,14 @@ class TestCommitService:
         mock_commit_review_repository.create.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_get_commit_with_reviews(self, commit_service, mock_commit_repository, mock_commit_review_repository, sample_commit, sample_commit_review):
+    async def test_get_commit_with_reviews(
+        self,
+        commit_service,
+        mock_commit_repository,
+        mock_commit_review_repository,
+        sample_commit,
+        sample_commit_review,
+    ):
         """Test getting a commit with reviews."""
         mock_commit_repository.get_by_id.return_value = sample_commit
         mock_commit_review_repository.get_by_commit.return_value = [sample_commit_review]

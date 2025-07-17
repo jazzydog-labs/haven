@@ -8,6 +8,7 @@ import requests
 
 BASE_URL = "http://localhost:8080/api/v1"
 
+
 def test_records_api():
     """Test all CRUD operations for records"""
     print("Testing Records API...")
@@ -21,10 +22,7 @@ def test_records_api():
             "value": 42,
             "active": True,
             "tags": ["test", "example"],
-            "metadata": {
-                "created_by": "test_script",
-                "purpose": "API testing"
-            }
+            "metadata": {"created_by": "test_script", "purpose": "API testing"},
         }
     }
 
@@ -70,8 +68,8 @@ def test_records_api():
             "metadata": {
                 "created_by": "test_script",
                 "purpose": "API testing",
-                "updated_at": datetime.now().isoformat()
-            }
+                "updated_at": datetime.now().isoformat(),
+            },
         }
     }
 
@@ -99,6 +97,7 @@ def test_records_api():
         print("Record not found (as expected)")
     else:
         print(f"Unexpected response: {response.text}")
+
 
 if __name__ == "__main__":
     test_records_api()

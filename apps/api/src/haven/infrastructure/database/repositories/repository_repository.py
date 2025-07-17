@@ -1,4 +1,3 @@
-
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +19,7 @@ class RepositoryRepositoryImpl(RepositoryRepository):
             url=repository.url,
             branch=repository.branch,
             description=repository.description,
-            is_local=repository.is_local
+            is_local=repository.is_local,
         )
 
         try:
@@ -104,5 +103,5 @@ class RepositoryRepositoryImpl(RepositoryRepository):
             description=db_repository.description,
             is_local=db_repository.is_local,
             created_at=db_repository.created_at,
-            updated_at=db_repository.updated_at
+            updated_at=db_repository.updated_at,
         )

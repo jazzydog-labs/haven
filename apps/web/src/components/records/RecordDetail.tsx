@@ -1,4 +1,4 @@
-import { RecordItem } from '../../types/record';
+import { RecordItem } from "../../types/record";
 
 interface RecordDetailProps {
   record: RecordItem;
@@ -16,14 +16,26 @@ const RecordDetail = ({ record, onClose, onEdit }: RecordDetailProps) => {
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">Record Details</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              Record Details
+            </h3>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-500"
             >
               <span className="sr-only">Close</span>
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -33,17 +45,23 @@ const RecordDetail = ({ record, onClose, onEdit }: RecordDetailProps) => {
           <dl className="space-y-4">
             <div>
               <dt className="text-sm font-medium text-gray-500">Record ID</dt>
-              <dd className="mt-1 text-sm text-gray-900 font-mono">{record.id}</dd>
+              <dd className="mt-1 text-sm text-gray-900 font-mono">
+                {record.id}
+              </dd>
             </div>
 
             <div>
               <dt className="text-sm font-medium text-gray-500">Created At</dt>
-              <dd className="mt-1 text-sm text-gray-900">{formatDate(record.created_at)}</dd>
+              <dd className="mt-1 text-sm text-gray-900">
+                {formatDate(record.created_at)}
+              </dd>
             </div>
 
             <div>
               <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-              <dd className="mt-1 text-sm text-gray-900">{formatDate(record.updated_at)}</dd>
+              <dd className="mt-1 text-sm text-gray-900">
+                {formatDate(record.updated_at)}
+              </dd>
             </div>
 
             <div>

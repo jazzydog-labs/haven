@@ -1,7 +1,8 @@
 """Tests for Commit domain entity."""
 
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
 
 from haven.domain.entities.commit import Commit, CommitReview, DiffStats, ReviewStatus
 
@@ -16,7 +17,7 @@ class TestDiffStats:
             insertions=100,
             deletions=50,
         )
-        
+
         assert stats.files_changed == 5
         assert stats.insertions == 100
         assert stats.deletions == 50
@@ -25,7 +26,7 @@ class TestDiffStats:
     def test_diff_stats_defaults(self):
         """Test DiffStats with default values."""
         stats = DiffStats()
-        
+
         assert stats.files_changed == 0
         assert stats.insertions == 0
         assert stats.deletions == 0
@@ -37,9 +38,9 @@ class TestCommit:
 
     def test_create_commit(self):
         """Test creating a valid commit."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         diff_stats = DiffStats(files_changed=3, insertions=50, deletions=25)
-        
+
         commit = Commit(
             repository_id=1,
             commit_hash="abc123def456",
@@ -51,7 +52,7 @@ class TestCommit:
             committed_at=now,
             diff_stats=diff_stats,
         )
-        
+
         assert commit.repository_id == 1
         assert commit.commit_hash == "abc123def456"
         assert commit.message == "Add new feature"
@@ -67,9 +68,9 @@ class TestCommit:
 
     def test_commit_validation_empty_hash(self):
         """Test commit validation with empty hash."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         diff_stats = DiffStats()
-        
+
         with pytest.raises(ValueError, match="Commit hash is required"):
             Commit(
                 repository_id=1,
@@ -85,9 +86,9 @@ class TestCommit:
 
     def test_commit_validation_short_hash(self):
         """Test commit validation with short hash."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         diff_stats = DiffStats()
-        
+
         with pytest.raises(ValueError, match="Commit hash must be at least 7 characters"):
             Commit(
                 repository_id=1,
@@ -103,9 +104,9 @@ class TestCommit:
 
     def test_commit_validation_empty_message(self):
         """Test commit validation with empty message."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         diff_stats = DiffStats()
-        
+
         with pytest.raises(ValueError, match="Commit message is required"):
             Commit(
                 repository_id=1,
@@ -121,9 +122,9 @@ class TestCommit:
 
     def test_commit_validation_invalid_repository_id(self):
         """Test commit validation with invalid repository ID."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         diff_stats = DiffStats()
-        
+
         with pytest.raises(ValueError, match="Repository ID must be positive"):
             Commit(
                 repository_id=0,
@@ -139,9 +140,9 @@ class TestCommit:
 
     def test_commit_merge_detection(self):
         """Test merge commit detection."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         diff_stats = DiffStats()
-        
+
         commit = Commit(
             repository_id=1,
             commit_hash="abc123def456",
@@ -153,14 +154,14 @@ class TestCommit:
             committed_at=now,
             diff_stats=diff_stats,
         )
-        
+
         assert commit.is_merge_commit
 
     def test_commit_multiline_message_summary(self):
         """Test summary extraction from multiline message."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         diff_stats = DiffStats()
-        
+
         commit = Commit(
             repository_id=1,
             commit_hash="abc123def456",
@@ -172,7 +173,7 @@ class TestCommit:
             committed_at=now,
             diff_stats=diff_stats,
         )
-        
+
         assert commit.summary == "Add new feature"
 
 
@@ -181,8 +182,8 @@ class TestCommitReview:
 
     def test_create_commit_review(self):
         """Test creating a valid commit review."""
-        now = datetime.now(timezone.utc)
-        
+        now = datetime.now(UTC)
+
         review = CommitReview(
             commit_id=1,
             reviewer_id=2,
@@ -190,7 +191,7 @@ class TestCommitReview:
             notes="Looks good, but needs tests",
             reviewed_at=now,
         )
-        
+
         assert review.commit_id == 1
         assert review.reviewer_id == 2
         assert review.status == ReviewStatus.PENDING_REVIEW
@@ -233,7 +234,7 @@ class TestCommitReview:
             reviewer_id=2,
             status=ReviewStatus.APPROVED,
         )
-        
+
         assert review.is_approved
         assert not review.needs_action
 
@@ -244,7 +245,7 @@ class TestCommitReview:
             reviewer_id=2,
             status=ReviewStatus.NEEDS_REVISION,
         )
-        
+
         assert not review.is_approved
         assert review.needs_action
 
@@ -255,6 +256,6 @@ class TestCommitReview:
             reviewer_id=2,
             status=ReviewStatus.DRAFT,
         )
-        
+
         assert not review.is_approved
         assert not review.needs_action

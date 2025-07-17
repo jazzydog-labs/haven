@@ -13,23 +13,18 @@ async def test_create_user():
 
     service = UserService(mock_repo)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
     mock_repo.create.return_value = user
 
     result = await service.create_user(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
+        username="testuser", email="test@example.com", display_name="Test User"
     )
 
     assert result.username == "testuser"
     assert result.email == "test@example.com"
     assert result.display_name == "Test User"
     mock_repo.create.assert_called_once()
+
 
 @pytest.mark.asyncio
 async def test_get_user_by_id():
@@ -38,12 +33,7 @@ async def test_get_user_by_id():
 
     service = UserService(mock_repo)
 
-    user = User(
-        id=1,
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(id=1, username="testuser", email="test@example.com", display_name="Test User")
     mock_repo.get_by_id.return_value = user
 
     result = await service.get_user_by_id(1)
@@ -52,6 +42,7 @@ async def test_get_user_by_id():
     assert result.username == "testuser"
     mock_repo.get_by_id.assert_called_once_with(1)
 
+
 @pytest.mark.asyncio
 async def test_get_user_by_username():
     mock_repo = Mock()
@@ -59,17 +50,14 @@ async def test_get_user_by_username():
 
     service = UserService(mock_repo)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
     mock_repo.get_by_username.return_value = user
 
     result = await service.get_user_by_username("testuser")
 
     assert result.username == "testuser"
     mock_repo.get_by_username.assert_called_once_with("testuser")
+
 
 @pytest.mark.asyncio
 async def test_get_all_users():
@@ -80,7 +68,7 @@ async def test_get_all_users():
 
     users = [
         User(username="user1", email="user1@example.com", display_name="User 1"),
-        User(username="user2", email="user2@example.com", display_name="User 2")
+        User(username="user2", email="user2@example.com", display_name="User 2"),
     ]
     mock_repo.get_all.return_value = users
 
@@ -91,6 +79,7 @@ async def test_get_all_users():
     assert result[1].username == "user2"
     mock_repo.get_all.assert_called_once()
 
+
 @pytest.mark.asyncio
 async def test_update_user():
     mock_repo = Mock()
@@ -99,17 +88,9 @@ async def test_update_user():
 
     service = UserService(mock_repo)
 
-    user = User(
-        id=1,
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(id=1, username="testuser", email="test@example.com", display_name="Test User")
     updated_user = User(
-        id=1,
-        username="testuser",
-        email="test@example.com",
-        display_name="Updated User"
+        id=1, username="testuser", email="test@example.com", display_name="Updated User"
     )
 
     mock_repo.get_by_id.return_value = user
@@ -121,6 +102,7 @@ async def test_update_user():
     mock_repo.get_by_id.assert_called_once_with(1)
     mock_repo.update.assert_called_once()
 
+
 @pytest.mark.asyncio
 async def test_update_user_not_found():
     mock_repo = Mock()
@@ -131,6 +113,7 @@ async def test_update_user_not_found():
 
     with pytest.raises(ValueError, match="User with id 1 not found"):
         await service.update_user(1, display_name="Updated User")
+
 
 @pytest.mark.asyncio
 async def test_delete_user():

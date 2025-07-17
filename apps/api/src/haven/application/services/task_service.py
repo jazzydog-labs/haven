@@ -45,17 +45,25 @@ class TaskService:
         """Get all tasks with pagination."""
         return await self.task_repository.get_all(limit=limit, offset=offset)
 
-    async def get_tasks_by_status(self, status: str, limit: int = 100, offset: int = 0) -> list[Task]:
+    async def get_tasks_by_status(
+        self, status: str, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         """Get tasks by status."""
         return await self.task_repository.get_by_status(status, limit=limit, offset=offset)
 
-    async def get_tasks_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
+    async def get_tasks_by_assignee(
+        self, assignee_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         """Get tasks assigned to a specific user."""
         return await self.task_repository.get_by_assignee(assignee_id, limit=limit, offset=offset)
 
-    async def get_tasks_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
+    async def get_tasks_by_repository(
+        self, repository_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         """Get tasks for a specific repository."""
-        return await self.task_repository.get_by_repository(repository_id, limit=limit, offset=offset)
+        return await self.task_repository.get_by_repository(
+            repository_id, limit=limit, offset=offset
+        )
 
     async def update_task(
         self,

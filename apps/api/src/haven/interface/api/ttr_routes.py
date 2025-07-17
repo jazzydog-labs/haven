@@ -1,6 +1,5 @@
 """TTR API routes for task management."""
 
-
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from haven.application.dtos.task_dtos import (
@@ -77,7 +76,7 @@ async def create_task(
         )
         return task_to_response(task)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.get("/tasks", response_model=TaskListResponse)
@@ -107,7 +106,7 @@ async def get_tasks(
             limit=limit,
         )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.get("/tasks/{task_id}", response_model=TaskResponse)
@@ -146,7 +145,7 @@ async def update_task(
         )
         return task_to_response(task)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -180,7 +179,7 @@ async def search_tasks(
             limit=request.limit,
         )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.post("/tasks/{task_id}/start", response_model=TaskResponse)
@@ -193,7 +192,7 @@ async def start_task(
         task = await service.start_task(task_id)
         return task_to_response(task)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.post("/tasks/{task_id}/complete", response_model=TaskResponse)
@@ -206,7 +205,7 @@ async def complete_task(
         task = await service.complete_task(task_id)
         return task_to_response(task)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.post("/tasks/{task_id}/log-time", response_model=TaskResponse)
@@ -220,7 +219,7 @@ async def log_time_on_task(
         task = await service.log_time_on_task(task_id, request.hours)
         return task_to_response(task)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.get("/tasks/overdue", response_model=TaskListResponse)
@@ -240,7 +239,7 @@ async def get_overdue_tasks(
             limit=limit,
         )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.get("/metrics", response_model=TaskMetricsResponse)
@@ -258,7 +257,7 @@ async def get_task_metrics(
             average_resolution_time_hours=metrics.get("average_resolution_time_hours", 0.0),
         )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.get("/ttr-stats", response_model=TimeToResolutionStatsResponse)
@@ -280,4 +279,4 @@ async def get_ttr_statistics(
             priority_distribution=stats["priority_distribution"],
         )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e

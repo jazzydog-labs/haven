@@ -1,4 +1,3 @@
-
 from haven.domain.entities.user import User
 from haven.domain.repositories.user_repository import UserRepository
 
@@ -8,18 +7,11 @@ class UserService:
         self.user_repository = user_repository
 
     async def create_user(
-        self,
-        username: str,
-        email: str,
-        display_name: str,
-        avatar_url: str | None = None
+        self, username: str, email: str, display_name: str, avatar_url: str | None = None
     ) -> User:
         """Create a new user"""
         user = User(
-            username=username,
-            email=email,
-            display_name=display_name,
-            avatar_url=avatar_url
+            username=username, email=email, display_name=display_name, avatar_url=avatar_url
         )
 
         return await self.user_repository.create(user)
@@ -41,10 +33,7 @@ class UserService:
         return await self.user_repository.get_all()
 
     async def update_user(
-        self,
-        user_id: int,
-        display_name: str | None = None,
-        avatar_url: str | None = None
+        self, user_id: int, display_name: str | None = None, avatar_url: str | None = None
     ) -> User:
         """Update user (only display_name and avatar_url can be updated)"""
         user = await self.user_repository.get_by_id(user_id)

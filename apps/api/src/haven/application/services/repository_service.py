@@ -1,4 +1,3 @@
-
 from haven.domain.entities.repository import Repository
 from haven.domain.repositories.repository_repository import RepositoryRepository
 
@@ -14,7 +13,7 @@ class RepositoryService:
         url: str,
         branch: str = "main",
         description: str | None = None,
-        is_local: bool = True
+        is_local: bool = True,
     ) -> Repository:
         """Create a new repository"""
         repository = Repository(
@@ -23,7 +22,7 @@ class RepositoryService:
             url=url,
             branch=branch,
             description=description,
-            is_local=is_local
+            is_local=is_local,
         )
 
         return await self.repository_repository.create(repository)
@@ -50,7 +49,7 @@ class RepositoryService:
         name: str | None = None,
         full_name: str | None = None,
         branch: str | None = None,
-        description: str | None = None
+        description: str | None = None,
     ) -> Repository:
         """Update repository (only certain fields can be updated)"""
         repository = await self.repository_repository.get_by_id(repo_id)
@@ -76,5 +75,6 @@ class RepositoryService:
         """Validate that repository path exists (for local repositories)"""
         if repository.is_local:
             from pathlib import Path
+
             return Path(repository.url).exists()
         return True

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import DiffViewer from './DiffViewer';
-import FileTree from './FileTree';
-import ReviewPanel from './ReviewPanel';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import DiffViewer from "./DiffViewer";
+import FileTree from "./FileTree";
+import ReviewPanel from "./ReviewPanel";
 
 interface Commit {
   id: string;
@@ -10,12 +10,12 @@ interface Commit {
   message: string;
   author: string;
   date: string;
-  reviewStatus: 'pending' | 'approved' | 'needs_revision' | 'draft';
+  reviewStatus: "pending" | "approved" | "needs_revision" | "draft";
 }
 
 interface FileChange {
   path: string;
-  type: 'added' | 'modified' | 'deleted' | 'renamed';
+  type: "added" | "modified" | "deleted" | "renamed";
   insertions: number;
   deletions: number;
   oldPath?: string;
@@ -25,7 +25,7 @@ interface FileChange {
 const CommitViewer: React.FC = () => {
   const { commitHash } = useParams<{ commitHash: string }>();
   const navigate = useNavigate();
-  
+
   const [commit, setCommit] = useState<Commit | null>(null);
   const [files, setFiles] = useState<FileChange[]>([]);
   const [selectedFile, setSelectedFile] = useState<FileChange | null>(null);
@@ -45,18 +45,19 @@ const CommitViewer: React.FC = () => {
 
       // Mock data for now - in reality this would come from the API
       const mockCommit: Commit = {
-        id: '1',
+        id: "1",
         hash: hash,
-        message: 'feat: Add enhanced diff viewer with syntax highlighting\n\nImplemented comprehensive diff viewer with:\n- Side-by-side and unified views\n- Syntax highlighting\n- File tree navigation\n- Review status tracking',
-        author: 'John Doe',
-        date: '2025-07-17',
-        reviewStatus: 'pending'
+        message:
+          "feat: Add enhanced diff viewer with syntax highlighting\n\nImplemented comprehensive diff viewer with:\n- Side-by-side and unified views\n- Syntax highlighting\n- File tree navigation\n- Review status tracking",
+        author: "John Doe",
+        date: "2025-07-17",
+        reviewStatus: "pending",
       };
 
       const mockFiles: FileChange[] = [
         {
-          path: 'apps/web/src/components/diff/DiffViewer.tsx',
-          type: 'added',
+          path: "apps/web/src/components/diff/DiffViewer.tsx",
+          type: "added",
           insertions: 245,
           deletions: 0,
           diff: `diff --git a/apps/web/src/components/diff/DiffViewer.tsx b/apps/web/src/components/diff/DiffViewer.tsx
@@ -75,32 +76,33 @@ index 0000000..a1b2c3d
 +  );
 +};
 +
-+export default DiffViewer;`
++export default DiffViewer;`,
         },
         {
-          path: 'apps/web/src/components/diff/FileTree.tsx',
-          type: 'added',
+          path: "apps/web/src/components/diff/FileTree.tsx",
+          type: "added",
           insertions: 189,
-          deletions: 0
+          deletions: 0,
         },
         {
-          path: 'apps/web/package.json',
-          type: 'modified',
+          path: "apps/web/package.json",
+          type: "modified",
           insertions: 3,
-          deletions: 1
-        }
+          deletions: 1,
+        },
       ];
 
       setCommit(mockCommit);
       setFiles(mockFiles);
-      
+
       // Auto-select first file
       if (mockFiles.length > 0) {
         setSelectedFile(mockFiles[0]);
       }
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load commit data');
+      setError(
+        err instanceof Error ? err.message : "Failed to load commit data"
+      );
     } finally {
       setLoading(false);
     }
@@ -112,40 +114,40 @@ index 0000000..a1b2c3d
     try {
       // Update review status via API
       // await updateCommitReview(commit.id, newStatus);
-      
+
       // Update local state
       setCommit({
         ...commit,
-        reviewStatus: newStatus as any
+        reviewStatus: newStatus as any,
       });
     } catch (err) {
-      console.error('Failed to update review status:', err);
+      console.error("Failed to update review status:", err);
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved':
-        return 'text-green-600 bg-green-100';
-      case 'needs_revision':
-        return 'text-red-600 bg-red-100';
-      case 'draft':
-        return 'text-gray-600 bg-gray-100';
+      case "approved":
+        return "text-green-600 bg-green-100";
+      case "needs_revision":
+        return "text-red-600 bg-red-100";
+      case "draft":
+        return "text-gray-600 bg-gray-100";
       default:
-        return 'text-yellow-600 bg-yellow-100';
+        return "text-yellow-600 bg-yellow-100";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'approved':
-        return '✅';
-      case 'needs_revision':
-        return '❌';
-      case 'draft':
-        return '📝';
+      case "approved":
+        return "✅";
+      case "needs_revision":
+        return "❌";
+      case "draft":
+        return "📝";
       default:
-        return '⏳';
+        return "⏳";
     }
   };
 
@@ -168,7 +170,7 @@ index 0000000..a1b2c3d
             <div className="mt-2 text-sm text-red-700">{error}</div>
             <div className="mt-4">
               <button
-                onClick={() => navigate('/diffs')}
+                onClick={() => navigate("/diffs")}
                 className="text-sm bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200"
               >
                 Back to Diffs
@@ -184,9 +186,11 @@ index 0000000..a1b2c3d
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900">Commit not found</h3>
-        <p className="mt-2 text-gray-600">The requested commit could not be loaded.</p>
+        <p className="mt-2 text-gray-600">
+          The requested commit could not be loaded.
+        </p>
         <button
-          onClick={() => navigate('/diffs')}
+          onClick={() => navigate("/diffs")}
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Back to Diffs
@@ -203,7 +207,7 @@ index 0000000..a1b2c3d
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-3 mb-2">
               <button
-                onClick={() => navigate('/diffs')}
+                onClick={() => navigate("/diffs")}
                 className="text-gray-400 hover:text-gray-600"
               >
                 ← Back
@@ -211,23 +215,29 @@ index 0000000..a1b2c3d
               <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
                 {commit.hash.substring(0, 8)}
               </span>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(commit.reviewStatus)}`}>
-                {getStatusIcon(commit.reviewStatus)} {commit.reviewStatus.replace('_', ' ')}
+              <span
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                  commit.reviewStatus
+                )}`}
+              >
+                {getStatusIcon(commit.reviewStatus)}{" "}
+                {commit.reviewStatus.replace("_", " ")}
               </span>
             </div>
-            
+
             <h1 className="text-xl font-semibold text-gray-900 break-words">
-              {commit.message.split('\n')[0]}
+              {commit.message.split("\n")[0]}
             </h1>
-            
-            {commit.message.includes('\n') && (
+
+            {commit.message.includes("\n") && (
               <div className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
-                {commit.message.split('\n').slice(1).join('\n').trim()}
+                {commit.message.split("\n").slice(1).join("\n").trim()}
               </div>
             )}
-            
+
             <div className="mt-2 text-sm text-gray-500">
-              by <span className="font-medium">{commit.author}</span> on {commit.date}
+              by <span className="font-medium">{commit.author}</span> on{" "}
+              {commit.date}
             </div>
           </div>
 
@@ -256,7 +266,7 @@ index 0000000..a1b2c3d
         <div className="flex-1 overflow-auto">
           {selectedFile ? (
             <DiffViewer
-              diffText={selectedFile.diff || ''}
+              diffText={selectedFile.diff || ""}
               oldPath={selectedFile.oldPath}
               newPath={selectedFile.path}
               language="typescript"

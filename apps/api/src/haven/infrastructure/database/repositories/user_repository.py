@@ -1,4 +1,3 @@
-
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,7 +17,7 @@ class UserRepositoryImpl(UserRepository):
             username=user.username,
             email=user.email,
             display_name=user.display_name,
-            avatar_url=user.avatar_url
+            avatar_url=user.avatar_url,
         )
 
         try:
@@ -98,5 +97,5 @@ class UserRepositoryImpl(UserRepository):
             display_name=db_user.display_name,
             avatar_url=db_user.avatar_url,
             created_at=db_user.created_at,
-            updated_at=db_user.updated_at
+            updated_at=db_user.updated_at,
         )

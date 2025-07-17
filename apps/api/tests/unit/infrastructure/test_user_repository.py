@@ -9,11 +9,7 @@ from haven.infrastructure.database.repositories.user_repository import UserRepos
 async def test_create_user(test_session: AsyncSession):
     repo = UserRepositoryImpl(test_session)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
 
     created_user = await repo.create(user)
 
@@ -24,15 +20,12 @@ async def test_create_user(test_session: AsyncSession):
     assert created_user.created_at is not None
     assert created_user.updated_at is not None
 
+
 @pytest.mark.asyncio
 async def test_get_user_by_id(test_session: AsyncSession):
     repo = UserRepositoryImpl(test_session)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
 
     created_user = await repo.create(user)
     found_user = await repo.get_by_id(created_user.id)
@@ -41,15 +34,12 @@ async def test_get_user_by_id(test_session: AsyncSession):
     assert found_user.id == created_user.id
     assert found_user.username == "testuser"
 
+
 @pytest.mark.asyncio
 async def test_get_user_by_username(test_session: AsyncSession):
     repo = UserRepositoryImpl(test_session)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
 
     await repo.create(user)
     found_user = await repo.get_by_username("testuser")
@@ -57,21 +47,19 @@ async def test_get_user_by_username(test_session: AsyncSession):
     assert found_user is not None
     assert found_user.username == "testuser"
 
+
 @pytest.mark.asyncio
 async def test_get_user_by_email(test_session: AsyncSession):
     repo = UserRepositoryImpl(test_session)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
 
     await repo.create(user)
     found_user = await repo.get_by_email("test@example.com")
 
     assert found_user is not None
     assert found_user.email == "test@example.com"
+
 
 @pytest.mark.asyncio
 async def test_get_all_users(test_session: AsyncSession):
@@ -90,15 +78,12 @@ async def test_get_all_users(test_session: AsyncSession):
     assert "user1" in usernames
     assert "user2" in usernames
 
+
 @pytest.mark.asyncio
 async def test_update_user(test_session: AsyncSession):
     repo = UserRepositoryImpl(test_session)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
 
     created_user = await repo.create(user)
     created_user.display_name = "Updated User"
@@ -109,15 +94,12 @@ async def test_update_user(test_session: AsyncSession):
     assert updated_user.display_name == "Updated User"
     assert updated_user.avatar_url == "https://example.com/avatar.jpg"
 
+
 @pytest.mark.asyncio
 async def test_delete_user(test_session: AsyncSession):
     repo = UserRepositoryImpl(test_session)
 
-    user = User(
-        username="testuser",
-        email="test@example.com",
-        display_name="Test User"
-    )
+    user = User(username="testuser", email="test@example.com", display_name="Test User")
 
     created_user = await repo.create(user)
     result = await repo.delete(created_user.id)
@@ -126,6 +108,7 @@ async def test_delete_user(test_session: AsyncSession):
 
     deleted_user = await repo.get_by_id(created_user.id)
     assert deleted_user is None
+
 
 @pytest.mark.asyncio
 async def test_duplicate_username_raises_error(test_session: AsyncSession):
@@ -138,6 +121,7 @@ async def test_duplicate_username_raises_error(test_session: AsyncSession):
 
     with pytest.raises(ValueError, match="Username or email already exists"):
         await repo.create(user2)
+
 
 @pytest.mark.asyncio
 async def test_duplicate_email_raises_error(test_session: AsyncSession):

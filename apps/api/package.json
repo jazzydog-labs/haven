@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "diff2html-cli": "^5.2.15"
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -14,9 +14,9 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
-} from 'recharts';
-import { format, subDays, parseISO } from 'date-fns';
+  ResponsiveContainer,
+} from "recharts";
+import { format, subDays, parseISO } from "date-fns";
 
 interface RepositoryStats {
   totalCommits: number;
@@ -56,7 +56,7 @@ const RepositoryDashboard: React.FC = () => {
     linesOfCode: 0,
     activeBranches: 0,
     pendingReviews: 0,
-    approvedCommits: 0
+    approvedCommits: 0,
   });
 
   const [commitActivity, setCommitActivity] = useState<CommitActivity[]>([]);
@@ -79,46 +79,81 @@ const RepositoryDashboard: React.FC = () => {
         linesOfCode: 45672,
         activeBranches: 12,
         pendingReviews: 7,
-        approvedCommits: 142
+        approvedCommits: 142,
       };
 
       // Generate commit activity for last 30 days
       const mockCommitActivity: CommitActivity[] = [];
       for (let i = 29; i >= 0; i--) {
-        const date = format(subDays(new Date(), i), 'yyyy-MM-dd');
+        const date = format(subDays(new Date(), i), "yyyy-MM-dd");
         mockCommitActivity.push({
           date,
           commits: Math.floor(Math.random() * 8) + 1,
           additions: Math.floor(Math.random() * 500) + 50,
-          deletions: Math.floor(Math.random() * 200) + 10
+          deletions: Math.floor(Math.random() * 200) + 10,
         });
       }
 
       const mockContributors: ContributorStats[] = [
-        { name: 'John Doe', commits: 45, additions: 12450, deletions: 3200, color: '#8884d8' },
-        { name: 'Jane Smith', commits: 38, additions: 9800, deletions: 2100, color: '#82ca9d' },
-        { name: 'Bob Johnson', commits: 28, additions: 7600, deletions: 1800, color: '#ffc658' },
-        { name: 'Alice Wilson', commits: 22, additions: 6200, deletions: 1400, color: '#ff7300' },
-        { name: 'Charlie Brown', commits: 15, additions: 4100, deletions: 900, color: '#00ff88' },
-        { name: 'David Lee', commits: 8, additions: 2300, deletions: 600, color: '#ff6b6b' }
+        {
+          name: "John Doe",
+          commits: 45,
+          additions: 12450,
+          deletions: 3200,
+          color: "#8884d8",
+        },
+        {
+          name: "Jane Smith",
+          commits: 38,
+          additions: 9800,
+          deletions: 2100,
+          color: "#82ca9d",
+        },
+        {
+          name: "Bob Johnson",
+          commits: 28,
+          additions: 7600,
+          deletions: 1800,
+          color: "#ffc658",
+        },
+        {
+          name: "Alice Wilson",
+          commits: 22,
+          additions: 6200,
+          deletions: 1400,
+          color: "#ff7300",
+        },
+        {
+          name: "Charlie Brown",
+          commits: 15,
+          additions: 4100,
+          deletions: 900,
+          color: "#00ff88",
+        },
+        {
+          name: "David Lee",
+          commits: 8,
+          additions: 2300,
+          deletions: 600,
+          color: "#ff6b6b",
+        },
       ];
 
       const mockFileTypes: FileTypeStats[] = [
-        { extension: '.ts/.tsx', files: 89, lines: 18450, color: '#3178c6' },
-        { extension: '.py', files: 67, lines: 15200, color: '#3776ab' },
-        { extension: '.md', files: 23, lines: 3400, color: '#083fa1' },
-        { extension: '.json', files: 15, lines: 2800, color: '#e34c26' },
-        { extension: '.yml/.yaml', files: 12, lines: 1200, color: '#cb171e' },
-        { extension: 'Other', files: 28, lines: 4622, color: '#6c757d' }
+        { extension: ".ts/.tsx", files: 89, lines: 18450, color: "#3178c6" },
+        { extension: ".py", files: 67, lines: 15200, color: "#3776ab" },
+        { extension: ".md", files: 23, lines: 3400, color: "#083fa1" },
+        { extension: ".json", files: 15, lines: 2800, color: "#e34c26" },
+        { extension: ".yml/.yaml", files: 12, lines: 1200, color: "#cb171e" },
+        { extension: "Other", files: 28, lines: 4622, color: "#6c757d" },
       ];
 
       setStats(mockStats);
       setCommitActivity(mockCommitActivity);
       setContributors(mockContributors);
       setFileTypes(mockFileTypes);
-
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+      console.error("Failed to load dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -137,36 +172,50 @@ const RepositoryDashboard: React.FC = () => {
     <div className="repository-dashboard space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Repository Overview</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Repository Overview
+        </h2>
         <div className="flex items-center space-x-2 text-sm text-gray-500">
-          <span>Last updated: {format(new Date(), 'MMM dd, yyyy HH:mm')}</span>
+          <span>Last updated: {format(new Date(), "MMM dd, yyyy HH:mm")}</span>
         </div>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-blue-600">{stats.totalCommits}</div>
+          <div className="text-2xl font-bold text-blue-600">
+            {stats.totalCommits}
+          </div>
           <div className="text-sm text-gray-500">Total Commits</div>
         </div>
         <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-green-600">{stats.totalContributors}</div>
+          <div className="text-2xl font-bold text-green-600">
+            {stats.totalContributors}
+          </div>
           <div className="text-sm text-gray-500">Contributors</div>
         </div>
         <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-purple-600">{stats.linesOfCode.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-purple-600">
+            {stats.linesOfCode.toLocaleString()}
+          </div>
           <div className="text-sm text-gray-500">Lines of Code</div>
         </div>
         <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-indigo-600">{stats.activeBranches}</div>
+          <div className="text-2xl font-bold text-indigo-600">
+            {stats.activeBranches}
+          </div>
           <div className="text-sm text-gray-500">Active Branches</div>
         </div>
         <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-yellow-600">{stats.pendingReviews}</div>
+          <div className="text-2xl font-bold text-yellow-600">
+            {stats.pendingReviews}
+          </div>
           <div className="text-sm text-gray-500">Pending Reviews</div>
         </div>
         <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-2xl font-bold text-green-600">{stats.approvedCommits}</div>
+          <div className="text-2xl font-bold text-green-600">
+            {stats.approvedCommits}
+          </div>
           <div className="text-sm text-gray-500">Approved</div>
         </div>
       </div>
@@ -175,24 +224,31 @@ const RepositoryDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Commit Activity Chart */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Commit Activity (Last 30 Days)</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Commit Activity (Last 30 Days)
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={commitActivity}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="date" 
-                tickFormatter={(date) => format(parseISO(date), 'MM/dd')}
+              <XAxis
+                dataKey="date"
+                tickFormatter={(date) => format(parseISO(date), "MM/dd")}
               />
               <YAxis />
-              <Tooltip 
-                labelFormatter={(date) => format(parseISO(date), 'MMM dd, yyyy')}
-                formatter={(value, name) => [value, name === 'commits' ? 'Commits' : name]}
+              <Tooltip
+                labelFormatter={(date) =>
+                  format(parseISO(date), "MMM dd, yyyy")
+                }
+                formatter={(value, name) => [
+                  value,
+                  name === "commits" ? "Commits" : name,
+                ]}
               />
-              <Area 
-                type="monotone" 
-                dataKey="commits" 
-                stroke="#8884d8" 
-                fill="#8884d8" 
+              <Area
+                type="monotone"
+                dataKey="commits"
+                stroke="#8884d8"
+                fill="#8884d8"
                 fillOpacity={0.6}
               />
             </AreaChart>
@@ -201,30 +257,34 @@ const RepositoryDashboard: React.FC = () => {
 
         {/* Code Changes Chart */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Code Changes (Last 30 Days)</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Code Changes (Last 30 Days)
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={commitActivity}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="date" 
-                tickFormatter={(date) => format(parseISO(date), 'MM/dd')}
+              <XAxis
+                dataKey="date"
+                tickFormatter={(date) => format(parseISO(date), "MM/dd")}
               />
               <YAxis />
-              <Tooltip 
-                labelFormatter={(date) => format(parseISO(date), 'MMM dd, yyyy')}
+              <Tooltip
+                labelFormatter={(date) =>
+                  format(parseISO(date), "MMM dd, yyyy")
+                }
               />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="additions" 
-                stroke="#82ca9d" 
+              <Line
+                type="monotone"
+                dataKey="additions"
+                stroke="#82ca9d"
                 name="Additions"
                 strokeWidth={2}
               />
-              <Line 
-                type="monotone" 
-                dataKey="deletions" 
-                stroke="#ff7300" 
+              <Line
+                type="monotone"
+                dataKey="deletions"
+                stroke="#ff7300"
                 name="Deletions"
                 strokeWidth={2}
               />
@@ -234,7 +294,9 @@ const RepositoryDashboard: React.FC = () => {
 
         {/* Top Contributors */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Contributors</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Top Contributors
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={contributors} layout="horizontal">
               <CartesianGrid strokeDasharray="3 3" />
@@ -248,7 +310,9 @@ const RepositoryDashboard: React.FC = () => {
 
         {/* File Types Distribution */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">File Types Distribution</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            File Types Distribution
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -257,13 +321,17 @@ const RepositoryDashboard: React.FC = () => {
                 cy="50%"
                 outerRadius={80}
                 dataKey="lines"
-                label={({ extension, percent }) => `${extension} ${percent ? (percent * 100).toFixed(0) : 0}%`}
+                label={({ extension, percent }) =>
+                  `${extension} ${percent ? (percent * 100).toFixed(0) : 0}%`
+                }
               >
                 {fileTypes.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => [`${value} lines`, 'Lines of Code']} />
+              <Tooltip
+                formatter={(value) => [`${value} lines`, "Lines of Code"]}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -274,7 +342,9 @@ const RepositoryDashboard: React.FC = () => {
         {/* Contributors Details */}
         <div className="bg-white rounded-lg border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Contributor Statistics</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Contributor Statistics
+            </h3>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -296,17 +366,26 @@ const RepositoryDashboard: React.FC = () => {
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: contributor.color }}></div>
-                        <div className="text-sm font-medium text-gray-900">{contributor.name}</div>
+                        <div
+                          className="w-3 h-3 rounded-full mr-3"
+                          style={{ backgroundColor: contributor.color }}
+                        ></div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {contributor.name}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {contributor.commits}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="text-green-600">+{contributor.additions}</span>
+                      <span className="text-green-600">
+                        +{contributor.additions}
+                      </span>
                       <span className="text-gray-400 mx-1">/</span>
-                      <span className="text-red-600">-{contributor.deletions}</span>
+                      <span className="text-red-600">
+                        -{contributor.deletions}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -318,7 +397,9 @@ const RepositoryDashboard: React.FC = () => {
         {/* File Types Details */}
         <div className="bg-white rounded-lg border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">File Type Breakdown</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              File Type Breakdown
+            </h3>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -340,8 +421,13 @@ const RepositoryDashboard: React.FC = () => {
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: fileType.color }}></div>
-                        <div className="text-sm font-medium text-gray-900">{fileType.extension}</div>
+                        <div
+                          className="w-3 h-3 rounded-full mr-3"
+                          style={{ backgroundColor: fileType.color }}
+                        ></div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {fileType.extension}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

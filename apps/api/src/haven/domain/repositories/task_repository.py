@@ -29,12 +29,16 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_assignee(self, assignee_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
+    async def get_by_assignee(
+        self, assignee_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         """Get tasks by assignee."""
         pass
 
     @abstractmethod
-    async def get_by_repository(self, repository_id: int, limit: int = 100, offset: int = 0) -> list[Task]:
+    async def get_by_repository(
+        self, repository_id: int, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         """Get tasks by repository."""
         pass
 

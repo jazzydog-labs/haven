@@ -282,11 +282,17 @@ class Query:
 
                 # Get tasks with filters
                 if status:
-                    tasks = await service.get_tasks_by_status(status, limit=first + 1, offset=offset)
+                    tasks = await service.get_tasks_by_status(
+                        status, limit=first + 1, offset=offset
+                    )
                 elif assignee_id:
-                    tasks = await service.get_tasks_by_assignee(assignee_id, limit=first + 1, offset=offset)
+                    tasks = await service.get_tasks_by_assignee(
+                        assignee_id, limit=first + 1, offset=offset
+                    )
                 elif repository_id:
-                    tasks = await service.get_tasks_by_repository(repository_id, limit=first + 1, offset=offset)
+                    tasks = await service.get_tasks_by_repository(
+                        repository_id, limit=first + 1, offset=offset
+                    )
                 else:
                     tasks = await service.get_all_tasks(limit=first + 1, offset=offset)
 

@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import CommitList from '../components/diff/CommitList';
+import { useState } from "react";
+import CommitList from "../components/diff/CommitList";
 
 const DiffGeneration = () => {
-  const [activeTab, setActiveTab] = useState<'commits' | 'generate'>('commits');
+  const [activeTab, setActiveTab] = useState<"commits" | "generate">("commits");
 
   return (
     <div className="px-4 py-6 sm:px-0">
@@ -10,21 +10,21 @@ const DiffGeneration = () => {
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
-            onClick={() => setActiveTab('commits')}
+            onClick={() => setActiveTab("commits")}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'commits'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              activeTab === "commits"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
             Recent Commits
           </button>
           <button
-            onClick={() => setActiveTab('generate')}
+            onClick={() => setActiveTab("generate")}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'generate'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              activeTab === "generate"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
             Generate Diffs
@@ -33,9 +33,9 @@ const DiffGeneration = () => {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'commits' && <CommitList />}
-      
-      {activeTab === 'generate' && (
+      {activeTab === "commits" && <CommitList />}
+
+      {activeTab === "generate" && (
         <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 p-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             Generate New Diffs

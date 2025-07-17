@@ -36,7 +36,7 @@ class TimeLogRepository(ABC):
         end_date: datetime,
         user_id: int | None = None,
         limit: int = 100,
-        offset: int = 0
+        offset: int = 0,
     ) -> list[TimeLog]:
         """Get time logs within a date range."""
         pass
@@ -62,7 +62,9 @@ class TimeLogRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_total_hours_by_user(self, user_id: int, start_date: datetime, end_date: datetime) -> float:
+    async def get_total_hours_by_user(
+        self, user_id: int, start_date: datetime, end_date: datetime
+    ) -> float:
         """Get total hours logged by a user within a date range."""
         pass
 

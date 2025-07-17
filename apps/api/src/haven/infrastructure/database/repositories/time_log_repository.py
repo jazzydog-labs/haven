@@ -65,23 +65,18 @@ class TimeLogRepositoryImpl(TimeLogRepository):
         end_date: datetime,
         user_id: int | None = None,
         limit: int = 100,
-        offset: int = 0
+        offset: int = 0,
     ) -> list[TimeLog]:
         """Get time logs within a date range."""
         query = TimeLogModel.__table__.select().where(
-            and_(
-                TimeLogModel.logged_date >= start_date,
-                TimeLogModel.logged_date <= end_date
-            )
+            and_(TimeLogModel.logged_date >= start_date, TimeLogModel.logged_date <= end_date)
         )
 
         if user_id:
             query = query.where(TimeLogModel.user_id == user_id)
 
         result = await self.session.execute(
-            query.order_by(desc(TimeLogModel.logged_date))
-            .limit(limit)
-            .offset(offset)
+            query.order_by(desc(TimeLogModel.logged_date)).limit(limit).offset(offset)
         )
         return [self._model_to_entity(TimeLogModel(**row._mapping)) for row in result.fetchall()]
 
@@ -128,14 +123,16 @@ class TimeLogRepositoryImpl(TimeLogRepository):
         )
         return result.scalar() or 0.0
 
-    async def get_total_hours_by_user(self, user_id: int, start_date: datetime, end_date: datetime) -> float:
+    async def get_total_hours_by_user(
+        self, user_id: int, start_date: datetime, end_date: datetime
+    ) -> float:
         """Get total hours logged by a user within a date range."""
         result = await self.session.execute(
             func.sum(TimeLogModel.hours).where(
                 and_(
                     TimeLogModel.user_id == user_id,
                     TimeLogModel.logged_date >= start_date,
-                    TimeLogModel.logged_date <= end_date
+                    TimeLogModel.logged_date <= end_date,
                 )
             )
         )
@@ -150,14 +147,13 @@ class TimeLogRepositoryImpl(TimeLogRepository):
         type_summary = await self.session.execute(
             TimeLogModel.__table__.select()
             .with_only_columns(
-                TimeLogModel.log_type,
-                func.sum(TimeLogModel.hours).label("total_hours")
+                TimeLogModel.log_type, func.sum(TimeLogModel.hours).label("total_hours")
             )
             .where(
                 and_(
                     TimeLogModel.user_id == user_id,
                     TimeLogModel.logged_date >= start_of_day,
-                    TimeLogModel.logged_date <= end_of_day
+                    TimeLogModel.logged_date <= end_of_day,
                 )
             )
             .group_by(TimeLogModel.log_type)
@@ -169,7 +165,7 @@ class TimeLogRepositoryImpl(TimeLogRepository):
                 and_(
                     TimeLogModel.user_id == user_id,
                     TimeLogModel.logged_date >= start_of_day,
-                    TimeLogModel.logged_date <= end_of_day
+                    TimeLogModel.logged_date <= end_of_day,
                 )
             )
         )
@@ -189,13 +185,13 @@ class TimeLogRepositoryImpl(TimeLogRepository):
             TimeLogModel.__table__.select()
             .with_only_columns(
                 func.date(TimeLogModel.logged_date).label("date"),
-                func.sum(TimeLogModel.hours).label("total_hours")
+                func.sum(TimeLogModel.hours).label("total_hours"),
             )
             .where(
                 and_(
                     TimeLogModel.user_id == user_id,
                     TimeLogModel.logged_date >= start_date,
-                    TimeLogModel.logged_date < end_date
+                    TimeLogModel.logged_date < end_date,
                 )
             )
             .group_by(func.date(TimeLogModel.logged_date))
@@ -205,14 +201,13 @@ class TimeLogRepositoryImpl(TimeLogRepository):
         type_summary = await self.session.execute(
             TimeLogModel.__table__.select()
             .with_only_columns(
-                TimeLogModel.log_type,
-                func.sum(TimeLogModel.hours).label("total_hours")
+                TimeLogModel.log_type, func.sum(TimeLogModel.hours).label("total_hours")
             )
             .where(
                 and_(
                     TimeLogModel.user_id == user_id,
                     TimeLogModel.logged_date >= start_date,
-                    TimeLogModel.logged_date < end_date
+                    TimeLogModel.logged_date < end_date,
                 )
             )
             .group_by(TimeLogModel.log_type)
@@ -224,7 +219,7 @@ class TimeLogRepositoryImpl(TimeLogRepository):
                 and_(
                     TimeLogModel.user_id == user_id,
                     TimeLogModel.logged_date >= start_date,
-                    TimeLogModel.logged_date < end_date
+                    TimeLogModel.logged_date < end_date,
                 )
             )
         )
@@ -246,8 +241,7 @@ class TimeLogRepositoryImpl(TimeLogRepository):
         # Average hours by type
         avg_by_type = await self.session.execute(
             base_query.with_only_columns(
-                TimeLogModel.log_type,
-                func.avg(TimeLogModel.hours).label("avg_hours")
+                TimeLogModel.log_type, func.avg(TimeLogModel.hours).label("avg_hours")
             ).group_by(TimeLogModel.log_type)
         )
 
@@ -260,7 +254,7 @@ class TimeLogRepositoryImpl(TimeLogRepository):
                     (TimeLogModel.log_type == "testing", TimeLogModel.hours * 0.9),
                     (TimeLogModel.log_type == "documentation", TimeLogModel.hours * 0.7),
                     (TimeLogModel.log_type == "meeting", TimeLogModel.hours * 0.5),
-                    else_=TimeLogModel.hours * 1.0
+                    else_=TimeLogModel.hours * 1.0,
                 )
             ).label("efficiency_score")
         )
@@ -268,7 +262,9 @@ class TimeLogRepositoryImpl(TimeLogRepository):
         efficiency_score = await self.session.execute(efficiency_query)
 
         return {
-            "average_hours_by_type": {row.log_type: float(row.avg_hours) for row in avg_by_type.fetchall()},
+            "average_hours_by_type": {
+                row.log_type: float(row.avg_hours) for row in avg_by_type.fetchall()
+            },
             "total_efficiency_score": efficiency_score.scalar() or 0.0,
         }
 

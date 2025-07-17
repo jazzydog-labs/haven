@@ -1,4 +1,4 @@
-import { RecordItem } from '../../types/record';
+import { RecordItem } from "../../types/record";
 
 interface RecordCardProps {
   record: RecordItem;

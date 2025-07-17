@@ -11,6 +11,7 @@ from strawberry.fastapi import GraphQLRouter
 from haven.config import get_settings
 from haven.domain.exceptions import DomainError, RecordNotFoundError
 from haven.infrastructure.database.factory import db_factory
+from haven.interface.api.commit_routes import router as commit_router
 from haven.interface.api.diff_routes import router as diff_router
 from haven.interface.api.routes import router as api_router
 from haven.interface.api.ttr_routes import router as ttr_router
@@ -55,6 +56,7 @@ def create_app() -> FastAPI:
     app.include_router(api_router, prefix="/api/v1")
     app.include_router(diff_router, prefix="/api/v1")
     app.include_router(ttr_router)
+    app.include_router(commit_router)
 
     # Add GraphQL endpoint
     graphql_app = GraphQLRouter(schema)

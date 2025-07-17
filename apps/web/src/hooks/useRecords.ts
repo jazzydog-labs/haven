@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { RecordItem, RecordCreateDTO, RecordUpdateDTO } from '../types/record';
-import { recordsAPI } from '../services/api/records';
+import { useState, useEffect, useCallback } from "react";
+import { RecordItem, RecordCreateDTO, RecordUpdateDTO } from "../types/record";
+import { recordsAPI } from "../services/api/records";
 
 export const useRecords = (limit: number = 10) => {
   const [records, setRecords] = useState<RecordItem[]>([]);
@@ -12,14 +12,14 @@ export const useRecords = (limit: number = 10) => {
   const fetchRecords = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const offset = (currentPage - 1) * limit;
       const response = await recordsAPI.list(limit, offset);
       setRecords(response.items);
       setTotal(response.total);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -30,32 +30,20 @@ export const useRecords = (limit: number = 10) => {
   }, [fetchRecords]);
 
   const createRecord = async (data: RecordCreateDTO) => {
-    try {
-      const newRecord = await recordsAPI.create(data);
-      await fetchRecords(); // Refresh the list
-      return newRecord;
-    } catch (err) {
-      throw err;
-    }
+    const newRecord = await recordsAPI.create(data);
+    await fetchRecords(); // Refresh the list
+    return newRecord;
   };
 
   const updateRecord = async (id: string, data: RecordUpdateDTO) => {
-    try {
-      const updatedRecord = await recordsAPI.update(id, data);
-      await fetchRecords(); // Refresh the list
-      return updatedRecord;
-    } catch (err) {
-      throw err;
-    }
+    const updatedRecord = await recordsAPI.update(id, data);
+    await fetchRecords(); // Refresh the list
+    return updatedRecord;
   };
 
   const deleteRecord = async (id: string) => {
-    try {
-      await recordsAPI.delete(id);
-      await fetchRecords(); // Refresh the list
-    } catch (err) {
-      throw err;
-    }
+    await recordsAPI.delete(id);
+    await fetchRecords(); // Refresh the list
   };
 
   const totalPages = Math.ceil(total / limit);
