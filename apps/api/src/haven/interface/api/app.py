@@ -86,7 +86,7 @@ def create_app() -> FastAPI:
             "version": settings.app.version,
             "environment": settings.app.env,
         }
-    
+
     # Also add health check under API v1 (for frontend)
     @app.get("/api/v1/health", tags=["Health"])
     async def api_health_check():

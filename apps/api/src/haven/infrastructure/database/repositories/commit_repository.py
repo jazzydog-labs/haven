@@ -126,6 +126,129 @@ class SQLAlchemyCommitRepository(CommitRepository):
         result = await self.session.execute(stmt)
         return result.scalar() or 0
 
+    async def search_commits(
+        self,
+        repository_id: int,
+        search_query: str | None = None,
+        author_filter: str | None = None,
+        date_from: str | None = None,
+        date_to: str | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[Commit]:
+        """Search commits with filters."""
+        from datetime import datetime
+
+        from sqlalchemy import and_, or_
+
+        stmt = select(CommitModel).where(CommitModel.repository_id == repository_id)
+
+        # Add search conditions
+        conditions = []
+
+        if search_query:
+            # Search in message and commit hash
+            search_pattern = f"%{search_query}%"
+            conditions.append(
+                or_(
+                    CommitModel.message.ilike(search_pattern),
+                    CommitModel.commit_hash.ilike(search_pattern),
+                )
+            )
+
+        if author_filter:
+            # Search in author name and email
+            author_pattern = f"%{author_filter}%"
+            conditions.append(
+                or_(
+                    CommitModel.author_name.ilike(author_pattern),
+                    CommitModel.author_email.ilike(author_pattern),
+                )
+            )
+
+        if date_from:
+            try:
+                date_from_parsed = datetime.fromisoformat(date_from.replace('Z', '+00:00'))
+                conditions.append(CommitModel.committed_at >= date_from_parsed)
+            except ValueError:
+                pass  # Invalid date format, skip
+
+        if date_to:
+            try:
+                date_to_parsed = datetime.fromisoformat(date_to.replace('Z', '+00:00'))
+                conditions.append(CommitModel.committed_at <= date_to_parsed)
+            except ValueError:
+                pass  # Invalid date format, skip
+
+        if conditions:
+            stmt = stmt.where(and_(*conditions))
+
+        # Order by committed date descending
+        stmt = stmt.order_by(CommitModel.committed_at.desc()).limit(limit).offset(offset)
+
+        result = await self.session.execute(stmt)
+        models = result.scalars().all()
+
+        return [self._model_to_entity(model) for model in models]
+
+    async def count_search_results(
+        self,
+        repository_id: int,
+        search_query: str | None = None,
+        author_filter: str | None = None,
+        date_from: str | None = None,
+        date_to: str | None = None,
+    ) -> int:
+        """Count search results."""
+        from datetime import datetime
+
+        from sqlalchemy import and_, func, or_
+
+        stmt = select(func.count(CommitModel.id)).where(
+            CommitModel.repository_id == repository_id
+        )
+
+        # Add same search conditions
+        conditions = []
+
+        if search_query:
+            search_pattern = f"%{search_query}%"
+            conditions.append(
+                or_(
+                    CommitModel.message.ilike(search_pattern),
+                    CommitModel.commit_hash.ilike(search_pattern),
+                )
+            )
+
+        if author_filter:
+            author_pattern = f"%{author_filter}%"
+            conditions.append(
+                or_(
+                    CommitModel.author_name.ilike(author_pattern),
+                    CommitModel.author_email.ilike(author_pattern),
+                )
+            )
+
+        if date_from:
+            try:
+                date_from_parsed = datetime.fromisoformat(date_from.replace('Z', '+00:00'))
+                conditions.append(CommitModel.committed_at >= date_from_parsed)
+            except ValueError:
+                pass
+
+        if date_to:
+            try:
+                date_to_parsed = datetime.fromisoformat(date_to.replace('Z', '+00:00'))
+                conditions.append(CommitModel.committed_at <= date_to_parsed)
+            except ValueError:
+                pass
+
+        if conditions:
+            stmt = stmt.where(and_(*conditions))
+
+        result = await self.session.execute(stmt)
+        return result.scalar() or 0
+
     def _model_to_entity(self, model: CommitModel) -> Commit:
         """Convert CommitModel to Commit entity."""
         return Commit(

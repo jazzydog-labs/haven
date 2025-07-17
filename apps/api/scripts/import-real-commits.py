@@ -6,13 +6,15 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from haven.domain.entities.commit import Commit, DiffStats
-from haven.infrastructure.database.repositories.commit_repository import SQLAlchemyCommitRepository
-from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
 from haven.domain.entities.repository import Repository
+from haven.infrastructure.database.repositories.commit_repository import SQLAlchemyCommitRepository
+from haven.infrastructure.database.repositories.repository_repository import (
+    RepositoryRepositoryImpl,
+)
 
 
 def get_commit_info(commit_hash: str) -> dict:
@@ -25,9 +27,9 @@ def get_commit_info(commit_hash: str) -> dict:
         text=True,
         check=True
     )
-    
+
     lines = result.stdout.strip().split('\n')
-    
+
     # Get diff stats
     stats_result = subprocess.run(
         ["git", "show", "--stat", "--format=", commit_hash],
@@ -35,7 +37,7 @@ def get_commit_info(commit_hash: str) -> dict:
         text=True,
         check=True
     )
-    
+
     # Parse diff stats from the last line
     stats_lines = stats_result.stdout.strip().split('\n')
     if stats_lines:
@@ -44,7 +46,7 @@ def get_commit_info(commit_hash: str) -> dict:
         files_changed = 0
         insertions = 0
         deletions = 0
-        
+
         parts = last_line.split(',')
         for part in parts:
             part = part.strip()
@@ -56,7 +58,7 @@ def get_commit_info(commit_hash: str) -> dict:
                 deletions = int(part.split()[0])
     else:
         files_changed = insertions = deletions = 0
-    
+
     return {
         'hash': lines[0],
         'message': lines[1],
@@ -80,19 +82,19 @@ async def import_commits(commit_hashes: list[str]):
         "postgresql+asyncpg://haven:haven@localhost:5432/haven",
         echo=True
     )
-    
+
     async_session_maker = sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
     )
-    
+
     async with async_session_maker() as session:
         repo_repository = RepositoryRepositoryImpl(session)
         commit_repository = SQLAlchemyCommitRepository(session)
-        
+
         # Get the current repository path
         repo_path = Path.cwd()
         repo_name = repo_path.name
-        
+
         # First, create a repository if it doesn't exist
         existing_repo = await repo_repository.get_by_id(1)
         if not existing_repo:
@@ -110,13 +112,13 @@ async def import_commits(commit_hashes: list[str]):
         else:
             repo = existing_repo
             print(f"Using existing repository: {repo.name} (ID: {repo.id})")
-        
+
         # Import each commit
         for i, commit_hash in enumerate(commit_hashes):
             try:
                 # Get commit info from git
                 info = get_commit_info(commit_hash)
-                
+
                 # Create commit entity
                 commit = Commit(
                     repository_id=repo.id,
@@ -133,7 +135,7 @@ async def import_commits(commit_hashes: list[str]):
                         deletions=info['diff_stats']['deletions'],
                     ),
                 )
-                
+
                 # Check if commit already exists
                 existing = await commit_repository.get_by_hash(repo.id, info['hash'])
                 if not existing:
@@ -141,10 +143,10 @@ async def import_commits(commit_hashes: list[str]):
                     print(f"Imported commit {i+1}/{len(commit_hashes)}: {saved_commit.short_hash} - {info['message'][:50]}")
                 else:
                     print(f"Commit already exists: {info['hash'][:7]} - {info['message'][:50]}")
-                
+
             except Exception as e:
                 print(f"Error importing commit {commit_hash}: {e}")
-        
+
         await session.commit()
         print(f"\nDone! Imported {len(commit_hashes)} commits for repository ID: {repo.id}")
         print(f"View them at: http://web.haven.local/repository/{repo.id}/browse")
@@ -158,7 +160,7 @@ async def main():
         "5bd9b2e",  # feat: Add repository browser with paginated commit list
         "fb6d76c",  # docs: Update roadmap and work log with diff viewer completion
     ]
-    
+
     print(f"Importing {len(commit_hashes)} commits from the current repository...")
     await import_commits(commit_hashes)
 

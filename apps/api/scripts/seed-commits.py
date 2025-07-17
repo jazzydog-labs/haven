@@ -2,16 +2,18 @@
 """Seed script to create sample commits for testing the repository browser."""
 
 import asyncio
-from datetime import datetime, timedelta, timezone
 import random
+from datetime import UTC, datetime, timedelta
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from haven.domain.entities.commit import Commit, DiffStats
-from haven.infrastructure.database.repositories.commit_repository import SQLAlchemyCommitRepository
-from haven.infrastructure.database.repositories.repository_repository import SQLAlchemyRepositoryRepository
 from haven.domain.entities.repository import Repository
+from haven.infrastructure.database.repositories.commit_repository import SQLAlchemyCommitRepository
+from haven.infrastructure.database.repositories.repository_repository import (
+    SQLAlchemyRepositoryRepository,
+)
 
 
 async def create_sample_commits():
@@ -21,15 +23,15 @@ async def create_sample_commits():
         "postgresql+asyncpg://haven:haven@localhost:5432/haven",
         echo=True
     )
-    
+
     async_session_maker = sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
     )
-    
+
     async with async_session_maker() as session:
         repo_repository = SQLAlchemyRepositoryRepository(session)
         commit_repository = SQLAlchemyCommitRepository(session)
-        
+
         # First, create a repository if it doesn't exist
         existing_repo = await repo_repository.get_by_id(1)
         if not existing_repo:
@@ -46,7 +48,7 @@ async def create_sample_commits():
         else:
             repo = existing_repo
             print(f"Using existing repository: {repo.name} (ID: {repo.id})")
-        
+
         # Create sample commits
         commit_messages = [
             "Initial commit",
@@ -80,31 +82,31 @@ async def create_sample_commits():
             "Improve query performance",
             "Add API versioning",
         ]
-        
+
         authors = [
             ("Alice Developer", "alice@example.com"),
             ("Bob Coder", "bob@example.com"),
             ("Charlie Hacker", "charlie@example.com"),
             ("Diana Engineer", "diana@example.com"),
         ]
-        
+
         # Start from 30 days ago
-        current_time = datetime.now(timezone.utc) - timedelta(days=30)
-        
+        current_time = datetime.now(UTC) - timedelta(days=30)
+
         for i, message in enumerate(commit_messages):
             # Generate a fake commit hash
-            commit_hash = f"{'%08x' % random.randint(0, 0xffffffff)}{random.randint(100000, 999999)}"
-            
+            commit_hash = f"{random.randint(0, 0xffffffff):08x}{random.randint(100000, 999999)}"
+
             # Random author
             author_name, author_email = random.choice(authors)
-            
+
             # Random diff stats
             diff_stats = DiffStats(
                 files_changed=random.randint(1, 15),
                 insertions=random.randint(10, 500),
                 deletions=random.randint(0, 200),
             )
-            
+
             # Create commit
             commit = Commit(
                 repository_id=repo.id,
@@ -117,7 +119,7 @@ async def create_sample_commits():
                 committed_at=current_time,
                 diff_stats=diff_stats,
             )
-            
+
             # Check if commit already exists
             existing = await commit_repository.get_by_hash(repo.id, commit_hash)
             if not existing:
@@ -125,10 +127,10 @@ async def create_sample_commits():
                 print(f"Created commit {i+1}/{len(commit_messages)}: {saved_commit.short_hash} - {message[:50]}")
             else:
                 print(f"Skipping existing commit: {commit_hash[:7]}")
-            
+
             # Move time forward by a random amount (0.5 to 2 days)
             current_time += timedelta(hours=random.randint(12, 48))
-        
+
         await session.commit()
         print(f"\nDone! Created commits for repository ID: {repo.id}")
         print(f"View them at: http://web.haven.local/repository/{repo.id}/browse")

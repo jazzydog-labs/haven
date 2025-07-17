@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { SearchInput } from "../common/SearchInput";
+import { CommitFilters } from "./CommitFilters";
 import "./CommitList.css";
 
 interface CommitInfo {
@@ -47,15 +49,39 @@ export const CommitList: React.FC<CommitListProps> = ({
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
 
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  // Check if any filters are active
+  const hasActiveFilters = !!(searchQuery || authorFilter || dateFrom || dateTo);
+
+  // Build query parameters
+  const buildQueryParams = () => {
+    const params = new URLSearchParams({
+      repository_id: repositoryId.toString(),
+      page: page.toString(),
+      page_size: pageSize.toString(),
+    });
+
+    if (searchQuery) params.append("search", searchQuery);
+    if (authorFilter) params.append("author", authorFilter);
+    if (dateFrom) params.append("date_from", dateFrom);
+    if (dateTo) params.append("date_to", dateTo);
+
+    return params.toString();
+  };
+
   // Fetch commits
   const fetchCommits = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/v1/commits/paginated?repository_id=${repositoryId}&page=${page}&page_size=${pageSize}`
-      );
+      const queryParams = buildQueryParams();
+      const response = await fetch(`/api/v1/commits/paginated?${queryParams}`);
       
       if (!response.ok) {
         throw new Error("Failed to fetch commits");
@@ -72,10 +98,24 @@ export const CommitList: React.FC<CommitListProps> = ({
     }
   };
 
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery("");
+    setAuthorFilter("");
+    setDateFrom("");
+    setDateTo("");
+    setPage(1); // Reset to first page
+  };
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, authorFilter, dateFrom, dateTo]);
+
   useEffect(() => {
     fetchCommits();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repositoryId, page]);
+  }, [repositoryId, page, searchQuery, authorFilter, dateFrom, dateTo]);
 
   const handleCommitClick = (commit: CommitInfo) => {
     if (onCommitSelect) {
@@ -115,8 +155,33 @@ export const CommitList: React.FC<CommitListProps> = ({
     <div className="commit-list">
       <div className="list-header">
         <h2>Commits</h2>
-        <div className="commit-count">{total} total commits</div>
+        <div className="commit-count">
+          {total} total commits
+          {hasActiveFilters && " (filtered)"}
+        </div>
       </div>
+
+      {/* Search Bar */}
+      <div className="mb-4">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search commits by message or hash..."
+          className="w-full"
+        />
+      </div>
+
+      {/* Filters */}
+      <CommitFilters
+        author={authorFilter}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onAuthorChange={setAuthorFilter}
+        onDateFromChange={setDateFrom}
+        onDateToChange={setDateTo}
+        onClearFilters={clearFilters}
+        hasActiveFilters={hasActiveFilters}
+      />
 
       <div className="commits-container">
         {commits.map((commit) => (
