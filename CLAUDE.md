@@ -10,7 +10,8 @@ just run
 # Or with local domains on port 9000:
 just run-proxy
 
-# Or with local domains on port 80 (requires sudo):
+# Or with local domains on port 80 (requires sudo password):
+# Note: You'll be prompted for your password when running this command
 just run-proxy80
 
 # Access your app:
@@ -26,6 +27,12 @@ just run-proxy80
 
 # Stop everything:
 just stop-all      # (or stop-proxy if using domains)
+
+# Manual proxy setup (if automated commands don't work):
+# 1. Start backend: just docker::up-d
+# 2. Start frontend: cd apps/web && npm run dev
+# 3. Start proxy on port 9000: caddy run --config Caddyfile.http
+# 4. Or on port 80 (with sudo): sudo caddy run --config Caddyfile.http80
 ```
 
 ### Alternative Methods

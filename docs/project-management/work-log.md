@@ -4,6 +4,17 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0001 - Fixed Caddy proxy port configuration for clean URLs
+**Added**: Support for running Caddy proxy on standard port 80 without port numbers in URLs
+**Fixed**: Port mismatch in Caddyfile.http (was routing to wrong port 3003 instead of 3000)
+**See**: New files `Caddyfile.http80` and updated `justfile` with `run-proxy80` command
+**Test**: Run `just run-proxy80` (requires sudo) and access http://web.haven.local without port
+**Demo**: 
+1. Stop any running services: `just stop-proxy`
+2. Run with port 80: `just run-proxy80` (will prompt for sudo password)
+3. Access clean URLs: http://haven.local, http://api.haven.local/docs, http://api.haven.local/graphql
+4. Alternative: Use existing `just run-proxy` for port 9000 (no sudo needed)
+
 ## 2025-07-16.0007 - Complete TTR System Implementation (Tasks, Todos, and Roadmap)
 **Added**: Complete TTR system with proper project management focus
 **See**: Models in `apps/api/src/haven/infrastructure/database/models.py`, entities in `apps/api/src/haven/domain/entities/`
