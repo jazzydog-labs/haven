@@ -4,42 +4,28 @@
 
 ### 🚀 ONE COMMAND TO RUN EVERYTHING
 ```bash
-# Start EVERYTHING (backend + frontend with hot-reload)
-just run
+# Start EVERYTHING with proxy on port 80 (recommended)
+just run       # Will prompt for sudo password
 
-# Or with local domains on port 9000:
-just run-proxy
-
-# Or with local domains on port 80 (requires sudo password):
-just start-proxy    # New simplified command!
-# Alternative: just run-proxy80
-
-# Access your app:
-# With run-proxy (port 9000):
-# 🌐 Frontend:    http://web.haven.local:9000
-# 📚 API Docs:    http://api.haven.local:9000/docs
-# 🔮 GraphQL:     http://api.haven.local:9000/graphql
-
-# With run-proxy80 (port 80, no port needed in URL):
-# 🌐 Frontend:    http://web.haven.local
+# Access your app with clean URLs:
+# 🌐 Frontend:    http://haven.local
 # 📚 API Docs:    http://api.haven.local/docs
 # 🔮 GraphQL:     http://api.haven.local/graphql
 
 # Stop everything:
-just stop-all      # (or stop-proxy if using domains)
+just stop
 
-# Manual proxy setup (if automated commands don't work):
-# 1. Start backend: just docker::up-d
-# 2. Start frontend: cd apps/web && npm run dev
-# 3. Start proxy on port 9000: caddy run --config Caddyfile.http
-# 4. Or on port 80 (with sudo): sudo caddy run --config Caddyfile.http80
-
-# Easy port 80 setup:
-./start-proxy-80.sh  # Starts everything and prompts for sudo password
+# Other useful commands:
+just status    # Check what's running
+just logs      # View logs (interactive menu)
+just restart   # Quick restart everything
 ```
 
 ### Alternative Methods
 ```bash
+# Run without proxy (direct ports 3000/8080)
+just run-simple
+
 # Backend only
 just docker::up-d
 

@@ -4,6 +4,18 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0004 - Added 'just start-proxy' command for port 80 setup
+**Added**: New `just start-proxy` command that automatically starts all services with proxy on port 80
+**Created**: Port architecture documentation explaining the correct port usage
+**See**: Updated justfile and new `docs/port-architecture.md`
+**Test**: Run `just start-proxy` and enter sudo password when prompted
+**Demo**: 
+1. Stop all services: `just stop-all`
+2. Run: `just start-proxy`
+3. Enter sudo password when prompted
+4. Access http://haven.local (no port number needed!)
+5. Verify proxy is routing correctly: Frontend on /, API on api.haven.local
+
 ## 2025-07-17.0003 - Enhanced stop commands to kill all processes
 **Fixed**: stop-all and stop-proxy commands now properly terminate all frontend processes
 **Added**: pkill commands to ensure npm and vite processes are killed even if started manually
