@@ -20,6 +20,11 @@ const Layout = ({ children }: LayoutProps) => {
       href: "/diffs",
       current: location.pathname === "/diffs",
     },
+    {
+      name: "Analytics",
+      href: "/dashboards",
+      current: location.pathname === "/dashboards",
+    },
   ];
 
   return (

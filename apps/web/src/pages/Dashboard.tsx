@@ -68,13 +68,19 @@ const Dashboard = () => {
                   href="/records"
                   className="block w-full text-left px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded"
                 >
-                  View Records
+                  📝 View Records
                 </a>
                 <a
                   href="/diffs"
                   className="block w-full text-left px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded"
                 >
-                  Generate Diffs
+                  🔍 Browse Commits
+                </a>
+                <a
+                  href="/dashboards"
+                  className="block w-full text-left px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded"
+                >
+                  📊 View Analytics
                 </a>
                 <a
                   href="/api/docs"
@@ -82,7 +88,7 @@ const Dashboard = () => {
                   rel="noopener noreferrer"
                   className="block w-full text-left px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded"
                 >
-                  API Documentation
+                  📚 API Documentation
                 </a>
               </div>
             </div>

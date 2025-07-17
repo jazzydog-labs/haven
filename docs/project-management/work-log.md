@@ -901,6 +901,65 @@ Key features:
 - Fixed justfile variable references (ROOT_DIR → PROJECT_ROOT)
 - Automatic port detection (frontend runs on 3003 due to conflicts)
 
+## 2025-07-17.0002 - Implemented review repository infrastructure for commit reviews
+**Added**: Complete repository layer for commit review system with domain entities and database models
+**See**: 
+- Domain entities: `apps/api/src/haven/domain/entities/review_comment.py`
+- Repository interfaces: `apps/api/src/haven/domain/repositories/review_repository.py`
+- SQLAlchemy implementations: `apps/api/src/haven/infrastructure/database/repositories/review_repository.py`
+- Database models: `apps/api/src/haven/infrastructure/database/models.py` (ReviewCommentModel)
+- Migration: `apps/api/alembic/versions/b1babe0f8b3b_add_review_comments_table.py`
+**Test**: 
+```bash
+# Run domain entity tests
+python -m pytest tests/unit/domain/test_review_comment.py -v
+
+# Run repository tests
+python -m pytest tests/unit/infrastructure/test_review_repository.py -v
+
+# Apply database migration
+alembic upgrade head
+```
+**Demo**: 
+```bash
+# Test review comment creation
+cd apps/api && python -c "
+from haven.domain.entities.review_comment import ReviewComment, CommitReview
+from datetime import datetime, timezone
+
+# Create review comment entities
+comment = ReviewComment(
+    commit_id=1,
+    reviewer_id=1,
+    line_number=42,
+    file_path='src/main.py',
+    content='Consider adding error handling here.'
+)
+
+review = CommitReview(
+    commit_id=1,
+    reviewer_id=1,
+    status=CommitReview.ReviewStatus.PENDING
+)
+
+print(f'Comment type: {comment.is_line_comment}')
+print(f'Review status: {review.is_pending}')
+"
+```
+
+Key features:
+- ReviewComment domain entity with line/file/general comment support
+- CommitReview domain entity with workflow status tracking
+- Comprehensive validation for comment content and file paths
+- Review status states: draft, pending, approved, needs_revision
+- Repository interfaces and SQLAlchemy implementations with full CRUD
+- Database models with proper foreign keys and indexes
+- Review_comments table migration with commit/user relationships
+- 17 domain entity tests + 7 repository integration tests passing
+- Support for review statistics and pending review queries
+
+Phase 1.1-1.3 complete - domain, repository, and database layers ready for service implementation.
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*

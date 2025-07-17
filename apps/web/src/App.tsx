@@ -3,6 +3,7 @@ import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Records from "./pages/Records";
 import DiffGeneration from "./pages/DiffGeneration";
+import Dashboards from "./pages/Dashboards";
 import CommitViewer from "./components/diff/CommitViewer";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/records" element={<Records />} />
             <Route path="/diffs" element={<DiffGeneration />} />
+            <Route path="/dashboards" element={<Dashboards />} />
           </Routes>
         </Layout>
       } />
