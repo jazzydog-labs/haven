@@ -5,7 +5,6 @@
   background: #fafbfc;
   border: 1px solid #e1e4e8;
   border-radius: 6px;
-  overflow: hidden;
 }
 
 .diff-viewer-loading,
@@ -125,7 +124,7 @@
 
 /* Diff Content */
 .diff-file-content {
-  overflow-x: auto;
+  /* Allow content to flow naturally */
 }
 
 .diff-block {
@@ -155,7 +154,8 @@
 .diff-line-content {
   flex: 1;
   padding: 0 10px;
-  overflow-x: auto;
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 
 .diff-line-sign {

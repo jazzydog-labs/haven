@@ -132,7 +132,10 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to submit review");
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Failed to submit review: ${response.status} - ${errorData}`);
+      }
 
       // Refresh reviews
       await fetchCommit();

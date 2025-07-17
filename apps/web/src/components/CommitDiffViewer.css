@@ -142,8 +142,7 @@
 }
 
 .diff-viewer-content {
-  height: 600px;
-  overflow: auto;
+  /* Remove fixed height and overflow to allow natural page scrolling */
 }
 
 .diff-iframe {
@@ -155,8 +154,6 @@
 
 .diff-html-container {
   width: 100%;
-  height: 100%;
-  overflow: auto;
   background: #fff;
 }
 

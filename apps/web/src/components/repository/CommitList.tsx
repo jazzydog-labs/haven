@@ -51,7 +51,7 @@ export const CommitList: React.FC<CommitListProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
+  const [pageSize] = useState(500);
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
 

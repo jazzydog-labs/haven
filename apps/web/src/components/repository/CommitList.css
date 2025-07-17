@@ -43,8 +43,7 @@
 
 /* Commits Container */
 .commits-container {
-  max-height: 600px;
-  overflow-y: auto;
+  /* Remove fixed height to allow natural page scrolling */
 }
 
 /* Commit Item */
