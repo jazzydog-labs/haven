@@ -33,6 +33,9 @@ just stop-all      # (or stop-proxy if using domains)
 # 2. Start frontend: cd apps/web && npm run dev
 # 3. Start proxy on port 9000: caddy run --config Caddyfile.http
 # 4. Or on port 80 (with sudo): sudo caddy run --config Caddyfile.http80
+
+# Easy port 80 setup:
+./start-proxy-80.sh  # Starts everything and prompts for sudo password
 ```
 
 ### Alternative Methods
