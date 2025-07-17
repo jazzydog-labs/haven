@@ -110,6 +110,29 @@ export const RepositoryManagerPage: React.FC = () => {
     }
   };
 
+  const generateDiffs = async (identifier: string) => {
+    setLoadingCommits(prev => ({ ...prev, [identifier]: true }));
+    try {
+      const response = await fetch(`/api/v1/repository-management/${identifier}/generate-diffs`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to start generating diffs");
+      }
+      
+      const data = await response.json();
+      alert(`Started generating diffs: ${data.message}`);
+    } catch (err) {
+      alert(`Failed to generate diffs: ${err instanceof Error ? err.message : "Unknown error"}`);
+    } finally {
+      setLoadingCommits(prev => ({ ...prev, [identifier]: false }));
+    }
+  };
+
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "N/A";
     return new Date(dateStr).toLocaleDateString();
@@ -223,13 +246,22 @@ export const RepositoryManagerPage: React.FC = () => {
                       {isLoadingCommits ? "Loading..." : "Load All Commits"}
                     </button>
                   ) : (
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => loadCommits(identifier, repo.branch)}
-                      disabled={isLoadingCommits}
-                    >
-                      {isLoadingCommits ? "Loading..." : "Refresh Commits"}
-                    </button>
+                    <>
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => loadCommits(identifier, repo.branch)}
+                        disabled={isLoadingCommits}
+                      >
+                        {isLoadingCommits ? "Loading..." : "Refresh Commits"}
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => generateDiffs(identifier)}
+                        disabled={isLoadingCommits}
+                      >
+                        Generate Diffs
+                      </button>
+                    </>
                   )}
                 </div>
               </div>

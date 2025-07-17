@@ -14,22 +14,20 @@ class GitClient:
         self.repos_base_path = Path(repos_base_path)
         self.repos_base_path.mkdir(parents=True, exist_ok=True)
 
-    async def get_commit_diff(self, repository_id: int, commit_hash: str) -> str:
+    async def get_commit_diff(self, repo_path: str, commit_hash: str) -> str:
         """
         Get the diff for a specific commit.
 
         Args:
-            repository_id: ID of the repository
+            repo_path: Path to the repository
             commit_hash: Hash of the commit
 
         Returns:
             Unified diff content as string
         """
-        # For now, we'll use a mock implementation
-        # In a real system, this would clone/fetch the repo and get the actual diff
-        repo_path = self._get_repo_path(repository_id)
+        repo_path_obj = Path(repo_path)
 
-        if not repo_path.exists():
+        if not repo_path_obj.exists():
             # Mock some diff content for demonstration
             return self._generate_mock_diff(commit_hash)
 
@@ -39,7 +37,7 @@ class GitClient:
         try:
             process = await asyncio.create_subprocess_exec(
                 *cmd,
-                cwd=str(repo_path),
+                cwd=str(repo_path_obj),
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )

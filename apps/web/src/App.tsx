@@ -9,6 +9,7 @@ import { CommitReviewPage } from "./pages/CommitReview";
 import { RepositoryBrowserPage } from "./pages/RepositoryBrowser";
 import { RepositoriesPage } from "./pages/Repositories";
 import { RepositoryManagerPage } from "./pages/RepositoryManager";
+import { TestDiffViewerPage } from "./pages/TestDiffViewer";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/diffs/commit/:commitHash" element={<CommitViewer />} />
       <Route path="/commits/:commitHash/review" element={<CommitReviewPage />} />
       <Route path="/repository/:repositoryHash/browse" element={<RepositoryBrowserPage />} />
+      <Route path="/test-diff/:commitId" element={<TestDiffViewerPage />} />
       <Route
         path="/*"
         element={

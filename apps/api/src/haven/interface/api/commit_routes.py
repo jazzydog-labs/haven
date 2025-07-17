@@ -62,7 +62,7 @@ async def create_commit(
 @router.get("/", response_model=list[CommitResponse])
 async def list_commits(
     repository_id: int = Query(..., description="Repository ID"),
-    limit: int = Query(100, ge=1, le=1000),
+    limit: int = Query(100, ge=1, le=500),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
 ) -> list[CommitResponse]:
@@ -77,7 +77,7 @@ async def list_commits(
 async def list_commits_paginated_with_reviews(
     repository_id: int = Query(..., description="Repository ID"),
     page: int = Query(1, ge=1, description="Page number"),
-    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    page_size: int = Query(20, ge=1, le=500, description="Items per page"),
     search: str | None = Query(None, description="Search in commit message or hash"),
     author: str | None = Query(None, description="Filter by author name or email"),
     date_from: str | None = Query(None, description="Filter commits from this date (ISO format)"),
@@ -193,7 +193,7 @@ async def list_commits_paginated_with_reviews(
 async def list_commits_paginated(
     repository_id: int = Query(..., description="Repository ID"),
     page: int = Query(1, ge=1, description="Page number"),
-    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    page_size: int = Query(20, ge=1, le=500, description="Items per page"),
     search: str | None = Query(None, description="Search in commit message or hash"),
     author: str | None = Query(None, description="Filter by author name or email"),
     date_from: str | None = Query(None, description="Filter commits from this date (ISO format)"),
@@ -260,6 +260,27 @@ async def get_commit_by_hash(
     return CommitResponse.from_entity(commit)
 
 
+@router.get("/hash/{commit_hash}", response_model=CommitResponse)
+async def get_commit_by_hash_global(
+    commit_hash: str,
+    db: AsyncSession = Depends(get_db),
+) -> CommitResponse:
+    """Get a commit by hash across all repositories."""
+    repo = SQLAlchemyCommitRepository(db)
+    
+    # Try to find commit by hash across all repositories
+    from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
+    repo_impl = RepositoryRepositoryImpl(db)
+    repositories = await repo_impl.get_all()
+    
+    for repository in repositories:
+        commit = await repo.get_by_hash(repository.id, commit_hash)
+        if commit:
+            return CommitResponse.from_entity(commit)
+    
+    raise HTTPException(status_code=404, detail="Commit not found")
+
+
 @router.get("/{commit_id}", response_model=CommitResponse)
 async def get_commit(
     commit_id: int,
@@ -291,8 +312,16 @@ async def generate_commit_diff(
     git_client = GitClient()
     diff_service = DiffHtmlService(git_client, repo)
 
+    # Get repository information
+    from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
+    repo_impl = RepositoryRepositoryImpl(db)
+    repository = await repo_impl.get_by_id(commit.repository_id)
+    
+    if not repository:
+        raise HTTPException(status_code=404, detail="Repository not found")
+    
     # Generate diff HTML
-    html_path = await diff_service.generate_diff_html(commit)
+    html_path = await diff_service.generate_diff_html(commit, repository.url)
 
     # Commit changes
     await db.commit()
@@ -329,8 +358,16 @@ async def generate_batch_diffs(
     git_client = GitClient()
     diff_service = DiffHtmlService(git_client, repo)
 
+    # Get repository information from first commit
+    from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
+    repo_impl = RepositoryRepositoryImpl(db)
+    repository = await repo_impl.get_by_id(commits[0].repository_id)
+    
+    if not repository:
+        raise HTTPException(status_code=404, detail="Repository not found")
+    
     # Process commits in parallel
-    results = await diff_service.process_commits_batch(commits, max_concurrent=5)
+    results = await diff_service.process_commits_batch(commits, repository.url, max_concurrent=5)
 
     # Commit changes
     await db.commit()
@@ -346,7 +383,7 @@ async def get_commit_diff_html(
     commit_id: int,
     db: AsyncSession = Depends(get_db),
 ):
-    """Get the HTML diff file for a commit."""
+    """Get the HTML diff file for a commit (legacy)."""
     repo = SQLAlchemyCommitRepository(db)
     commit = await repo.get_by_id(commit_id)
 
@@ -366,6 +403,34 @@ async def get_commit_diff_html(
         media_type="text/html",
         filename=f"commit_{commit.short_hash}_diff.html",
     )
+
+
+@router.get("/{commit_id}/diff-json")
+async def get_commit_diff_json(
+    commit_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    """Get the JSON diff data for a commit."""
+    repo = SQLAlchemyCommitRepository(db)
+    commit = await repo.get_by_id(commit_id)
+
+    if not commit:
+        raise HTTPException(status_code=404, detail="Commit not found")
+
+    if not commit.diff_html_path:
+        raise HTTPException(status_code=404, detail="Diff not generated for this commit")
+
+    # Check if JSON file exists
+    file_path = Path(commit.diff_html_path)
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Diff file not found")
+
+    # Read and return JSON content
+    import json
+    with open(file_path, 'r') as f:
+        diff_data = json.load(f)
+    
+    return diff_data
 
 
 # Review endpoints

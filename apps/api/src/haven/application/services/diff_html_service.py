@@ -1,6 +1,7 @@
-"""Service for generating HTML diffs using diff2html."""
+"""Service for generating JSON diffs using diff2html."""
 
 import asyncio
+import json
 import os
 import tempfile
 from datetime import datetime
@@ -12,93 +13,99 @@ from haven.infrastructure.git.git_client import GitClient
 
 
 class DiffHtmlService:
-    """Service for generating HTML diffs for commits using diff2html."""
+    """Service for generating diff data for commits using diff2html."""
 
     def __init__(
         self,
         git_client: GitClient,
         commit_repository: CommitRepository,
-        output_dir: str = "apps/api/diff-output",
+        output_dir: str = "/app/diff-output",
     ):
-        """Initialize the diff HTML service."""
+        """Initialize the diff service."""
         self.git_client = git_client
         self.commit_repository = commit_repository
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    async def generate_diff_html(self, commit: Commit) -> str:
+    async def generate_diff_html(self, commit: Commit, repo_path: str = "/repo") -> str:
         """
-        Generate HTML diff for a commit using diff2html-cli.
+        Generate JSON diff data for a commit using diff2html-cli.
 
         Args:
             commit: The commit to generate diff for
+            repo_path: Path to the repository (default: "/repo")
 
         Returns:
-            Path to the generated HTML file
+            Path to the generated JSON file
         """
         # Create output directory for this repository
         repo_dir = self.output_dir / f"repo_{commit.repository_id}"
         repo_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate filename based on commit hash
-        html_filename = f"{commit.commit_hash}.html"
-        html_path = repo_dir / html_filename
+        json_filename = f"{commit.commit_hash}.json"
+        json_path = repo_dir / json_filename
 
         # Get the git diff for this commit
-        diff_content = await self._get_commit_diff(commit)
+        diff_content = await self._get_commit_diff(commit, repo_path)
 
         if not diff_content:
             # No diff content (might be initial commit)
-            html_content = self._generate_empty_diff_html(commit)
-            html_path.write_text(html_content)
+            empty_diff_data = {
+                "commit": {
+                    "hash": commit.commit_hash,
+                    "short_hash": commit.short_hash,
+                    "summary": commit.summary,
+                    "message": commit.message,
+                    "author_name": commit.author_name,
+                    "author_email": commit.author_email,
+                    "committed_at": commit.committed_at.isoformat()
+                },
+                "files": []
+            }
+            json_path.write_text(json.dumps(empty_diff_data, indent=2))
         else:
-            # Use diff2html-cli to generate HTML
-            await self._run_diff2html(diff_content, html_path, commit)
+            # Use diff2html-cli to generate JSON
+            await self._run_diff2html_json(diff_content, json_path, commit)
+
+        # Note: Commit update is handled by the caller to ensure proper transaction management
 
         # Return relative path from project root
-        relative_path = html_path.relative_to(Path.cwd())
+        relative_path = json_path.relative_to(Path.cwd())
         return str(relative_path)
 
-    async def _get_commit_diff(self, commit: Commit) -> str:
+    async def _get_commit_diff(self, commit: Commit, repo_path: str) -> str:
         """Get the diff content for a commit."""
-        # This assumes git_client has a method to get diff
-        # You might need to implement this in GitClient
         try:
             # Get diff between commit and its parent
-            return await self.git_client.get_commit_diff(commit.repository_id, commit.commit_hash)
+            return await self.git_client.get_commit_diff(repo_path, commit.commit_hash)
         except Exception as e:
             print(f"Error getting diff for commit {commit.commit_hash}: {e}")
             return ""
 
-    async def _run_diff2html(self, diff_content: str, output_path: Path, commit: Commit) -> None:
-        """Run diff2html-cli to generate HTML from diff content."""
+    async def _run_diff2html_json(self, diff_content: str, output_path: Path, commit: Commit) -> None:
+        """Run diff2html-cli to generate JSON from diff content."""
         # Create temporary file with diff content
         with tempfile.NamedTemporaryFile(mode="w", suffix=".diff", delete=False) as tmp:
             tmp.write(diff_content)
             tmp_path = tmp.name
 
         try:
-            # Run diff2html-cli command
+            # Run diff2html-cli command to generate JSON
             cmd = [
-                "npx",
-                "diff2html-cli",
+                "/usr/local/bin/diff2html",
                 "--input",
                 "file",
+                "--format",
+                "json",
                 "--output",
-                "file",
-                "--file",
-                str(output_path),
-                "--style",
-                "side",  # Side-by-side view
-                "--title",
-                f"Commit {commit.short_hash}: {commit.summary}",
-                "--highlightCode",  # Enable syntax highlighting
+                "stdout",
+                "--",
                 tmp_path,
             ]
 
             process = await asyncio.create_subprocess_exec(
                 *cmd,
-                cwd=str(Path.cwd() / "apps/api"),
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
@@ -107,6 +114,26 @@ class DiffHtmlService:
 
             if process.returncode != 0:
                 raise Exception(f"diff2html-cli failed: {stderr.decode()}")
+
+            # Parse the JSON output
+            diff_data = json.loads(stdout.decode())
+            
+            # Enhance with commit metadata
+            enhanced_data = {
+                "commit": {
+                    "hash": commit.commit_hash,
+                    "short_hash": commit.short_hash,
+                    "summary": commit.summary,
+                    "message": commit.message,
+                    "author_name": commit.author_name,
+                    "author_email": commit.author_email,
+                    "committed_at": commit.committed_at.isoformat()
+                },
+                "files": diff_data
+            }
+            
+            # Write enhanced JSON to file
+            output_path.write_text(json.dumps(enhanced_data, indent=2))
 
         finally:
             # Clean up temporary file
@@ -169,13 +196,14 @@ class DiffHtmlService:
 """
 
     async def process_commits_batch(
-        self, commits: list[Commit], max_concurrent: int = 5
+        self, commits: list[Commit], repo_path: str = "/repo", max_concurrent: int = 5
     ) -> dict[int, str]:
         """
         Process multiple commits in parallel to generate HTML diffs.
 
         Args:
             commits: List of commits to process
+            repo_path: Path to the repository
             max_concurrent: Maximum number of concurrent diff generations
 
         Returns:
@@ -187,11 +215,7 @@ class DiffHtmlService:
         async def process_with_semaphore(commit: Commit) -> tuple[int, str | None]:
             async with semaphore:
                 try:
-                    html_path = await self.generate_diff_html(commit)
-                    # Update commit in database with HTML path
-                    commit.diff_html_path = html_path
-                    commit.diff_generated_at = datetime.utcnow()
-                    await self.commit_repository.update(commit)
+                    html_path = await self.generate_diff_html(commit, repo_path)
                     return (commit.id, html_path)
                 except Exception as e:
                     print(f"Error processing commit {commit.id}: {e}")
