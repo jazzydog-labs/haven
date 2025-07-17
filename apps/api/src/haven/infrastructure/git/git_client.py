@@ -2,6 +2,8 @@
 
 import asyncio
 from pathlib import Path
+from datetime import datetime, timezone
+from typing import Optional
 
 
 class GitClient:
@@ -192,3 +194,81 @@ index 1234567..abcdefg 100644
             return int(result.strip()) if result.strip() else 0
         except Exception:
             return 0
+
+    async def get_commit_log(
+        self,
+        repo_path: str,
+        branch: str = "HEAD",
+        limit: Optional[int] = None,
+        since_date: Optional[datetime] = None,
+    ) -> list[dict]:
+        """Get commit log from repository."""
+        cmd = [
+            "git",
+            "log",
+            branch,
+            "--format=%H|%an|%ae|%cn|%ce|%ct|%s",
+            "--numstat",
+        ]
+        
+        if limit:
+            cmd.append(f"-{limit}")
+        
+        if since_date:
+            cmd.append(f"--since={since_date.isoformat()}")
+        
+        try:
+            result = await self._run_command(cmd, cwd=repo_path)
+            if not result.strip():
+                return []
+            
+            commits = []
+            lines = result.strip().split("\n")
+            i = 0
+            
+            while i < len(lines):
+                if "|" in lines[i]:
+                    # Parse commit info
+                    parts = lines[i].split("|", 6)
+                    if len(parts) >= 7:
+                        commit_hash, author_name, author_email, committer_name, committer_email, timestamp, message = parts
+                        
+                        # Parse numstat
+                        i += 1
+                        files_changed = 0
+                        insertions = 0
+                        deletions = 0
+                        
+                        while i < len(lines) and lines[i] and not "|" in lines[i]:
+                            if lines[i].strip():
+                                parts = lines[i].split("\t")
+                                if len(parts) >= 2:
+                                    files_changed += 1
+                                    if parts[0] != "-":
+                                        insertions += int(parts[0])
+                                    if parts[1] != "-":
+                                        deletions += int(parts[1])
+                            i += 1
+                        
+                        commits.append({
+                            "hash": commit_hash,
+                            "author_name": author_name,
+                            "author_email": author_email,
+                            "committer_name": committer_name,
+                            "committer_email": committer_email,
+                            "committed_at": datetime.fromtimestamp(int(timestamp), tz=timezone.utc),
+                            "message": message,
+                            "files_changed": files_changed,
+                            "insertions": insertions,
+                            "deletions": deletions,
+                        })
+                    else:
+                        i += 1
+                else:
+                    i += 1
+            
+            return commits
+            
+        except Exception as e:
+            print(f"Error getting commit log: {e}")
+            return []

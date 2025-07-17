@@ -81,6 +81,7 @@ async def list_commits_paginated_with_reviews(
     author: str | None = Query(None, description="Filter by author name or email"),
     date_from: str | None = Query(None, description="Filter commits from this date (ISO format)"),
     date_to: str | None = Query(None, description="Filter commits until this date (ISO format)"),
+    branch: str | None = Query(None, description="Filter by branch name"),
     db: AsyncSession = Depends(get_db),
 ) -> PaginatedCommitWithReviewResponse:
     """List commits with review status for a repository."""

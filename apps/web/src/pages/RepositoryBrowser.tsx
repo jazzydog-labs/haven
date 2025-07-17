@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { CommitList } from "../components/repository/CommitList";
+import { BranchSelector } from "../components/repository/BranchSelector";
 import "./RepositoryBrowser.css";
 
 interface RepositoryInfo {
@@ -25,6 +26,7 @@ export const RepositoryBrowserPage: React.FC = () => {
   const { repositoryHash } = useParams<{ repositoryHash: string }>();
   const [repository, setRepository] = useState<RepositoryInfo | null>(null);
   const [selectedCommitId, setSelectedCommitId] = useState<number | null>(null);
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,6 +41,7 @@ export const RepositoryBrowserPage: React.FC = () => {
         }
         const data: RepositoryInfo = await response.json();
         setRepository(data);
+        setSelectedBranch(data.current_branch || data.branch);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load repository");
       } finally {
@@ -94,8 +97,12 @@ export const RepositoryBrowserPage: React.FC = () => {
             </div>
           )}
           <div className="info-row">
-            <span className="label">Current Branch:</span>
-            <span className="value">{repository.current_branch || repository.branch}</span>
+            <span className="label">Branch:</span>
+            <BranchSelector
+              repositoryIdentifier={repository.slug || repository.repository_hash}
+              currentBranch={selectedBranch || repository.branch}
+              onBranchChange={setSelectedBranch}
+            />
           </div>
           <div className="info-row">
             <span className="label">Total Commits:</span>
@@ -120,6 +127,7 @@ export const RepositoryBrowserPage: React.FC = () => {
           repositoryHash={repository.repository_hash}
           onCommitSelect={setSelectedCommitId}
           selectedCommitId={selectedCommitId}
+          branch={selectedBranch}
         />
       </div>
     </div>

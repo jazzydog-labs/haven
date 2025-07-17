@@ -116,3 +116,29 @@ async def list_repositories(
         )
         for repo in repositories
     ]
+
+
+@router.get("/{repository_identifier}/branches", response_model=list[str])
+async def get_repository_branches(
+    repository_identifier: str,
+    db: AsyncSession = Depends(get_db),
+) -> list[str]:
+    """Get all branches for a repository."""
+    repo_impl = RepositoryRepositoryImpl(db)
+    
+    # Try to get by slug first, then by hash
+    repository = await repo_impl.get_by_slug(repository_identifier)
+    if not repository:
+        repository = await repo_impl.get_by_hash(repository_identifier)
+    
+    if not repository:
+        raise HTTPException(status_code=404, detail="Repository not found")
+    
+    # Get branches from git
+    git_client = GitClient()
+    try:
+        branches = await git_client.get_branches(repository.url)
+        return branches
+    except Exception as e:
+        # If git operations fail, return default branch
+        return [repository.branch]

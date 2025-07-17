@@ -37,12 +37,14 @@ interface CommitListProps {
   repositoryHash?: string;
   onCommitSelect?: (commitId: number) => void;
   selectedCommitId?: number | null;
+  branch?: string | null;
 }
 
 export const CommitList: React.FC<CommitListProps> = ({
   repositoryId,
   onCommitSelect,
   selectedCommitId,
+  branch,
 }) => {
   const navigate = useNavigate();
   const [commits, setCommits] = useState<CommitInfo[]>([]);
@@ -74,6 +76,7 @@ export const CommitList: React.FC<CommitListProps> = ({
     if (authorFilter) params.append("author", authorFilter);
     if (dateFrom) params.append("date_from", dateFrom);
     if (dateTo) params.append("date_to", dateTo);
+    if (branch) params.append("branch", branch);
 
     return params.toString();
   };
