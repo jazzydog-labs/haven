@@ -4,6 +4,28 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0011 - Enhanced real-time fuzzy search
+**Enhanced**: Real-time fuzzy search with visual feedback and highlighting
+**Features**:
+- Debounced search with 150ms delay for smooth performance
+- Search results highlight matching text in yellow
+- Visual "Searching..." indicator with spinning animation
+- Shows number of results found instead of total commits when searching
+- Highlights work on commit hash, message, and author fields
+**See**:
+- `apps/web/src/components/repository/CommitList.tsx:239-271` - Highlight function
+- `apps/web/src/components/repository/CommitList.css:237-267` - Search styles
+**Test**:
+1. Type in the search box and see the "Searching..." indicator
+2. After 150ms, results appear with highlighted matches
+3. Clear search to see all commits again
+**Demo**:
+1. Start services: `just run`
+2. Go to http://haven.local/repository/[repo-id]/browse
+3. Type "fix" or "feat" in search box
+4. See matching text highlighted in yellow
+5. Notice smooth search without page refresh
+
 ## 2025-07-17.0010 - Display existing comments on diff lines
 **Added**: Display of existing comments below their associated lines in diff viewer
 **Features**:
