@@ -46,6 +46,15 @@ async def _load_commits_task(
     if not repository:
         return
     
+    # If no since_date specified, find latest commit date to avoid duplicates
+    if not since_date:
+        existing_commits = await commit_repo.get_by_repository(repository.id)
+        if existing_commits:
+            # Find the latest commit date
+            latest_commit = max(existing_commits, key=lambda c: c.committed_at)
+            since_date = latest_commit.committed_at
+            print(f"Loading commits since: {since_date}")
+    
     # Get commits from git
     git_client = GitClient()
     try:
@@ -59,10 +68,13 @@ async def _load_commits_task(
         
         # Process each commit
         loaded_count = 0
+        skipped_count = 0
+        
         for commit_data in commits_data:
             # Check if commit already exists
             existing = await commit_repo.get_by_hash(repository.id, commit_data["hash"])
             if existing:
+                skipped_count += 1
                 continue
             
             # Create commit entity
@@ -87,7 +99,7 @@ async def _load_commits_task(
             loaded_count += 1
         
         await db_session.commit()
-        print(f"Loaded {loaded_count} new commits for repository {repository.name}")
+        print(f"Loaded {loaded_count} new commits, skipped {skipped_count} existing commits for repository {repository.name}")
         
     except Exception as e:
         print(f"Error loading commits: {str(e)}")

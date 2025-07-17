@@ -5,6 +5,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func
 
 from haven.application.services.diff_html_service import DiffHtmlService
 from haven.domain.entities.commit import Commit, CommitReview
@@ -124,7 +125,7 @@ async def list_commits_paginated_with_reviews(
     if commit_ids:
         # Get latest review status for each commit
         subquery = (
-            db.query(
+            select(
                 CommitReviewModel.commit_id,
                 func.max(CommitReviewModel.created_at).label("latest_created_at")
             )
@@ -133,8 +134,8 @@ async def list_commits_paginated_with_reviews(
             .subquery()
         )
         
-        reviews_query = await db.execute(
-            db.query(
+        reviews_stmt = (
+            select(
                 CommitReviewModel.commit_id,
                 CommitReviewModel.status,
                 func.count(CommitReviewModel.id).label("review_count"),
@@ -147,6 +148,8 @@ async def list_commits_paginated_with_reviews(
             )
             .group_by(CommitReviewModel.commit_id, CommitReviewModel.status)
         )
+        
+        reviews_query = await db.execute(reviews_stmt)
         
         review_map = {
             row.commit_id: {
