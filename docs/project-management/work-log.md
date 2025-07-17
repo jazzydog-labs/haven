@@ -960,6 +960,110 @@ Key features:
 
 Phase 1.1-1.3 complete - domain, repository, and database layers ready for service implementation.
 
+## 2025-07-17.0003 - Implemented comprehensive web diff viewer with per-commit review functionality
+**Added**: Complete Phase 3A implementation with enhanced diff visualization and review workflow
+**See**: 
+- Diff components: `apps/web/src/components/diff/`
+- Updated DiffGeneration page: `apps/web/src/pages/DiffGeneration.tsx`
+- Enhanced routing in `apps/web/src/App.tsx`
+- Next phase plan: `docs/project-management/next-phase-plan.md`
+**Test**: 
+```bash
+# Build and test frontend
+cd apps/web && npm run build
+
+# Access the new diff viewer
+# Visit http://web.haven.local:9000/diffs
+# Click on any commit to see detailed diff view
+```
+**Demo**: 
+```bash
+# Start all services
+just run-proxy
+
+# Navigate to enhanced diff viewer:
+# 1. Go to http://web.haven.local:9000/diffs
+# 2. View commit list with filtering by review status
+# 3. Click any commit to see side-by-side diff view
+# 4. Use file tree to navigate between changed files
+# 5. Use review panel to change commit status
+# 6. Test responsive design and UI components
+
+# Key URLs:
+# - Commit list: http://web.haven.local:9000/diffs
+# - Individual commit: http://web.haven.local:9000/diffs/commit/a1b2c3d4
+```
+
+Key features implemented:
+- **DiffViewer**: Side-by-side and unified diff views with syntax highlighting using react-diff-view
+- **FileTree**: File navigation with change indicators (+/-/M/R) and statistics
+- **CommitViewer**: Full-screen commit interface with integrated file tree and review panel
+- **ReviewPanel**: Review status management (pending/approved/needs_revision/draft) with notes
+- **CommitList**: Paginated commit list with filtering by status and quick navigation
+- Enhanced routing to support `/diffs/commit/:hash` URLs with full-screen layout
+- Mock data integration ready for backend API connection
+- Responsive design with proper TypeScript typing throughout
+
+## 2025-07-17.0004 - Added interactive repository analytics dashboard with comprehensive metrics
+**Added**: Phase 3B implementation with repository overview dashboard and interactive charts
+**See**: 
+- Repository dashboard: `apps/web/src/components/dashboards/RepositoryDashboard.tsx`
+- Dashboards page: `apps/web/src/pages/Dashboards.tsx`
+- Updated navigation in `apps/web/src/components/Layout.tsx`
+- Enhanced main dashboard: `apps/web/src/pages/Dashboard.tsx`
+**Test**: 
+```bash
+# Build and test dashboard
+cd apps/web && npm run build
+
+# Test all dashboard features
+# Visit http://web.haven.local:9000/dashboards
+```
+**Demo**: 
+```bash
+# Start services and navigate to dashboards
+just run-proxy
+
+# Access repository analytics dashboard:
+# Go to http://web.haven.local:9000/dashboards
+
+# Features to explore:
+# 1. Repository Overview tab with key metrics
+# 2. Interactive charts (commit activity, code changes, contributors, file types)
+# 3. Detailed statistics tables
+# 4. Responsive design across different screen sizes
+# 5. Tab navigation (Repository/Quality/Team - placeholder tabs)
+# 6. Updated main dashboard with Analytics link
+
+# Key visualizations:
+# - Commit activity timeline (last 30 days)
+# - Code changes tracking (additions/deletions)
+# - Top contributors with commit counts
+# - File type distribution by lines of code
+# - Comprehensive statistics tables
+```
+
+Key dashboard features:
+- **Repository Metrics**: Total commits, contributors, LOC, branches, pending reviews, approved commits
+- **Interactive Charts**: Using Recharts library for professional visualizations:
+  * Area chart for commit activity timeline
+  * Line chart for code changes (additions/deletions)
+  * Horizontal bar chart for top contributors
+  * Pie chart for file type distribution
+- **Detailed Tables**: Contributor statistics and file type breakdowns with color coding
+- **Responsive Design**: Grid layouts that adapt to different screen sizes
+- **Tab Interface**: Repository/Quality/Team dashboard categories with placeholders
+- **Mock Data**: Realistic repository statistics ready for backend integration
+- **Loading States**: Proper loading indicators and error handling
+- **Navigation Integration**: Added Analytics section to main navigation
+
+Technical implementation:
+- Added Recharts and date-fns dependencies for chart functionality
+- Professional styling with proper tooltips and legends
+- Color-coded data visualization for better user experience
+- TypeScript typing throughout for type safety
+- Excluded problematic generated API types from build process
+
 ---
 
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
