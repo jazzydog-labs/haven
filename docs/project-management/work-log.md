@@ -1259,4 +1259,37 @@ Key implementation details:
 
 ---
 
+## 2025-07-17.0004 - Fixed 5-second delay in Vite proxy caused by IPv6 DNS timeout
+**Added**: DNS resolution fix to eliminate 5-second delays when accessing API through Vite proxy
+**See**: `apps/web/vite.config.ts` - Added dns.setDefaultResultOrder and updated proxy config
+**Test**: 
+```bash
+# Test API proxy response time (should be <100ms)
+curl -s -w "\nTime: %{time_total}s\n" http://localhost:3000/api/v1/health
+
+# Test GraphQL proxy
+curl -s -w "\nTime: %{time_total}s\n" -X POST http://localhost:3000/graphql \
+  -H "Content-Type: application/json" -d '{"query": "{ __typename }"}'
+```
+**Demo**: 
+```bash
+# Start services
+just run-simple
+
+# Open browser to http://localhost:3000
+# API calls should now be instant (no 5-second delay)
+
+# Compare before/after:
+# Before: API calls took 5+ seconds due to IPv6 timeout
+# After: API calls complete in ~20ms
+```
+
+Key changes:
+- Added `dns.setDefaultResultOrder('ipv4first')` to force IPv4 resolution
+- Changed proxy targets from `api.haven.local` to `127.0.0.1` to bypass DNS
+- Preserved Host headers for backend compatibility
+- Eliminated the IPv6 AAAA record lookup timeout for .local domains
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
