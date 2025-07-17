@@ -1481,4 +1481,42 @@ Key improvements:
 
 ---
 
+## 2025-07-17.0009 - Fix commits API and improve refresh functionality
+**Fixed**: SQLAlchemy async query issues and enhanced refresh commits behavior
+**See**: 
+- Backend: `apps/api/src/haven/interface/api/commit_routes.py` - Fixed async query syntax
+- Backend: `apps/api/src/haven/interface/api/repository_management_routes.py` - Improved refresh logic
+**Test**: 
+```bash
+# Test commits API (was returning 500 errors)
+curl "http://localhost:8080/api/v1/commits/paginated-with-reviews?repository_id=15&page=1&page_size=5"
+
+# Test refresh commits (now loads only new commits)
+curl -X POST "http://localhost:8080/api/v1/repository-management/5b40a07c/load-commits" \
+  -H "Content-Type: application/json" \
+  -d '{"branch": "main", "limit": null}'
+```
+**Demo**: 
+```bash
+# Start services
+just run
+
+# Navigate to repository browser
+# http://localhost:3000/repository/5b40a07c/browse
+
+# Features now work:
+# 1. Commits list displays properly (no more "Failed to fetch commits")
+# 2. Branch selector shows available branches
+# 3. Repository manager refresh only loads new commits
+# 4. Proper commit count updates in real-time
+```
+
+Key improvements:
+- Fixed async SQLAlchemy queries using select() instead of query()
+- Enhanced refresh to use since_date for incremental loading
+- Better error handling and logging for commit loading
+- Repository browser now displays commits correctly
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
