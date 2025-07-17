@@ -1,5 +1,6 @@
 """API routes for commit management and diff generation."""
 
+import os
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -312,7 +313,9 @@ async def generate_commit_diff(
 
     # Initialize services
     git_client = GitClient()
-    diff_service = DiffHtmlService(git_client, repo)
+    # Use local diff output directory when running locally
+    output_dir = "/app/diff-output" if os.path.exists("/app") else "diff-output"
+    diff_service = DiffHtmlService(git_client, repo, output_dir)
 
     # Get repository information
     from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
@@ -358,7 +361,9 @@ async def generate_batch_diffs(
 
     # Initialize services
     git_client = GitClient()
-    diff_service = DiffHtmlService(git_client, repo)
+    # Use local diff output directory when running locally
+    output_dir = "/app/diff-output" if os.path.exists("/app") else "diff-output"
+    diff_service = DiffHtmlService(git_client, repo, output_dir)
 
     # Get repository information from first commit
     from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
