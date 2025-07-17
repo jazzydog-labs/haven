@@ -239,8 +239,11 @@ export const CommitList: React.FC<CommitListProps> = ({
   };
 
   const truncateMessage = (message: string, maxLength: number = 60) => {
-    if (message.length <= maxLength) return message;
-    return message.substring(0, maxLength - 3) + "...";
+    // Remove conventional commit prefix if present (e.g., "feat: ", "fix: ", "docs: ")
+    const cleanMessage = message.replace(/^(feat|fix|docs|style|refactor|test|chore|ci|build|perf|revert):\s*/i, '');
+    
+    if (cleanMessage.length <= maxLength) return cleanMessage;
+    return cleanMessage.substring(0, maxLength - 3) + "...";
   };
 
   const highlightMatch = (text: string, matches: any[] | undefined, fieldKey: string): React.ReactNode => {
