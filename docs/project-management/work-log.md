@@ -1125,4 +1125,56 @@ Technical implementation:
 
 ---
 
+## 2025-07-17.0002 - Implemented HTML diff viewer with diff2html integration
+**Added**: Complete diff viewing system using diff2html for HTML generation with review functionality
+**See**: 
+- Backend: `src/haven/application/services/diff_html_service.py`, `src/haven/interface/api/commit_routes.py`
+- Frontend: `src/components/CommitDiffViewer.tsx`, `src/pages/CommitReview.tsx`
+- Database: Migration `20250717_0204_add_diff_html_to_commits.py`
+**Test**: 
+```bash
+# Unit tests for diff service
+just test tests/unit/application/test_commit_service.py
+
+# Integration tests (once backend running)
+curl -X POST http://api.haven.local/api/v1/commits/1/generate-diff
+curl http://api.haven.local/api/v1/commits/1/diff-html
+```
+**Demo**: 
+```bash
+# Start all services
+just run-proxy
+
+# 1. Create sample commits in database (if not already present)
+# 2. Navigate to commit review page:
+#    http://web.haven.local/commits/1/review
+
+# Features to explore:
+# - View commit metadata (hash, author, message, stats)
+# - Generate HTML diff using diff2html (click "Generate Diff" if not present)
+# - View diff in embedded iframe with syntax highlighting
+# - Submit review with status (approved/needs revision/draft)
+# - View review history with timestamps
+# - Open diff in new tab for full-screen viewing
+
+# Backend endpoints:
+# GET  /api/v1/commits/{id} - Get commit details
+# POST /api/v1/commits/{id}/generate-diff - Generate HTML diff
+# GET  /api/v1/commits/{id}/diff-html - Get raw HTML diff
+# POST /api/v1/commits/{id}/reviews - Submit review
+# GET  /api/v1/commits/{id}/reviews - Get review history
+# POST /api/v1/commits/batch/generate-diffs - Batch process commits
+```
+
+Key implementation details:
+- **DiffHtmlService**: Generates HTML diffs using diff2html-cli via subprocess
+- **Parallel Processing**: Uses asyncio.Semaphore for concurrent diff generation
+- **File Storage**: Saves HTML files to `var/diffs/` with database path references
+- **Git Integration**: GitClient abstraction for repository operations (mock included)
+- **Review Workflow**: Complete review system with status tracking and notes
+- **Frontend Components**: React components with vanilla CSS (no Material-UI)
+- **Database Schema**: Added diff_html_path and diff_generated_at to commits table
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
