@@ -1,25 +1,36 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Script to add the Haven repository itself to the database."""
 
 import asyncio
 import hashlib
 from pathlib import Path
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 
-from haven.infrastructure.database.factory import db_factory
-from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
+from haven.infrastructure.database.repositories.repository_repository import (
+    RepositoryRepositoryImpl,
+)
 from haven.domain.entities.repository import Repository
 from haven.infrastructure.git.git_client import GitClient
 
 
 async def add_haven_repository():
     """Add the Haven repository to the database."""
-    await db_factory.init()
+    # Database connection
+    engine = create_async_engine(
+        "postgresql+asyncpg://haven:haven@localhost:5432/haven",
+        echo=False
+    )
+
+    async_session_maker = sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
     
-    async with db_factory.get_session() as session:
+    async with async_session_maker() as session:
         repo_impl = RepositoryRepositoryImpl(session)
         
-        # Path to Haven repository (current working directory)
-        haven_path = str(Path.cwd().absolute())
+        # Path to Haven repository (go up three directories from scripts/add-haven-repository.py)
+        haven_path = str(Path(__file__).parent.parent.parent.parent.absolute())
         
         # Check if already exists
         existing = await repo_impl.get_by_url(haven_path)
@@ -39,7 +50,8 @@ async def add_haven_repository():
             remote_url=remote_url,
             branch="main",
             description="A platform for visualizing and reviewing git diffs with a clean architecture",
-            is_local=True
+            is_local=True,
+            slug="haven"  # Use simple slug for Haven itself
         )
         
         # Generate hash
@@ -51,10 +63,14 @@ async def add_haven_repository():
         
         print(f"Haven repository added successfully!")
         print(f"Repository ID: {saved_repo.id}")
+        print(f"Repository Slug: {saved_repo.slug}")
         print(f"Repository Hash: {saved_repo.repository_hash}")
         print(f"Local Path: {saved_repo.url}")
         print(f"Remote URL: {saved_repo.remote_url}")
-        print(f"\nAccess it at: http://haven.local/repository/{saved_repo.repository_hash}/browse")
+        print(f"\nAccess it at: http://haven.local/repository/{saved_repo.slug or saved_repo.repository_hash}/browse")
+    
+    # Clean up
+    await engine.dispose()
 
 
 if __name__ == "__main__":

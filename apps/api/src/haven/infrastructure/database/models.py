@@ -104,6 +104,7 @@ class RepositoryModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     repository_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
+    slug: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     url: Mapped[str] = mapped_column(Text, nullable=False)  # Local path

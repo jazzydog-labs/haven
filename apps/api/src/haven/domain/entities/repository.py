@@ -10,6 +10,7 @@ class Repository:
     url: str  # Local path
     branch: str
     repository_hash: str | None = None
+    slug: str | None = None  # Short identifier
     remote_url: str | None = None  # Git remote URL
     description: str | None = None
     is_local: bool = True
@@ -25,9 +26,8 @@ class Repository:
         if not self.branch:
             raise ValueError("Branch cannot be empty")
 
-        # Validate URL format for local repositories
-        if self.is_local and not Path(self.url).exists():
-            raise ValueError(f"Local repository path does not exist: {self.url}")
+        # Skip path validation in production/Docker environments
+        # Path validation only makes sense during repository creation, not when loading from DB
 
     @property
     def display_name(self) -> str:

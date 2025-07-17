@@ -19,12 +19,24 @@ class RepositoryRepositoryImpl(RepositoryRepository):
         if not repository.repository_hash:
             repository.repository_hash = hashlib.sha256(repository.url.encode()).hexdigest()
         
+        # Generate slug - try using the name first
+        slug = repository.slug
+        if not slug:
+            # Check if name is unique
+            existing = await self.get_by_name(repository.name)
+            if not existing:
+                slug = repository.name.lower()
+            else:
+                # Use short hash if name is not unique
+                slug = repository.repository_hash[:8] if repository.repository_hash else None
+        
         db_repository = RepositoryModel(
             name=repository.name,
             full_name=repository.full_name,
             url=repository.url,
             remote_url=repository.remote_url,
             repository_hash=repository.repository_hash,
+            slug=slug,
             branch=repository.branch,
             description=repository.description,
             is_local=repository.is_local,
@@ -63,6 +75,13 @@ class RepositoryRepositoryImpl(RepositoryRepository):
     async def get_by_hash(self, repository_hash: str) -> Repository | None:
         """Get repository by hash"""
         stmt = select(RepositoryModel).where(RepositoryModel.repository_hash == repository_hash)
+        result = await self.session.execute(stmt)
+        db_repository = result.scalar_one_or_none()
+        return self._to_entity(db_repository) if db_repository else None
+
+    async def get_by_slug(self, slug: str) -> Repository | None:
+        """Get repository by slug"""
+        stmt = select(RepositoryModel).where(RepositoryModel.slug == slug)
         result = await self.session.execute(stmt)
         db_repository = result.scalar_one_or_none()
         return self._to_entity(db_repository) if db_repository else None
@@ -118,6 +137,7 @@ class RepositoryRepositoryImpl(RepositoryRepository):
             url=db_repository.url,
             remote_url=db_repository.remote_url,
             repository_hash=db_repository.repository_hash,
+            slug=db_repository.slug,
             branch=db_repository.branch,
             description=db_repository.description,
             is_local=db_repository.is_local,

@@ -5,6 +5,7 @@ import "./Repositories.css";
 interface Repository {
   id: number;
   repository_hash: string | null;
+  slug: string | null;
   name: string;
   full_name: string;
   url: string;
@@ -103,16 +104,16 @@ export const RepositoriesPage: React.FC = () => {
               </div>
 
               <div className="repo-actions">
-                {repo.repository_hash ? (
+                {repo.slug || repo.repository_hash ? (
                   <Link 
-                    to={`/repository/${repo.repository_hash}/browse`}
+                    to={`/repository/${repo.slug || repo.repository_hash}/browse`}
                     className="btn btn-primary"
                   >
                     Browse Commits
                   </Link>
                 ) : (
                   <div className="no-hash-warning">
-                    Repository hash not generated yet. Run update-repository-hashes.py
+                    Repository identifier not generated yet. Run update-repository-slugs.py
                   </div>
                 )}
               </div>

@@ -1389,4 +1389,48 @@ Breaking changes require URL updates in any bookmarks or links.
 
 ---
 
+## 2025-07-17.0007 - Implement shorter repository identifiers (slugs)
+**Added**: Support for short, user-friendly repository identifiers using slugs
+**See**: 
+- Database: Added `slug` field to repositories table via migration
+- Backend: `apps/api/src/haven/infrastructure/database/repositories/repository_repository.py` - Auto-generates slugs
+- Backend: `apps/api/src/haven/interface/api/repository_routes.py` - Supports both slug and hash access
+- Frontend: `apps/web/src/pages/Repositories.tsx` - Uses slugs for navigation
+**Test**: 
+```bash
+# Update existing repos with slugs
+cd apps/api && python scripts/update-repository-slugs.py
+
+# Test repository access by slug
+curl http://localhost:8080/api/v1/repositories/haven
+
+# Test repository access by hash still works
+curl http://localhost:8080/api/v1/repositories/5b40a07c377e7430720d915e79de49488e11f04e95d19c04b4c0c8115ed7370c
+```
+**Demo**: 
+```bash
+# Start services
+just run
+
+# View all repositories with slugs
+# http://localhost:3000/repositories
+
+# Access Haven repository by slug
+# http://localhost:3000/repository/haven/browse
+
+# Features:
+# 1. Repository URLs can use short slug (e.g., "haven") or full hash
+# 2. Slug uses repository name if unique, otherwise first 8 chars of hash
+# 3. API endpoint tries slug first, then falls back to hash lookup
+# 4. Repository list shows slug-based URLs for cleaner navigation
+```
+
+Key improvements:
+- Much friendlier URLs: `/repository/haven/browse` instead of 64-char hash
+- Backwards compatible - old hash URLs still work
+- Auto-generates slugs on repository creation
+- Migration script updates existing repositories
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*

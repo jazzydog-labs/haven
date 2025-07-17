@@ -16,6 +16,7 @@ class RepositoryResponse(BaseModel):
     """Response model for repository."""
     id: int
     repository_hash: str | None
+    slug: str | None
     name: str
     full_name: str
     url: str  # Local path
@@ -34,14 +35,18 @@ class RepositoryWithStatsResponse(RepositoryResponse):
     current_branch: str | None = None
 
 
-@router.get("/{repository_hash}", response_model=RepositoryWithStatsResponse)
-async def get_repository_by_hash(
-    repository_hash: str,
+@router.get("/{repository_identifier}", response_model=RepositoryWithStatsResponse)
+async def get_repository_by_identifier(
+    repository_identifier: str,
     db: AsyncSession = Depends(get_db),
 ) -> RepositoryWithStatsResponse:
-    """Get repository by hash with statistics."""
+    """Get repository by hash or slug with statistics."""
     repo_impl = RepositoryRepositoryImpl(db)
-    repository = await repo_impl.get_by_hash(repository_hash)
+    
+    # Try to get by slug first, then by hash
+    repository = await repo_impl.get_by_slug(repository_identifier)
+    if not repository:
+        repository = await repo_impl.get_by_hash(repository_identifier)
     
     if not repository:
         raise HTTPException(status_code=404, detail="Repository not found")
@@ -70,6 +75,7 @@ async def get_repository_by_hash(
     return RepositoryWithStatsResponse(
         id=repository.id,
         repository_hash=repository.repository_hash,
+        slug=repository.slug,
         name=repository.name,
         full_name=repository.full_name,
         url=repository.url,
@@ -97,6 +103,7 @@ async def list_repositories(
         RepositoryResponse(
             id=repo.id,
             repository_hash=repo.repository_hash,
+            slug=repo.slug,
             name=repo.name,
             full_name=repo.full_name,
             url=repo.url,

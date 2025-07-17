@@ -6,6 +6,7 @@ import "./RepositoryBrowser.css";
 interface RepositoryInfo {
   id: number;
   repository_hash: string;
+  slug: string | null;
   name: string;
   full_name: string;
   url: string;  // Local path
