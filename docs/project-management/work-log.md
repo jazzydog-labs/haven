@@ -1433,4 +1433,52 @@ Key improvements:
 
 ---
 
+## 2025-07-17.0008 - Repository manager dashboard and branch selector
+**Added**: Complete repository management interface for bootstrapping commits
+**See**: 
+- Frontend: `apps/web/src/pages/RepositoryManager.tsx` - Dashboard for managing repositories
+- Frontend: `apps/web/src/components/repository/BranchSelector.tsx` - Dropdown branch selector
+- Backend: `apps/api/src/haven/interface/api/repository_management_routes.py` - Management endpoints
+- Backend: Enhanced `GitClient.get_commit_log()` to parse git log with file stats
+**Test**: 
+```bash
+# Bootstrap Haven repository commits
+cd apps/api && python scripts/bootstrap-haven-commits.py
+
+# Test repository stats endpoint
+curl http://localhost:8080/api/v1/repository-management/haven/stats
+
+# Test branch selector
+curl http://localhost:8080/api/v1/repositories/haven/branches
+```
+**Demo**: 
+```bash
+# Start services
+just run
+
+# Navigate to repository manager
+# http://localhost:3000/repository-manager
+
+# Features:
+# 1. Shows all repositories with real-time statistics
+# 2. "Load All Commits" button for empty repositories
+# 3. "Refresh Commits" for updating existing data
+# 4. Branch selector in repository browser (dropdown UI)
+# 5. Async loading with progress feedback
+
+# Bootstrap Haven repository:
+# 1. Click "Load All Commits" for Haven repository
+# 2. Watch stats update (100 commits loaded)
+# 3. Navigate to Browse to see the commits
+```
+
+Key improvements:
+- One-click commit bootstrapping from Git repositories
+- Repository statistics dashboard with commit/branch counts
+- Branch selector UI component (preparation for branch filtering)
+- Docker path compatibility (/repo mount point)
+- Background task processing for large repositories
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
