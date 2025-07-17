@@ -7,6 +7,7 @@ import Dashboards from "./pages/Dashboards";
 import CommitViewer from "./components/diff/CommitViewer";
 import { CommitReviewPage } from "./pages/CommitReview";
 import { RepositoryBrowserPage } from "./pages/RepositoryBrowser";
+import { RepositoriesPage } from "./pages/Repositories";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/records" element={<Records />} />
+              <Route path="/repositories" element={<RepositoriesPage />} />
               <Route path="/diffs" element={<DiffGeneration />} />
               <Route path="/dashboards" element={<Dashboards />} />
             </Routes>

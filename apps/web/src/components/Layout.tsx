@@ -16,9 +16,9 @@ const Layout = ({ children }: LayoutProps) => {
       current: location.pathname === "/records",
     },
     {
-      name: "Repository",
-      href: "/repository/13/browse",
-      current: location.pathname.startsWith("/repository"),
+      name: "Repositories",
+      href: "/repositories",
+      current: location.pathname === "/repositories" || location.pathname.startsWith("/repository"),
     },
     {
       name: "Diff Generation",
