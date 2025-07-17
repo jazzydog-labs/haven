@@ -1177,4 +1177,50 @@ Key implementation details:
 
 ---
 
+## 2025-07-17.0003 - Implemented repository browser with paginated commit list
+**Added**: Repository browsing functionality with paginated commit listing and navigation
+**See**: 
+- Backend: `src/haven/interface/api/commit_routes.py` (paginated endpoint)
+- Frontend: `src/components/repository/CommitList.tsx`, `src/pages/RepositoryBrowser.tsx`
+- Repository: Added `count_by_repository` method to commit repository
+**Test**: 
+```bash
+# Test paginated API endpoint
+curl "http://api.haven.local/api/v1/commits/paginated?repository_id=1&page=1&page_size=20"
+
+# Integration test with UI
+just test tests/unit/infrastructure/test_commit_repository.py::test_count_by_repository
+```
+**Demo**: 
+```bash
+# Start services
+just run-proxy
+
+# Navigate to repository browser:
+# http://web.haven.local/repository/1/browse
+
+# Features:
+# - Paginated commit list with 20 commits per page
+# - Shows commit hash, message (truncated), author, date
+# - Displays diff statistics (files changed, additions, deletions)
+# - Indicates if diff HTML has been generated (📄 icon)
+# - Click any commit to navigate to detailed diff viewer
+# - Pagination controls for navigating through commit history
+# - Responsive design with hover effects
+
+# API endpoint features:
+# GET /api/v1/commits/paginated?repository_id=1&page=1&page_size=20
+# Returns: { items: [...], total: N, page: 1, page_size: 20, total_pages: M }
+```
+
+Key implementation details:
+- **Paginated API**: New endpoint returns commit list with pagination metadata
+- **Repository Count**: Added count method to repository interface and implementation
+- **CommitList Component**: Displays commits with stats and navigation
+- **RepositoryBrowser Page**: Container page for browsing repository commits
+- **Navigation Flow**: Click commit → Navigate to /commits/{id}/review
+- **Performance**: Server-side pagination for handling large repositories
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
