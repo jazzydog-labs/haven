@@ -153,6 +153,17 @@
   display: block;
 }
 
+.diff-html-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: #fff;
+}
+
+.diff-html-container > * {
+  margin: 0;
+}
+
 .no-diff {
   display: flex;
   flex-direction: column;

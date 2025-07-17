@@ -7,8 +7,10 @@ from pathlib import Path
 class Repository:
     name: str
     full_name: str
-    url: str
+    url: str  # Local path
     branch: str
+    repository_hash: str | None = None
+    remote_url: str | None = None  # Git remote URL
     description: str | None = None
     is_local: bool = True
     id: int | None = None

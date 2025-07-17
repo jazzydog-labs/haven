@@ -28,12 +28,12 @@ interface CommitReview {
 }
 
 interface CommitDiffViewerProps {
-  commitId: number;
+  commitHash: string;
   onReviewComplete?: () => void;
 }
 
 export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
-  commitId,
+  commitHash,
   onReviewComplete,
 }) => {
   const [commit, setCommit] = useState<CommitInfo | null>(null);
@@ -49,23 +49,29 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
   // Fetch commit information
   const fetchCommit = async () => {
     try {
-      const response = await fetch(`/api/v1/commits/${commitId}`);
+      // First get repository ID - we'll need to pass it as a query param
+      // For now, assume repository_id=1 - in production, this would come from context
+      const repositoryId = 1; // TODO: Get from route or context
+      
+      const response = await fetch(`/api/v1/commits/by-hash/${commitHash}?repository_id=${repositoryId}`);
       if (!response.ok) throw new Error("Failed to fetch commit");
       const data = await response.json();
       setCommit(data);
 
       // Fetch reviews
       const reviewsResponse = await fetch(
-        `/api/v1/commits/${commitId}/reviews`
+        `/api/v1/commits/${data.id}/reviews`
       );
       if (reviewsResponse.ok) {
         const reviewsData = await reviewsResponse.json();
         setReviews(reviewsData);
       }
 
-      // Load diff HTML if available
-      if (data.diff_html_path) {
-        await loadDiffHtml();
+      // Auto-generate diff if not available
+      if (!data.diff_html_path) {
+        await generateDiff(data.id);
+      } else {
+        await loadDiffHtml(data.id);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load commit");
@@ -75,7 +81,7 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
   };
 
   // Load diff HTML content
-  const loadDiffHtml = async () => {
+  const loadDiffHtml = async (commitId: number) => {
     try {
       const response = await fetch(`/api/v1/commits/${commitId}/diff-html`);
       if (!response.ok) throw new Error("Failed to load diff");
@@ -87,13 +93,16 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
   };
 
   // Generate diff if not available
-  const generateDiff = async () => {
+  const generateDiff = async (commitId?: number) => {
     setGenerating(true);
     setError(null);
 
     try {
+      const id = commitId || commit?.id;
+      if (!id) throw new Error("No commit ID available");
+      
       const response = await fetch(
-        `/api/v1/commits/${commitId}/generate-diff`,
+        `/api/v1/commits/${id}/generate-diff`,
         {
           method: "POST",
         }
@@ -112,7 +121,9 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
   // Submit review
   const submitReview = async () => {
     try {
-      const response = await fetch(`/api/v1/commits/${commitId}/reviews`, {
+      if (!commit) throw new Error("No commit loaded");
+      
+      const response = await fetch(`/api/v1/commits/${commit.id}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -141,7 +152,7 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
   useEffect(() => {
     fetchCommit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [commitId]);
+  }, [commitHash]);
 
   if (loading) {
     return <div className="commit-diff-viewer loading">Loading...</div>;
@@ -215,7 +226,7 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
           {commit.diff_html_path && (
             <div className="diff-actions">
               <button
-                onClick={generateDiff}
+                onClick={() => generateDiff()}
                 disabled={generating}
                 className="btn btn-sm"
               >
@@ -223,7 +234,7 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
               </button>
               <button
                 onClick={() =>
-                  window.open(`/api/v1/commits/${commitId}/diff-html`, "_blank")
+                  window.open(`/api/v1/commits/${commit.id}/diff-html`, "_blank")
                 }
                 className="btn btn-sm"
               >
@@ -234,17 +245,18 @@ export const CommitDiffViewer: React.FC<CommitDiffViewerProps> = ({
         </div>
 
         <div className="diff-viewer-content">
-          {commit.diff_html_path ? (
-            <iframe
-              srcDoc={diffHtml}
-              className="diff-iframe"
-              title="Commit Diff"
+          {commit.diff_html_path && diffHtml ? (
+            <div
+              className="diff-html-container"
+              dangerouslySetInnerHTML={{ __html: diffHtml }}
             />
+          ) : commit.diff_html_path && !diffHtml ? (
+            <div className="loading">Loading diff...</div>
           ) : (
             <div className="no-diff">
               <p>No diff generated yet</p>
               <button
-                onClick={generateDiff}
+                onClick={() => generateDiff()}
                 disabled={generating}
                 className="btn btn-primary"
               >

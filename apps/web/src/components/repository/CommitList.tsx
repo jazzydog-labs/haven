@@ -19,6 +19,9 @@ interface CommitInfo {
   };
   diff_html_path?: string;
   diff_generated_at?: string;
+  review_status?: "pending_review" | "approved" | "needs_revision" | "draft";
+  review_count?: number;
+  latest_review_at?: string;
 }
 
 interface PaginatedResponse {
@@ -31,6 +34,7 @@ interface PaginatedResponse {
 
 interface CommitListProps {
   repositoryId: number;
+  repositoryHash?: string;
   onCommitSelect?: (commitId: number) => void;
   selectedCommitId?: number | null;
 }
@@ -81,7 +85,7 @@ export const CommitList: React.FC<CommitListProps> = ({
 
     try {
       const queryParams = buildQueryParams();
-      const response = await fetch(`/api/v1/commits/paginated?${queryParams}`);
+      const response = await fetch(`/api/v1/commits/paginated-with-reviews?${queryParams}`);
       
       if (!response.ok) {
         throw new Error("Failed to fetch commits");
@@ -121,8 +125,32 @@ export const CommitList: React.FC<CommitListProps> = ({
     if (onCommitSelect) {
       onCommitSelect(commit.id);
     }
-    // Navigate to commit review page
-    navigate(`/commits/${commit.id}/review`);
+    // Navigate to commit review page using hash
+    navigate(`/commits/${commit.commit_hash}/review`);
+  };
+
+  const getReviewStatusBadge = (status?: string) => {
+    if (!status) return null;
+    
+    const statusColors = {
+      pending_review: "badge-pending",
+      approved: "badge-approved",
+      needs_revision: "badge-needs-revision",
+      draft: "badge-draft"
+    };
+    
+    const statusLabels = {
+      pending_review: "Pending Review",
+      approved: "Approved",
+      needs_revision: "Needs Revision",
+      draft: "Draft"
+    };
+    
+    return (
+      <span className={`review-badge ${statusColors[status as keyof typeof statusColors]}`}>
+        {statusLabels[status as keyof typeof statusLabels]}
+      </span>
+    );
   };
 
   const formatDate = (dateString: string) => {
@@ -194,6 +222,7 @@ export const CommitList: React.FC<CommitListProps> = ({
           >
             <div className="commit-header">
               <span className="commit-hash">{commit.commit_hash.substring(0, 7)}</span>
+              {getReviewStatusBadge(commit.review_status)}
               <span className="commit-date">{formatDate(commit.committed_at)}</span>
             </div>
             

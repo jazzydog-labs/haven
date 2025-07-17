@@ -13,10 +13,18 @@ class RepositoryRepositoryImpl(RepositoryRepository):
 
     async def create(self, repository: Repository) -> Repository:
         """Create a new repository"""
+        import hashlib
+        
+        # Generate repository hash from URL
+        if not repository.repository_hash:
+            repository.repository_hash = hashlib.sha256(repository.url.encode()).hexdigest()
+        
         db_repository = RepositoryModel(
             name=repository.name,
             full_name=repository.full_name,
             url=repository.url,
+            remote_url=repository.remote_url,
+            repository_hash=repository.repository_hash,
             branch=repository.branch,
             description=repository.description,
             is_local=repository.is_local,
@@ -52,6 +60,13 @@ class RepositoryRepositoryImpl(RepositoryRepository):
         db_repository = result.scalar_one_or_none()
         return self._to_entity(db_repository) if db_repository else None
 
+    async def get_by_hash(self, repository_hash: str) -> Repository | None:
+        """Get repository by hash"""
+        stmt = select(RepositoryModel).where(RepositoryModel.repository_hash == repository_hash)
+        result = await self.session.execute(stmt)
+        db_repository = result.scalar_one_or_none()
+        return self._to_entity(db_repository) if db_repository else None
+
     async def get_all(self) -> list[Repository]:
         """Get all repositories"""
         stmt = select(RepositoryModel)
@@ -71,6 +86,8 @@ class RepositoryRepositoryImpl(RepositoryRepository):
         db_repository.name = repository.name
         db_repository.full_name = repository.full_name
         db_repository.url = repository.url
+        db_repository.remote_url = repository.remote_url
+        db_repository.repository_hash = repository.repository_hash
         db_repository.branch = repository.branch
         db_repository.description = repository.description
         db_repository.is_local = repository.is_local
@@ -99,6 +116,8 @@ class RepositoryRepositoryImpl(RepositoryRepository):
             name=db_repository.name,
             full_name=db_repository.full_name,
             url=db_repository.url,
+            remote_url=db_repository.remote_url,
+            repository_hash=db_repository.repository_hash,
             branch=db_repository.branch,
             description=db_repository.description,
             is_local=db_repository.is_local,

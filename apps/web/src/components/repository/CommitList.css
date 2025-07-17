@@ -180,3 +180,33 @@
   color: #666;
   font-size: 0.875rem;
 }
+
+/* Review Status Badges */
+.review-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 12px;
+  margin-left: 0.5rem;
+}
+
+.badge-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.badge-approved {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge-needs-revision {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.badge-draft {
+  background-color: #e2e3e5;
+  color: #383d41;
+}

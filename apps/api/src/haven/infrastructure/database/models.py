@@ -103,9 +103,11 @@ class RepositoryModel(Base):
     __tablename__ = "repositories"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    repository_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    url: Mapped[str] = mapped_column(Text, nullable=False)
+    url: Mapped[str] = mapped_column(Text, nullable=False)  # Local path
+    remote_url: Mapped[str | None] = mapped_column(Text, nullable=True)  # Git remote URL
     branch: Mapped[str] = mapped_column(String(255), nullable=False, default="main")
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_local: Mapped[bool] = mapped_column(nullable=False, default=True)

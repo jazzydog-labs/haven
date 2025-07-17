@@ -130,3 +130,65 @@ index 1234567..abcdefg 100644
 
         if process.returncode != 0:
             raise Exception(f"Git pull failed: {stderr.decode()}")
+
+    async def _run_command(self, cmd: list[str], cwd: str | None = None) -> str:
+        """Run a git command and return output."""
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            cwd=cwd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await process.communicate()
+        if process.returncode != 0:
+            raise Exception(f"Command failed: {stderr.decode()}")
+        return stdout.decode()
+
+    async def list_files(self, repo_path: str, ref: str = "HEAD") -> list[str]:
+        """List all files in repository at given ref."""
+        result = await self._run_command(
+            ["git", "ls-tree", "-r", "--name-only", ref], cwd=repo_path
+        )
+        return result.strip().split("\n") if result.strip() else []
+
+    async def get_remote_url(self, repo_path: str, remote: str = "origin") -> str | None:
+        """Get the remote URL for a repository."""
+        try:
+            result = await self._run_command(
+                ["git", "config", "--get", f"remote.{remote}.url"], cwd=repo_path
+            )
+            return result.strip() if result.strip() else None
+        except Exception:
+            return None
+
+    async def get_current_branch(self, repo_path: str) -> str | None:
+        """Get the current branch name."""
+        try:
+            result = await self._run_command(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_path
+            )
+            return result.strip() if result.strip() else None
+        except Exception:
+            return None
+
+    async def get_branches(self, repo_path: str) -> list[str]:
+        """Get all branch names."""
+        try:
+            result = await self._run_command(
+                ["git", "branch", "-a", "--format=%(refname:short)"], cwd=repo_path
+            )
+            branches = result.strip().split("\n") if result.strip() else []
+            # Remove duplicates and sort
+            return sorted(list(set(branches)))
+        except Exception:
+            return []
+
+    async def get_commit_count(self, repo_path: str, branch: str = "HEAD") -> int:
+        """Get the total number of commits in a branch."""
+        try:
+            result = await self._run_command(
+                ["git", "rev-list", "--count", branch], cwd=repo_path
+            )
+            return int(result.strip()) if result.strip() else 0
+        except Exception:
+            return 0

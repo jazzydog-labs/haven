@@ -12,8 +12,8 @@ function App() {
   return (
     <Routes>
       <Route path="/diffs/commit/:commitHash" element={<CommitViewer />} />
-      <Route path="/commits/:commitId/review" element={<CommitReviewPage />} />
-      <Route path="/repository/:repositoryId/browse" element={<RepositoryBrowserPage />} />
+      <Route path="/commits/:commitHash/review" element={<CommitReviewPage />} />
+      <Route path="/repository/:repositoryHash/browse" element={<RepositoryBrowserPage />} />
       <Route
         path="/*"
         element={

@@ -43,3 +43,45 @@
   font-size: 1.5rem;
   margin: 0;
 }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.repository-info {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: #495057;
+  min-width: 140px;
+  margin-right: 1rem;
+}
+
+.info-row .value {
+  color: #212529;
+  font-family: 'Courier New', monospace;
+  background-color: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}

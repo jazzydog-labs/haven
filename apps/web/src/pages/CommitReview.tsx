@@ -4,14 +4,14 @@ import { CommitDiffViewer } from "../components/CommitDiffViewer";
 import "./CommitReview.css";
 
 export const CommitReviewPage: React.FC = () => {
-  const { commitId } = useParams<{ commitId: string }>();
+  const { commitHash } = useParams<{ commitHash: string }>();
   const navigate = useNavigate();
 
-  if (!commitId) {
+  if (!commitHash) {
     return (
       <div className="commit-review-page">
         <div className="error-message">
-          <h1>Invalid commit ID</h1>
+          <h1>Invalid commit hash</h1>
         </div>
       </div>
     );
@@ -26,7 +26,7 @@ export const CommitReviewPage: React.FC = () => {
       </div>
 
       <CommitDiffViewer
-        commitId={parseInt(commitId, 10)}
+        commitHash={commitHash}
         onReviewComplete={() => {
           // Could navigate back or show a success message
           console.log("Review completed");

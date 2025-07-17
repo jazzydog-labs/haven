@@ -18,10 +18,14 @@ from haven.interface.api.schemas.commit_schemas import (
     CommitCreate,
     CommitDiffResponse,
     CommitResponse,
+    CommitWithReviewResponse,
     CommitReviewCreate,
     CommitReviewResponse,
     PaginatedCommitResponse,
+    PaginatedCommitWithReviewResponse,
 )
+from haven.domain.entities.commit import ReviewStatus
+from sqlalchemy import func, desc
 
 router = APIRouter(prefix="/api/v1/commits", tags=["commits"])
 
@@ -66,6 +70,119 @@ async def list_commits(
     commits = await repo.get_by_repository(repository_id, limit, offset)
 
     return [CommitResponse.from_entity(commit) for commit in commits]
+
+
+@router.get("/paginated-with-reviews", response_model=PaginatedCommitWithReviewResponse)
+async def list_commits_paginated_with_reviews(
+    repository_id: int = Query(..., description="Repository ID"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    search: str | None = Query(None, description="Search in commit message or hash"),
+    author: str | None = Query(None, description="Filter by author name or email"),
+    date_from: str | None = Query(None, description="Filter commits from this date (ISO format)"),
+    date_to: str | None = Query(None, description="Filter commits until this date (ISO format)"),
+    db: AsyncSession = Depends(get_db),
+) -> PaginatedCommitWithReviewResponse:
+    """List commits with review status for a repository."""
+    repo = SQLAlchemyCommitRepository(db)
+    review_repo = SQLAlchemyCommitReviewRepository(db)
+
+    # Calculate offset from page number
+    offset = (page - 1) * page_size
+
+    # Check if we have any search/filter parameters
+    has_filters = any([search, author, date_from, date_to])
+
+    if has_filters:
+        # Use search method
+        commits = await repo.search_commits(
+            repository_id=repository_id,
+            search_query=search,
+            author_filter=author,
+            date_from=date_from,
+            date_to=date_to,
+            limit=page_size,
+            offset=offset,
+        )
+        total = await repo.count_search_results(
+            repository_id=repository_id,
+            search_query=search,
+            author_filter=author,
+            date_from=date_from,
+            date_to=date_to,
+        )
+    else:
+        # Use regular listing
+        commits = await repo.get_by_repository(repository_id, page_size, offset)
+        total = await repo.count_by_repository(repository_id)
+
+    # Get reviews for all commits
+    commit_ids = [c.id for c in commits]
+    from haven.infrastructure.database.models import CommitReviewModel
+    
+    if commit_ids:
+        # Get latest review status for each commit
+        subquery = (
+            db.query(
+                CommitReviewModel.commit_id,
+                func.max(CommitReviewModel.created_at).label("latest_created_at")
+            )
+            .filter(CommitReviewModel.commit_id.in_(commit_ids))
+            .group_by(CommitReviewModel.commit_id)
+            .subquery()
+        )
+        
+        reviews_query = await db.execute(
+            db.query(
+                CommitReviewModel.commit_id,
+                CommitReviewModel.status,
+                func.count(CommitReviewModel.id).label("review_count"),
+                func.max(CommitReviewModel.reviewed_at).label("latest_review_at")
+            )
+            .join(
+                subquery,
+                (CommitReviewModel.commit_id == subquery.c.commit_id) &
+                (CommitReviewModel.created_at == subquery.c.latest_created_at)
+            )
+            .group_by(CommitReviewModel.commit_id, CommitReviewModel.status)
+        )
+        
+        review_map = {
+            row.commit_id: {
+                "status": ReviewStatus(row.status),
+                "count": row.review_count,
+                "latest_at": row.latest_review_at
+            }
+            for row in reviews_query
+        }
+    else:
+        review_map = {}
+
+    # Build response with reviews
+    items_with_reviews = []
+    for commit in commits:
+        commit_response = CommitResponse.from_entity(commit)
+        review_info = review_map.get(commit.id, {})
+        
+        items_with_reviews.append(
+            CommitWithReviewResponse(
+                **commit_response.model_dump(),
+                review_status=review_info.get("status"),
+                review_count=review_info.get("count", 0),
+                latest_review_at=review_info.get("latest_at")
+            )
+        )
+
+    # Calculate total pages
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+
+    return PaginatedCommitWithReviewResponse(
+        items=items_with_reviews,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages,
+    )
 
 
 @router.get("/paginated", response_model=PaginatedCommitResponse)
@@ -121,6 +238,22 @@ async def list_commits_paginated(
         page_size=page_size,
         total_pages=total_pages,
     )
+
+
+@router.get("/by-hash/{commit_hash}", response_model=CommitResponse)
+async def get_commit_by_hash(
+    commit_hash: str,
+    repository_id: int = Query(..., description="Repository ID"),
+    db: AsyncSession = Depends(get_db),
+) -> CommitResponse:
+    """Get a commit by hash."""
+    repo = SQLAlchemyCommitRepository(db)
+    commit = await repo.get_by_hash(repository_id, commit_hash)
+
+    if not commit:
+        raise HTTPException(status_code=404, detail="Commit not found")
+
+    return CommitResponse.from_entity(commit)
 
 
 @router.get("/{commit_id}", response_model=CommitResponse)
