@@ -4,6 +4,20 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0006 - Repository browser integration complete with real commits
+**Integrated**: Repository browser fully functional with real commit data from current repository
+**Fixed**: API import issues and route ordering to enable commit endpoints
+**Added**: Import script for real commits and navigation integration
+**See**: Working repository browser at /repository/13/browse with 3 real commits
+**Test**: `curl "http://localhost:8080/api/v1/commits/paginated?repository_id=13&page=1&page_size=20"`
+**Demo**:
+1. Ensure services are running: `just run`
+2. Navigate to http://localhost:3000/repository/13/browse
+3. View list of 3 real commits with stats and metadata
+4. Click any commit to navigate to review page
+5. Use pagination controls (when more commits exist)
+6. Access via main navigation menu "Repository" link
+
 ## 2025-07-17.0005 - Simplified justfile and consolidated run commands
 **Refactored**: Major cleanup of justfile to reduce command complexity
 **Consolidated**: Multiple run commands into simple 'just run' that starts everything with proxy on port 80
