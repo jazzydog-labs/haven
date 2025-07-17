@@ -4,6 +4,17 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0008 - Fixed 5-second delay in repository browser loading
+**Fixed**: Repository browser was taking 5+ seconds to load commits due to IPv6 DNS timeout
+**Root Cause**: Vite proxy was using api.haven.local which attempted IPv6 first, timed out, then fell back to IPv4
+**Solution**: Changed Vite proxy to use localhost instead of domain names for backend API
+**See**: Repository browser now loads instantly (25ms vs 5000ms)
+**Test**: `curl -w "\nTotal time: %{time_total}s\n" "http://localhost:3000/api/v1/commits/paginated?repository_id=13&page=1&page_size=20"`
+**Demo**:
+1. Navigate to http://localhost:3000/repository/13/browse
+2. Commits load instantly without delay
+3. Page is responsive and interactive immediately
+
 ## 2025-07-17.0007 - Fixed dashboard API health check endpoint
 **Fixed**: Dashboard was showing "API Health: Unavailable" due to incorrect endpoint path
 **Added**: Health endpoint at /api/v1/health to match frontend expectations

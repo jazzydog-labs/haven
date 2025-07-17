@@ -21,11 +21,11 @@ export default defineConfig({
     ],
     proxy: {
       '/api': {
-        target: 'http://api.haven.local:8080',
+        target: 'http://localhost:8080',
         changeOrigin: true,
       },
       '/graphql': {
-        target: 'http://api.haven.local:8080',
+        target: 'http://localhost:8080',
         changeOrigin: true,
       },
     },
