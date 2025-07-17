@@ -4,6 +4,27 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0010 - Display existing comments on diff lines
+**Added**: Display of existing comments below their associated lines in diff viewer
+**Features**:
+- Comments are automatically fetched when viewing a diff
+- Existing comments appear below the lines they reference
+- Comments show author (user ID) and timestamp
+- Comments refresh after adding new ones
+- Works in both unified and split view modes
+**See**:
+- `apps/web/src/components/diff/CommentDisplay.tsx` - Component for showing comments
+- `apps/web/src/components/DiffViewer.tsx:91-102` - Fetch comments function
+**Test**:
+1. Add a comment to a diff line (from previous feature)
+2. Refresh the page or navigate away and back
+3. The comment should appear below the line it was added to
+**Demo**:
+1. Start services: `just run`
+2. Navigate to a commit that already has comments
+3. Comments appear automatically below their associated lines
+4. Add a new comment and see it appear immediately
+
 ## 2025-07-17.0009 - Added inline comments on diff lines
 **Added**: Ability to add inline comments on specific lines in commit diffs
 **Features**:
