@@ -7,21 +7,21 @@
 }
 
 # Main domain - serves the web app
-haven.local {
+haven.local:80 {
     reverse_proxy localhost:3000
 }
 
 # Web subdomain (alias for main domain)
-web.haven.local {
+web.haven.local:80 {
     reverse_proxy localhost:3000
 }
 
 # API subdomain
-api.haven.local {
+api.haven.local:80 {
     reverse_proxy localhost:8080
 }
 
 # App subdomain (alias for main domain)
-app.haven.local {
+app.haven.local:80 {
     reverse_proxy localhost:3000
 }
