@@ -57,6 +57,8 @@ export const CommitList: React.FC<CommitListProps> = ({
   const [pageSize] = useState(500);
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
+  const [searchMatches, setSearchMatches] = useState<Map<number, any>>(new Map()); // Store search match details
+  const [isSearching, setIsSearching] = useState(false);
 
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState("");
@@ -157,16 +159,40 @@ export const CommitList: React.FC<CommitListProps> = ({
       keys: ['message', 'commit_hash', 'author_name', 'author_email'],
       threshold: 0.3,
       includeScore: true,
+      includeMatches: true,
+      minMatchCharLength: 2,
     });
   }, [allCommits]);
 
-  // Apply client-side fuzzy search
+  // Apply client-side fuzzy search with debouncing
   useEffect(() => {
     if (searchQuery && allCommits.length > 0) {
-      const results = fuse.search(searchQuery);
-      setCommits(results.map(result => result.item));
+      setIsSearching(true);
+      // Apply fuzzy search with a slight delay for better performance
+      const timeoutId = setTimeout(() => {
+        const results = fuse.search(searchQuery);
+        
+        // Store match information for highlighting
+        const matchMap = new Map();
+        results.forEach(result => {
+          if (result.item.id) {
+            matchMap.set(result.item.id, result.matches);
+          }
+        });
+        setSearchMatches(matchMap);
+        
+        setCommits(results.map(result => result.item));
+        setIsSearching(false);
+      }, 150); // 150ms debounce
+
+      return () => {
+        clearTimeout(timeoutId);
+        setIsSearching(false);
+      };
     } else {
       setCommits(allCommits);
+      setSearchMatches(new Map());
+      setIsSearching(false);
     }
   }, [searchQuery, allCommits, fuse]);
 
@@ -217,13 +243,52 @@ export const CommitList: React.FC<CommitListProps> = ({
     return message.substring(0, maxLength - 3) + "...";
   };
 
+  const highlightMatch = (text: string, matches: any[] | undefined, fieldKey: string): React.ReactNode => {
+    if (!matches || !searchQuery) return text;
+    
+    const match = matches.find(m => m.key === fieldKey);
+    if (!match || !match.indices || match.indices.length === 0) return text;
+    
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    
+    // Sort indices by start position
+    const sortedIndices = [...match.indices].sort((a, b) => a[0] - b[0]);
+    
+    sortedIndices.forEach(([start, end], i) => {
+      // Add text before match
+      if (start > lastIndex) {
+        parts.push(text.substring(lastIndex, start));
+      }
+      // Add highlighted match
+      parts.push(
+        <span key={i} className="search-highlight">
+          {text.substring(start, end + 1)}
+        </span>
+      );
+      lastIndex = end + 1;
+    });
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return <>{parts}</>;
+  };
+
   return (
     <div className="commit-list">
       <div className="list-header">
         <h2>Commits</h2>
         <div className="commit-count">
-          {total} total commits
-          {hasActiveFilters && " (filtered)"}
+          {isSearching ? (
+            <span className="searching-indicator">Searching...</span>
+          ) : searchQuery ? (
+            <span>{commits.length} results found</span>
+          ) : (
+            <span>{total} total commits{hasActiveFilters && " (filtered)"}</span>
+          )}
         </div>
       </div>
 
@@ -272,19 +337,21 @@ export const CommitList: React.FC<CommitListProps> = ({
             onClick={() => handleCommitClick(commit)}
           >
             <div className="commit-header">
-              <span className="commit-hash">{commit.commit_hash.substring(0, 7)}</span>
+              <span className="commit-hash">
+                {highlightMatch(commit.commit_hash.substring(0, 7), searchMatches.get(commit.id), 'commit_hash')}
+              </span>
               <CommitTypeTag message={commit.message} />
               {getReviewStatusBadge(commit.review_status)}
               <span className="commit-date">{formatDate(commit.committed_at)}</span>
             </div>
             
             <div className="commit-message">
-              {truncateMessage(commit.message)}
+              {highlightMatch(truncateMessage(commit.message), searchMatches.get(commit.id), 'message')}
             </div>
             
             <div className="commit-meta">
               <span className="commit-author">
-                {commit.author_name}
+                {highlightMatch(commit.author_name, searchMatches.get(commit.id), 'author_name')}
               </span>
               <div className="commit-stats">
                 <span className="stat files">{commit.diff_stats.files_changed} files</span>

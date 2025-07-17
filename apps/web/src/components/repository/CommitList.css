@@ -232,3 +232,36 @@
   background-color: #e2e3e5;
   color: #383d41;
 }
+
+/* Search highlighting */
+.search-highlight {
+  background-color: #fff3cd;
+  color: inherit;
+  font-weight: 600;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* Search indicator */
+.searching-indicator {
+  color: #1976d2;
+  font-style: italic;
+}
+
+.searching-indicator::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 8px;
+  border: 2px solid #1976d2;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
