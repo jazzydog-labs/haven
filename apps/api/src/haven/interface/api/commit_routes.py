@@ -30,8 +30,83 @@ from haven.interface.api.schemas.commit_schemas import (
 )
 from haven.domain.entities.commit import ReviewStatus
 from sqlalchemy import func, desc
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/api/v1/commits", tags=["commits"])
+
+
+async def _load_single_commit_from_git(repository, commit_hash: str, db: AsyncSession):
+    """Load a single commit from git repository if it exists."""
+    try:
+        from haven.infrastructure.database.repositories.repository_repository import RepositoryRepositoryImpl
+        
+        git_client = GitClient()
+        
+        # Try to get commit info from git
+        cmd = [
+            "git",
+            "show",
+            "--format=%H|%an|%ae|%cn|%ce|%ct|%s",
+            "--numstat",
+            "--no-patch",
+            commit_hash
+        ]
+        
+        result = await git_client._run_command(cmd, cwd=repository.url)
+        if not result.strip():
+            return None
+        
+        lines = result.strip().split("\n")
+        if not lines or "|" not in lines[0]:
+            return None
+        
+        # Parse commit info
+        parts = lines[0].split("|", 6)
+        if len(parts) < 7:
+            return None
+        
+        commit_hash_full, author_name, author_email, committer_name, committer_email, timestamp, message = parts
+        
+        # Parse numstat for diff stats
+        files_changed = 0
+        insertions = 0
+        deletions = 0
+        
+        for i in range(1, len(lines)):
+            if lines[i].strip():
+                parts = lines[i].split("\t")
+                if len(parts) >= 2:
+                    files_changed += 1
+                    if parts[0] != "-":
+                        insertions += int(parts[0])
+                    if parts[1] != "-":
+                        deletions += int(parts[1])
+        
+        # Create commit entity
+        commit = Commit(
+            repository_id=repository.id,
+            commit_hash=commit_hash_full,
+            message=message,
+            author_name=author_name,
+            author_email=author_email,
+            committer_name=committer_name,
+            committer_email=committer_email,
+            committed_at=datetime.fromtimestamp(int(timestamp), tz=timezone.utc),
+            files_changed=files_changed,
+            insertions=insertions,
+            deletions=deletions,
+        )
+        
+        # Save to database
+        repo = SQLAlchemyCommitRepository(db)
+        await repo.create(commit)
+        await db.commit()
+        
+        return commit
+        
+    except Exception as e:
+        print(f"Error loading commit {commit_hash} from git: {e}")
+        return None
 
 
 @router.post("/", response_model=CommitResponse)
@@ -280,6 +355,12 @@ async def get_commit_by_hash_global(
         commit = await repo.get_by_hash(repository.id, commit_hash)
         if commit:
             return CommitResponse.from_entity(commit)
+    
+    # If not found in database, try to load it from git repositories
+    for repository in repositories:
+        loaded_commit = await _load_single_commit_from_git(repository, commit_hash, db)
+        if loaded_commit:
+            return CommitResponse.from_entity(loaded_commit)
     
     raise HTTPException(status_code=404, detail="Commit not found")
 
