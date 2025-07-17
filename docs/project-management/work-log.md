@@ -1292,4 +1292,47 @@ Key changes:
 
 ---
 
+## 2025-07-17.0005 - Added search and filter functionality to repository browser
+**Added**: Complete search and filter system for browsing commits
+**See**: 
+- Backend: `apps/api/src/haven/infrastructure/database/repositories/commit_repository.py` - search_commits() and count_search_results() methods
+- Frontend: `apps/web/src/components/common/SearchInput.tsx` - Reusable search component with debouncing
+- Frontend: `apps/web/src/components/repository/CommitFilters.tsx` - Advanced filtering UI
+**Test**: 
+```bash
+# Test search functionality
+curl "http://localhost:8080/api/v1/commits/paginated?repository_id=1&search=fix"
+
+# Test author filter
+curl "http://localhost:8080/api/v1/commits/paginated?repository_id=1&author=alice"
+
+# Test date range filter
+curl "http://localhost:8080/api/v1/commits/paginated?repository_id=1&date_from=2025-01-01&date_to=2025-01-31"
+```
+**Demo**: 
+```bash
+# Start services
+just run
+
+# Seed sample data if needed
+cd apps/api && python scripts/seed-commits.py
+
+# Navigate to http://localhost:3000/repository/1/browse
+# - Use search bar to find commits by message or hash
+# - Click "Filters" to expand advanced options
+# - Filter by author name/email
+# - Set date range to narrow results
+# - All filters work together and update results in real-time
+```
+
+Key features:
+- Real-time search with 300ms debouncing to reduce API calls
+- Advanced filters (author, date range) in collapsible panel
+- Clear indication when filters are active
+- Pagination resets to page 1 when filters change
+- Backend uses SQLAlchemy's ilike for case-insensitive search
+- Supports multiple filters simultaneously
+
+---
+
 *Entries follow format: YYYY-MM-DD.NNNN where NNNN is daily sequence number*
