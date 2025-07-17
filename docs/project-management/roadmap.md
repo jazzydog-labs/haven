@@ -57,13 +57,11 @@ All critical infrastructure and frontend development tasks have been successfull
 - [x] **Diff Visualization Interface** - React components for viewing diffs ✓ COMPLETED
 - [x] **Repository Browser** - Navigate commits and file changes ✓ COMPLETED
 - [x] **Search & Filter** - Find specific changes across history ✓ COMPLETED (2025-07-17)
-- [ ] **Export Options** - PDF, markdown export of diff reports
 
 ### API Enhancements  
 - [ ] **Advanced Diff Analysis** - File change metrics, complexity analysis
 - [ ] **Repository Statistics** - Contributor stats, file evolution
 - [ ] **Webhook Integration** - Real-time diff notifications
-- [ ] **API Rate Limiting** - Protect against abuse
 
 ### Infrastructure & DevOps
 - [ ] **Container Orchestration** - Production Docker setup with health checks
@@ -89,7 +87,6 @@ All critical infrastructure and frontend development tasks have been successfull
 ### Medium Priority
 - [ ] **Database Connection Pooling**: Configure proper async pooling for production
 - [ ] **Logging Structure**: Implement structured JSON logging with correlation IDs
-- [ ] **Rate Limiting**: Add before public API exposure
 - [ ] **Metrics Collection**: OpenTelemetry integration for observability
 
 ### Low Priority  
