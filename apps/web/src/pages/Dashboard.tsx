@@ -71,7 +71,7 @@ const Dashboard = () => {
                   📝 View Records
                 </a>
                 <a
-                  href="/repository/1/browse"
+                  href="/repository/13/browse"
                   className="block w-full text-left px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded"
                 >
                   🔍 Browse Repository

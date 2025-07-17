@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from haven.application.services.diff_html_service import DiffHtmlService
 from haven.domain.entities.commit import Commit, CommitReview
-from haven.infrastructure.database import get_db
+from haven.infrastructure.database.dependencies import get_db
 from haven.infrastructure.database.repositories.commit_repository import (
     SQLAlchemyCommitRepository,
     SQLAlchemyCommitReviewRepository,
@@ -54,21 +54,6 @@ async def create_commit(
     return CommitResponse.from_entity(saved_commit)
 
 
-@router.get("/{commit_id}", response_model=CommitResponse)
-async def get_commit(
-    commit_id: int,
-    db: AsyncSession = Depends(get_db),
-) -> CommitResponse:
-    """Get a commit by ID."""
-    repo = SQLAlchemyCommitRepository(db)
-    commit = await repo.get_by_id(commit_id)
-
-    if not commit:
-        raise HTTPException(status_code=404, detail="Commit not found")
-
-    return CommitResponse.from_entity(commit)
-
-
 @router.get("/", response_model=list[CommitResponse])
 async def list_commits(
     repository_id: int = Query(..., description="Repository ID"),
@@ -110,6 +95,21 @@ async def list_commits_paginated(
         page_size=page_size,
         total_pages=total_pages,
     )
+
+
+@router.get("/{commit_id}", response_model=CommitResponse)
+async def get_commit(
+    commit_id: int,
+    db: AsyncSession = Depends(get_db),
+) -> CommitResponse:
+    """Get a commit by ID."""
+    repo = SQLAlchemyCommitRepository(db)
+    commit = await repo.get_by_id(commit_id)
+
+    if not commit:
+        raise HTTPException(status_code=404, detail="Commit not found")
+
+    return CommitResponse.from_entity(commit)
 
 
 @router.post("/{commit_id}/generate-diff", response_model=CommitDiffResponse)
