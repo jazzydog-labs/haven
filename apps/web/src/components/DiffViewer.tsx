@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { InlineComment } from '../diff/InlineComment';
 import './DiffViewer.css';
 
 interface DiffLine {
@@ -52,6 +53,8 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'unified' | 'split'>('unified');
+  const [activeCommentLines, setActiveCommentLines] = useState<Set<string>>(new Set());
+  const [selectedLineRange, setSelectedLineRange] = useState<{ start: string; end: string } | null>(null);
 
   useEffect(() => {
     fetchDiffData();
@@ -83,34 +86,120 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
     }
   };
 
-  const renderUnifiedDiff = (file: DiffFile) => {
+  const getLineKey = (fileIndex: number, blockIndex: number, lineIndex: number, side?: 'left' | 'right') => {
+    return `${fileIndex}-${blockIndex}-${lineIndex}${side ? `-${side}` : ''}`;
+  };
+
+  const handleLineClick = (lineKey: string, fileName: string, lineNumber: number) => {
+    if (activeCommentLines.has(lineKey)) {
+      // Remove comment form if clicking on the same line
+      setActiveCommentLines(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(lineKey);
+        return newSet;
+      });
+    } else {
+      // Add comment form for this line
+      setActiveCommentLines(prev => new Set(prev).add(lineKey));
+    }
+  };
+
+  const handleCommentSave = async (lineKey: string, comment: string, fileName: string, lineNumber: number) => {
+    try {
+      const response = await fetch(`/api/v1/commits/${commitId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reviewer_id: 1, // TODO: Get actual user ID
+          line_number: lineNumber,
+          file_path: fileName,
+          content: comment,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save comment');
+      }
+
+      const savedComment = await response.json();
+      console.log('Comment saved:', savedComment);
+      
+      // Remove the comment form after saving
+      setActiveCommentLines(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(lineKey);
+        return newSet;
+      });
+      
+      // TODO: Add the saved comment to the UI to show it immediately
+    } catch (error) {
+      console.error('Failed to save comment:', error);
+      alert('Failed to save comment');
+    }
+  };
+
+  const handleCommentCancel = (lineKey: string) => {
+    setActiveCommentLines(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(lineKey);
+      return newSet;
+    });
+  };
+
+  const renderUnifiedDiff = (file: DiffFile, fileIndex: number) => {
+    const fileName = file.newName || file.oldName || 'Unknown file';
     return (
       <div className="diff-file-content">
         {file.blocks.map((block, blockIndex) => (
           <div key={blockIndex} className="diff-block">
-            {block.lines.map((line, lineIndex) => (
-              <div key={lineIndex} className={`diff-line ${getLineClass(line.type)}`}>
-                <span className="diff-line-number old">
-                  {line.oldNumber || ''}
-                </span>
-                <span className="diff-line-number new">
-                  {line.newNumber || ''}
-                </span>
-                <span className="diff-line-content">
-                  <span className="diff-line-sign">
-                    {line.type === 'insert' ? '+' : line.type === 'delete' ? '-' : ' '}
-                  </span>
-                  {line.content}
-                </span>
-              </div>
-            ))}
+            {block.lines.map((line, lineIndex) => {
+              const lineKey = getLineKey(fileIndex, blockIndex, lineIndex);
+              const lineNumber = line.newNumber || line.oldNumber || 0;
+              const showComment = activeCommentLines.has(lineKey);
+              
+              return (
+                <React.Fragment key={lineIndex}>
+                  <div 
+                    className={`diff-line ${getLineClass(line.type)} ${line.type !== 'context' ? 'clickable' : ''}`}
+                    onClick={() => line.type !== 'context' && handleLineClick(lineKey, fileName, lineNumber)}
+                  >
+                    <span className="diff-line-number old">
+                      {line.oldNumber || ''}
+                    </span>
+                    <span className="diff-line-number new">
+                      {line.newNumber || ''}
+                    </span>
+                    <span className="diff-line-content">
+                      <span className="diff-line-sign">
+                        {line.type === 'insert' ? '+' : line.type === 'delete' ? '-' : ' '}
+                      </span>
+                      <span>{line.content.replace(/^[+-]\s?/, '')}</span>
+                    </span>
+                  </div>
+                  {showComment && (
+                    <div className="diff-comment-row">
+                      <InlineComment
+                        lineNumber={lineNumber}
+                        fileName={fileName}
+                        commitHash={diffData?.commit.hash || ''}
+                        onSave={(comment) => handleCommentSave(lineKey, comment, fileName, lineNumber)}
+                        onCancel={() => handleCommentCancel(lineKey)}
+                      />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
         ))}
       </div>
     );
   };
 
-  const renderSplitDiff = (file: DiffFile) => {
+  const renderSplitDiff = (file: DiffFile, fileIndex: number) => {
+    const fileName = file.newName || file.oldName || 'Unknown file';
     return (
       <div className="diff-file-content split">
         {file.blocks.map((block, blockIndex) => {
@@ -138,39 +227,80 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
             <div key={blockIndex} className="diff-block">
               {leftLines.map((leftLine, lineIndex) => {
                 const rightLine = rightLines[lineIndex];
+                const leftLineKey = getLineKey(fileIndex, blockIndex, lineIndex, 'left');
+                const rightLineKey = getLineKey(fileIndex, blockIndex, lineIndex, 'right');
+                const leftLineNumber = leftLine?.oldNumber || 0;
+                const rightLineNumber = rightLine?.newNumber || 0;
+                const showLeftComment = leftLine && leftLine.type === 'delete' && activeCommentLines.has(leftLineKey);
+                const showRightComment = rightLine && rightLine.type === 'insert' && activeCommentLines.has(rightLineKey);
+                
                 return (
-                  <div key={lineIndex} className="diff-line-pair">
-                    <div className={`diff-line-left ${leftLine ? getLineClass(leftLine.type) : 'diff-line-empty'}`}>
-                      <span className="diff-line-number">
-                        {leftLine?.oldNumber || ''}
-                      </span>
-                      <span className="diff-line-content">
-                        {leftLine && (
-                          <>
-                            <span className="diff-line-sign">
-                              {leftLine.type === 'delete' ? '-' : ' '}
-                            </span>
-                            {leftLine.content}
-                          </>
-                        )}
-                      </span>
+                  <React.Fragment key={lineIndex}>
+                    <div className="diff-line-pair">
+                      <div 
+                        className={`diff-line-left ${leftLine ? getLineClass(leftLine.type) : 'diff-line-empty'} ${leftLine && leftLine.type === 'delete' ? 'clickable' : ''}`}
+                        onClick={() => leftLine && leftLine.type === 'delete' && handleLineClick(leftLineKey, fileName, leftLineNumber)}
+                      >
+                        <span className="diff-line-number">
+                          {leftLine?.oldNumber || ''}
+                        </span>
+                        <span className="diff-line-content">
+                          {leftLine && (
+                            <>
+                              <span className="diff-line-sign">
+                                {leftLine.type === 'delete' ? '-' : ' '}
+                              </span>
+                              {leftLine.content.replace(/^[+-]\s?/, '')}
+                            </>
+                          )}
+                        </span>
+                      </div>
+                      <div 
+                        className={`diff-line-right ${rightLine ? getLineClass(rightLine.type) : 'diff-line-empty'} ${rightLine && rightLine.type === 'insert' ? 'clickable' : ''}`}
+                        onClick={() => rightLine && rightLine.type === 'insert' && handleLineClick(rightLineKey, fileName, rightLineNumber)}
+                      >
+                        <span className="diff-line-number">
+                          {rightLine?.newNumber || ''}
+                        </span>
+                        <span className="diff-line-content">
+                          {rightLine && (
+                            <>
+                              <span className="diff-line-sign">
+                                {rightLine.type === 'insert' ? '+' : ' '}
+                              </span>
+                              {rightLine.content.replace(/^[+-]\s?/, '')}
+                            </>
+                          )}
+                        </span>
+                      </div>
                     </div>
-                    <div className={`diff-line-right ${rightLine ? getLineClass(rightLine.type) : 'diff-line-empty'}`}>
-                      <span className="diff-line-number">
-                        {rightLine?.newNumber || ''}
-                      </span>
-                      <span className="diff-line-content">
-                        {rightLine && (
-                          <>
-                            <span className="diff-line-sign">
-                              {rightLine.type === 'insert' ? '+' : ' '}
-                            </span>
-                            {rightLine.content}
-                          </>
+                    {(showLeftComment || showRightComment) && (
+                      <div className="diff-comment-row split">
+                        {showLeftComment && (
+                          <div className="diff-comment-left">
+                            <InlineComment
+                              lineNumber={leftLineNumber}
+                              fileName={fileName}
+                              commitHash={diffData?.commit.hash || ''}
+                              onSave={(comment) => handleCommentSave(leftLineKey, comment, fileName, leftLineNumber)}
+                              onCancel={() => handleCommentCancel(leftLineKey)}
+                            />
+                          </div>
                         )}
-                      </span>
-                    </div>
-                  </div>
+                        {showRightComment && (
+                          <div className="diff-comment-right">
+                            <InlineComment
+                              lineNumber={rightLineNumber}
+                              fileName={fileName}
+                              commitHash={diffData?.commit.hash || ''}
+                              onSave={(comment) => handleCommentSave(rightLineKey, comment, fileName, rightLineNumber)}
+                              onCancel={() => handleCommentCancel(rightLineKey)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </React.Fragment>
                 );
               })}
             </div>
@@ -236,7 +366,7 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({ commitId }) => {
                   <span className="diff-deletions">-{file.deletedLines}</span>
                 </span>
               </div>
-              {viewMode === 'unified' ? renderUnifiedDiff(file) : renderSplitDiff(file)}
+              {viewMode === 'unified' ? renderUnifiedDiff(file, fileIndex) : renderSplitDiff(file, fileIndex)}
             </div>
           ))
         )}

@@ -156,3 +156,32 @@ class PaginatedCommitWithReviewResponse(BaseModel):
     page: int
     page_size: int
     total_pages: int
+
+
+class ReviewCommentBase(BaseModel):
+    """Base schema for review comment."""
+    
+    line_number: int | None = Field(None, gt=0, description="Line number for line-specific comments")
+    file_path: str | None = Field(None, max_length=500, description="File path for file-specific comments")
+    content: str = Field(..., min_length=1, max_length=10000, description="Comment content")
+
+
+class ReviewCommentCreate(ReviewCommentBase):
+    """Schema for creating a review comment."""
+    
+    reviewer_id: int = Field(..., gt=0)
+
+
+class ReviewCommentResponse(ReviewCommentBase):
+    """Schema for review comment response."""
+    
+    id: int
+    commit_id: int
+    reviewer_id: int
+    created_at: datetime
+    updated_at: datetime | None = None
+
+    class Config:
+        """Pydantic config."""
+        
+        from_attributes = True

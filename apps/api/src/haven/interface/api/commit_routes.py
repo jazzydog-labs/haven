@@ -24,6 +24,8 @@ from haven.interface.api.schemas.commit_schemas import (
     CommitReviewResponse,
     PaginatedCommitResponse,
     PaginatedCommitWithReviewResponse,
+    ReviewCommentCreate,
+    ReviewCommentResponse,
 )
 from haven.domain.entities.commit import ReviewStatus
 from sqlalchemy import func, desc
@@ -473,3 +475,73 @@ async def list_commit_reviews(
     reviews = await review_repo.get_by_commit(commit_id)
 
     return [CommitReviewResponse.from_entity(review) for review in reviews]
+
+
+# Review comment endpoints
+@router.post("/{commit_id}/comments", response_model=ReviewCommentResponse)
+async def create_review_comment(
+    commit_id: int,
+    comment_data: ReviewCommentCreate,
+    db: AsyncSession = Depends(get_db),
+) -> ReviewCommentResponse:
+    """Create an inline comment on a commit."""
+    # Check if commit exists
+    commit_repo = SQLAlchemyCommitRepository(db)
+    commit = await commit_repo.get_by_id(commit_id)
+    
+    if not commit:
+        raise HTTPException(status_code=404, detail="Commit not found")
+    
+    # Import ReviewComment entity and repository
+    from haven.domain.entities.review_comment import ReviewComment
+    from haven.infrastructure.database.repositories.review_repository import SqlAlchemyReviewCommentRepository
+    
+    # Create review comment
+    comment_repo = SqlAlchemyReviewCommentRepository(db)
+    comment = ReviewComment(
+        commit_id=commit_id,
+        reviewer_id=comment_data.reviewer_id,
+        line_number=comment_data.line_number,
+        file_path=comment_data.file_path,
+        content=comment_data.content,
+    )
+    
+    saved_comment = await comment_repo.create(comment)
+    await db.commit()
+    
+    return ReviewCommentResponse(
+        id=saved_comment.id,
+        commit_id=saved_comment.commit_id,
+        reviewer_id=saved_comment.reviewer_id,
+        line_number=saved_comment.line_number,
+        file_path=saved_comment.file_path,
+        content=saved_comment.content,
+        created_at=saved_comment.created_at,
+        updated_at=saved_comment.updated_at,
+    )
+
+
+@router.get("/{commit_id}/comments", response_model=list[ReviewCommentResponse])
+async def list_review_comments(
+    commit_id: int,
+    db: AsyncSession = Depends(get_db),
+) -> list[ReviewCommentResponse]:
+    """List all inline comments for a commit."""
+    from haven.infrastructure.database.repositories.review_repository import SqlAlchemyReviewCommentRepository
+    
+    comment_repo = SqlAlchemyReviewCommentRepository(db)
+    comments = await comment_repo.get_by_commit_id(commit_id)
+    
+    return [
+        ReviewCommentResponse(
+            id=comment.id,
+            commit_id=comment.commit_id,
+            reviewer_id=comment.reviewer_id,
+            line_number=comment.line_number,
+            file_path=comment.file_path,
+            content=comment.content,
+            created_at=comment.created_at,
+            updated_at=comment.updated_at,
+        )
+        for comment in comments
+    ]

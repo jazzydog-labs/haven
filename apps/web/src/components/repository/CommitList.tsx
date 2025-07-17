@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import Fuse from 'fuse.js';
 import { SearchInput } from "../common/SearchInput";
 import { CommitFilters } from "./CommitFilters";
+import { CommitTypeTag } from "./CommitTypeTag";
 import "./CommitList.css";
 
 interface CommitInfo {
@@ -48,6 +50,7 @@ export const CommitList: React.FC<CommitListProps> = ({
 }) => {
   const navigate = useNavigate();
   const [commits, setCommits] = useState<CommitInfo[]>([]);
+  const [allCommits, setAllCommits] = useState<CommitInfo[]>([]); // Store all commits for fuzzy search
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -60,9 +63,21 @@ export const CommitList: React.FC<CommitListProps> = ({
   const [authorFilter, setAuthorFilter] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  
+  // Applied filter states (actual filters being used)
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
+  const [appliedAuthorFilter, setAppliedAuthorFilter] = useState("");
+  const [appliedDateFrom, setAppliedDateFrom] = useState("");
+  const [appliedDateTo, setAppliedDateTo] = useState("");
+  const [appliedStatusFilter, setAppliedStatusFilter] = useState<string[]>([]);
 
   // Check if any filters are active
-  const hasActiveFilters = !!(searchQuery || authorFilter || dateFrom || dateTo);
+  const hasActiveFilters = !!(appliedSearchQuery || appliedAuthorFilter || appliedDateFrom || appliedDateTo || appliedStatusFilter.length > 0);
+  const hasPendingFilters = !!(searchQuery || authorFilter || dateFrom || dateTo || statusFilter.length > 0) && 
+    (searchQuery !== appliedSearchQuery || authorFilter !== appliedAuthorFilter || 
+     dateFrom !== appliedDateFrom || dateTo !== appliedDateTo || 
+     JSON.stringify(statusFilter) !== JSON.stringify(appliedStatusFilter));
 
   // Build query parameters
   const buildQueryParams = () => {
@@ -72,11 +87,16 @@ export const CommitList: React.FC<CommitListProps> = ({
       page_size: pageSize.toString(),
     });
 
-    if (searchQuery) params.append("search", searchQuery);
-    if (authorFilter) params.append("author", authorFilter);
-    if (dateFrom) params.append("date_from", dateFrom);
-    if (dateTo) params.append("date_to", dateTo);
+    if (appliedSearchQuery) params.append("search", appliedSearchQuery);
+    if (appliedAuthorFilter) params.append("author", appliedAuthorFilter);
+    if (appliedDateFrom) params.append("date_from", appliedDateFrom);
+    if (appliedDateTo) params.append("date_to", appliedDateTo);
     if (branch) params.append("branch", branch);
+    
+    // Add status filters
+    appliedStatusFilter.forEach(status => {
+      params.append("status", status);
+    });
 
     return params.toString();
   };
@@ -95,6 +115,7 @@ export const CommitList: React.FC<CommitListProps> = ({
       }
 
       const data: PaginatedResponse = await response.json();
+      setAllCommits(data.items);
       setCommits(data.items);
       setTotal(data.total);
       setTotalPages(data.total_pages);
@@ -105,24 +126,54 @@ export const CommitList: React.FC<CommitListProps> = ({
     }
   };
 
+  // Apply filters
+  const applyFilters = () => {
+    setAppliedSearchQuery(searchQuery);
+    setAppliedAuthorFilter(authorFilter);
+    setAppliedDateFrom(dateFrom);
+    setAppliedDateTo(dateTo);
+    setAppliedStatusFilter(statusFilter);
+    setPage(1); // Reset to first page
+  };
+
   // Clear all filters
   const clearFilters = () => {
     setSearchQuery("");
     setAuthorFilter("");
     setDateFrom("");
     setDateTo("");
+    setStatusFilter([]);
+    setAppliedSearchQuery("");
+    setAppliedAuthorFilter("");
+    setAppliedDateFrom("");
+    setAppliedDateTo("");
+    setAppliedStatusFilter([]);
     setPage(1); // Reset to first page
   };
 
-  // Reset page when filters change
+  // Fuzzy search setup
+  const fuse = useMemo(() => {
+    return new Fuse(allCommits, {
+      keys: ['message', 'commit_hash', 'author_name', 'author_email'],
+      threshold: 0.3,
+      includeScore: true,
+    });
+  }, [allCommits]);
+
+  // Apply client-side fuzzy search
   useEffect(() => {
-    setPage(1);
-  }, [searchQuery, authorFilter, dateFrom, dateTo]);
+    if (searchQuery && allCommits.length > 0) {
+      const results = fuse.search(searchQuery);
+      setCommits(results.map(result => result.item));
+    } else {
+      setCommits(allCommits);
+    }
+  }, [searchQuery, allCommits, fuse]);
 
   useEffect(() => {
     fetchCommits();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repositoryId, page, searchQuery, authorFilter, dateFrom, dateTo]);
+  }, [repositoryId, page, appliedSearchQuery, appliedAuthorFilter, appliedDateFrom, appliedDateTo, appliedStatusFilter]);
 
   const handleCommitClick = (commit: CommitInfo) => {
     if (onCommitSelect) {
@@ -166,22 +217,6 @@ export const CommitList: React.FC<CommitListProps> = ({
     return message.substring(0, maxLength - 3) + "...";
   };
 
-  if (loading) {
-    return <div className="commit-list loading">Loading commits...</div>;
-  }
-
-  if (error) {
-    return <div className="commit-list error">{error}</div>;
-  }
-
-  if (commits.length === 0) {
-    return (
-      <div className="commit-list empty">
-        <p>No commits found for this repository</p>
-      </div>
-    );
-  }
-
   return (
     <div className="commit-list">
       <div className="list-header">
@@ -207,15 +242,28 @@ export const CommitList: React.FC<CommitListProps> = ({
         author={authorFilter}
         dateFrom={dateFrom}
         dateTo={dateTo}
+        statusFilter={statusFilter}
         onAuthorChange={setAuthorFilter}
         onDateFromChange={setDateFrom}
         onDateToChange={setDateTo}
+        onStatusFilterChange={setStatusFilter}
         onClearFilters={clearFilters}
+        onApplyFilters={applyFilters}
         hasActiveFilters={hasActiveFilters}
+        hasPendingFilters={hasPendingFilters}
       />
 
       <div className="commits-container">
-        {commits.map((commit) => (
+        {loading ? (
+          <div className="loading-container">Loading commits...</div>
+        ) : error ? (
+          <div className="error-container">{error}</div>
+        ) : commits.length === 0 ? (
+          <div className="empty-container">
+            <p>No commits found{hasActiveFilters ? " matching your filters" : ""}</p>
+          </div>
+        ) : (
+          commits.map((commit) => (
           <div
             key={commit.id}
             className={`commit-item ${
@@ -225,6 +273,7 @@ export const CommitList: React.FC<CommitListProps> = ({
           >
             <div className="commit-header">
               <span className="commit-hash">{commit.commit_hash.substring(0, 7)}</span>
+              <CommitTypeTag message={commit.message} />
               {getReviewStatusBadge(commit.review_status)}
               <span className="commit-date">{formatDate(commit.committed_at)}</span>
             </div>
@@ -235,7 +284,7 @@ export const CommitList: React.FC<CommitListProps> = ({
             
             <div className="commit-meta">
               <span className="commit-author">
-                <strong>{commit.author_name}</strong>
+                {commit.author_name}
               </span>
               <div className="commit-stats">
                 <span className="stat files">{commit.diff_stats.files_changed} files</span>
@@ -249,7 +298,8 @@ export const CommitList: React.FC<CommitListProps> = ({
               </div>
             </div>
           </div>
-        ))}
+          ))
+        )}
       </div>
 
       {totalPages > 1 && (
