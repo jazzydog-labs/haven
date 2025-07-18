@@ -4,6 +4,21 @@ This file tracks completed development work. Each entry documents what was done,
 
 ---
 
+## 2025-07-17.0012 - Automatic commit loading on demand
+**Fixed**: Commits no longer get stuck at "Loading..." when not in database
+**Features**:
+- Automatic loading of commits from git repositories when not found in database
+- Parse git show output to extract commit metadata and diff statistics
+- Save newly loaded commits to database for future access
+- Works with any commit hash, even if not bulk-loaded yet
+**See**: Visit any commit URL like `http://haven.local/commits/ef3efe9ae411cc024555b88f179909065ce21a73/review`
+**Test**: `curl -s "http://localhost:8080/api/v1/commits/hash/COMMIT_HASH" | jq .`
+**Demo**: 
+1. Find any commit hash: `git log --oneline | tail -1`
+2. Visit `http://haven.local/commits/COMMIT_HASH/review`
+3. Commit loads automatically even if not in database
+4. Diff generation happens on-demand
+
 ## 2025-07-17.0011 - Enhanced real-time fuzzy search
 **Enhanced**: Real-time fuzzy search with visual feedback and highlighting
 **Features**:
